@@ -12,17 +12,20 @@
   </div>
 </template>
 
-<script>
+<script lang="ts">
 export default {
   name: 'JsonEditorNew',
 };
 </script>
 
-<script setup  lang="ts">
+<script setup lang="ts">
 import JSONEditor from 'jsoneditor/dist/jsoneditor.min.js';
 import 'jsoneditor/dist/jsoneditor.min.css';
+import type {Options, ExpandOptions, SerializableNode} from '@/types';
 
-import {ref, reactive, computed, watch, nextTick, onMounted, onBeforeUnmount} from 'vue';
+import {inject, ref, reactive, computed, watch, nextTick, onMounted, onBeforeUnmount} from 'vue';
+
+const pluginOptions = inject('jsonEditorOptions', {}) as object;
 
 const emit = defineEmits(['update:value', 'error']);
 
@@ -31,14 +34,22 @@ const props = defineProps({
     type: Object,
     default: () => ({}),
   },
-  value: [Object, Array, Number, String, Boolean],
-  height: {
-    type: String,
-  },
+  json: [Object, Array, Number, String, Boolean],
+  jsonString: String,
+  height: [String, Number],
   plus: {
     type: Boolean,
     default: true,
   },
+  expandOnInit: {
+    type: Boolean,
+    default: false,
+  },
+});
+
+const options: Options = reactive({
+  ...pluginOptions,
+  ...props.options,
 });
 
 const max = ref(false);
@@ -50,31 +61,38 @@ const state = reactive({
   style: {},
 });
 
-const getHeight = computed(() => {
+const getHeight = computed((): object => {
   if (props.height && !max.value) {
     return {
-      height: props.height,
+      height: props.height + 'px',
     };
   }
   return {};
 });
 
-const initView = async () => {
-  if (process.server) return;
-
+const initView = async (): void => {
   if (!state.editor) {
-    const cacheChange = props.options.onChange;
-    delete props.options.onChange;
-    const options = {...props.options, onChange};
+    const cacheChange = options.onChange;
+    delete options.onChange;
+    const temporaryOptions = {...options, onChange};
     await nextTick();
-    state.editor = new JSONEditor(container.value, options);
-    props.options.onChange = cacheChange;
+    state.editor = new JSONEditor(container.value, temporaryOptions);
+    options.onChange = cacheChange;
   }
-  state.editor.set(props.value !== undefined ? props.value : {});
+  if (props.json !== undefined) {
+    state.editor.set(props.json);
+  } else if (propr.jsonString !== undefined) {
+    state.editor.setText(propr.jsonString);
+  } else {
+    state.editor.set({});
+  }
   state.editor.focus();
+  if (props.expandOnInit) {
+    state.editor.expandAll();
+  }
 };
 
-const onChange = async () => {
+const onChange = async (): void => {
   let error = null;
   let json = {};
   try {
@@ -91,33 +109,58 @@ const onChange = async () => {
     await nextTick();
     internalChange.value = false;
   }
-  props.options.onChange && props.options.onChange(...arguments);
+  options.onChange && options.onChange(...arguments);
 };
 
-const destroyView = () => {
+const destroyView = (): void => {
   if (state.editor) {
     state.editor.destroy();
     state.editor = null;
   }
 };
 
-const displayButton = computed(() => {
-  return props.options.mode === 'code' && props.plus;
+const displayButton = computed((): boolean => {
+  return options.mode === 'code' && props.plus;
 });
 
-const onButtonClick = () => {
+const onButtonClick = (): void => {
   max.value = !max.value;
 };
 
+const $collapseAll = (): void => {
+  state.editor?.collapseAll();
+};
+
+const $expandAll = (): void => {
+  state.editor?.expandAll();
+};
+
+const $expand = (options: ExpandOptions): void => {
+  state.editor?.expand(options);
+};
+
+const $getNodesByRange = (start: {path: string[]}, end: {path: string[]}): SerializableNode[] => {
+  state.editor?.getNodesByRange(start, end);
+};
+
 watch(
-  () => props.value,
+  () => props.json,
   (value) => {
     if (state.editor && value !== undefined && !internalChange.value) {
-      state.editor.set(value);
+      state.editor.update(value);
     }
   },
   {
     deep: true,
+  }
+);
+
+watch(
+  () => props.jsonString,
+  (jsonString) => {
+    if (state.editor && jsonString !== undefined && !internalChange.value) {
+      state.editor.updateText(jsonString);
+    }
   }
 );
 
@@ -128,14 +171,29 @@ watch(max, () => {
 });
 
 watch(
-  () => props.options,
-  (value) => {
-    if (value && value.mode && state.editor) {
-      state.editor.setMode(value.mode);
+  () => options.mode,
+  (mode) => {
+    if (mode && state.editor) {
+      state.editor.setMode(mode);
     }
-  },
-  {
-    deep: true,
+  }
+);
+
+watch(
+  () => options.name,
+  (name) => {
+    if (name && state.editor) {
+      state.editor.setName(name);
+    }
+  }
+);
+
+watch(
+  () => options.schema,
+  (schema) => {
+    if (schema && state.editor) {
+      state.editor.setSchema(schema);
+    }
   }
 );
 

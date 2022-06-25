@@ -1,4 +1,8 @@
-import { createApp } from 'vue'
-import App from './App.vue'
+import {createApp} from 'vue';
+import App from './App.vue';
+import JsonEditorPlugin from '@/JsonEditorPlugin';
 
-createApp(App).mount('#app')
+const app = createApp(App);
+
+app.use(JsonEditorPlugin);
+app.mount('#app');
