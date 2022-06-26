@@ -21,7 +21,8 @@ export default {
 <script setup lang="ts">
 import JSONEditor from 'jsoneditor/dist/jsoneditor.min.js';
 import 'jsoneditor/dist/jsoneditor.min.css';
-import type {Options, ExpandOptions, SerializableNode} from '@/types';
+import type {JSONEditorOptions, SerializableNode} from 'jsoneditor';
+import type CSS from 'csstype';
 
 import {inject, ref, reactive, computed, watch, nextTick, onMounted, onBeforeUnmount} from 'vue';
 
@@ -47,7 +48,7 @@ const props = defineProps({
   },
 });
 
-const options: Options = reactive({
+const options: JSONEditorOptions = reactive({
   ...pluginOptions,
   ...props.options,
 });
@@ -61,7 +62,7 @@ const state = reactive({
   style: {},
 });
 
-const getHeight = computed((): object => {
+const getHeight = computed((): CSS.Properties => {
   if (props.height && !max.value) {
     return {
       height: props.height + 'px',
@@ -70,7 +71,7 @@ const getHeight = computed((): object => {
   return {};
 });
 
-const initView = async (): void => {
+const initView = async (): Promise<void> => {
   if (!state.editor) {
     const cacheChange = options.onChange;
     delete options.onChange;
@@ -81,8 +82,8 @@ const initView = async (): void => {
   }
   if (props.json !== undefined) {
     state.editor.set(props.json);
-  } else if (propr.jsonString !== undefined) {
-    state.editor.setText(propr.jsonString);
+  } else if (props.jsonString !== undefined) {
+    state.editor.setText(props.jsonString);
   } else {
     state.editor.set({});
   }
@@ -92,7 +93,7 @@ const initView = async (): void => {
   }
 };
 
-const onChange = async (): void => {
+const onChange = async (): Promise<void> => {
   let error = null;
   let json = {};
   try {
@@ -135,12 +136,8 @@ const $expandAll = (): void => {
   state.editor?.expandAll();
 };
 
-const $expand = (options: ExpandOptions): void => {
-  state.editor?.expand(options);
-};
-
 const $getNodesByRange = (start: {path: string[]}, end: {path: string[]}): SerializableNode[] => {
-  state.editor?.getNodesByRange(start, end);
+  return state.editor?.getNodesByRange(start, end);
 };
 
 watch(

@@ -77,7 +77,7 @@ export type Options = {
   sortObjectKeys?: boolean;
   limitDragging?: boolean;
   history?: boolean;
-  mode: Mode;
+  mode?: Mode;
   modes?: Mode[];
   name?: string;
   schema?: object;
