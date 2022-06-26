@@ -1,33 +1,29 @@
 <template>
-  <div class="json-editor" :class="{'json-editor--max-box': max}" :style="getHeight" @keydown.stop>
-    <div ref="container" class="json-editor__box"></div>
-
-    <button
-      v-if="displayButton"
-      type="button"
-      class="json-editor__max-button"
-      size="mini"
-      @click="onButtonClick"
-    ></button>
-  </div>
+  <div
+    class="json-editor"
+    :class="{'json-editor--max-box': max}"
+    :style="getHeight"
+    ref="container"
+    @keydown.stop
+  ></div>
 </template>
 
 <script lang="ts">
 export default {
-  name: 'JsonEditorNew',
+  name: 'JsonEditor',
 };
 </script>
 
 <script setup lang="ts">
-import JSONEditor from 'jsoneditor/dist/jsoneditor.min.js';
+import JSONEditor from 'jsoneditor';
 import 'jsoneditor/dist/jsoneditor.min.css';
-import type {Options, ExpandOptions, SerializableNode} from '@/types';
+import type {JSONEditorOptions, SerializableNode} from 'jsoneditor';
 
 import {inject, ref, reactive, computed, watch, nextTick, onMounted, onBeforeUnmount} from 'vue';
 
 const pluginOptions = inject('jsonEditorOptions', {}) as object;
 
-const emit = defineEmits(['update:value', 'error']);
+const emit = defineEmits(['update:json', 'update:jsonString', 'error']);
 
 const props = defineProps({
   options: {
@@ -37,7 +33,7 @@ const props = defineProps({
   json: [Object, Array, Number, String, Boolean],
   jsonString: String,
   height: [String, Number],
-  plus: {
+  fullWidthButton: {
     type: Boolean,
     default: true,
   },
@@ -47,7 +43,7 @@ const props = defineProps({
   },
 });
 
-const options: Options = reactive({
+const options: JSONEditorOptions = reactive({
   ...pluginOptions,
   ...props.options,
 });
@@ -55,13 +51,14 @@ const options: Options = reactive({
 const max = ref(false);
 const internalChange = ref(false);
 const container = ref();
+const fullWidthButton = ref(null);
 
 const state = reactive({
   editor: null,
   style: {},
 });
 
-const getHeight = computed((): object => {
+const getHeight = computed(() => {
   if (props.height && !max.value) {
     return {
       height: props.height + 'px',
@@ -70,7 +67,36 @@ const getHeight = computed((): object => {
   return {};
 });
 
-const initView = async (): void => {
+const setFullWidthButton = (): void => {
+  if (!props.fullWidthButton || fullWidthButton.value) return;
+
+  const menu = document.querySelector('.jsoneditor-menu');
+  fullWidthButton.value = document.createElement('button');
+  fullWidthButton.value.classList.add('jsoneditor__full-width-button');
+
+  menu.appendChild(fullWidthButton.value);
+
+  fullWidthButton.value.addEventListener('click', onButtonClick);
+};
+
+const removeFullWidthButton = (): void => {
+  if (!fullWidthButton.value) return;
+
+  fullWidthButton.value.removeEventListener('click', onButtonClick);
+  fullWidthButton.value = null;
+};
+
+const onButtonClick = (): void => {
+  max.value = !max.value;
+
+  if (max.value) {
+    fullWidthButton.value?.classList.add('jsoneditor__full-width-button--active');
+  } else {
+    fullWidthButton.value?.classList.remove('jsoneditor__full-width-button--active');
+  }
+};
+
+const initView = async (): Promise<void> => {
   if (!state.editor) {
     const cacheChange = options.onChange;
     delete options.onChange;
@@ -81,8 +107,8 @@ const initView = async (): void => {
   }
   if (props.json !== undefined) {
     state.editor.set(props.json);
-  } else if (propr.jsonString !== undefined) {
-    state.editor.setText(propr.jsonString);
+  } else if (props.jsonString !== undefined) {
+    state.editor.setText(props.jsonString);
   } else {
     state.editor.set({});
   }
@@ -90,13 +116,16 @@ const initView = async (): void => {
   if (props.expandOnInit) {
     state.editor.expandAll();
   }
+  setFullWidthButton();
 };
 
-const onChange = async (): void => {
+const onChange = async (): Promise<void> => {
   let error = null;
   let json = {};
+  let jsonString = '';
   try {
     json = state.editor.get();
+    jsonString = state.editor.get();
   } catch (err) {
     error = err;
   }
@@ -105,11 +134,12 @@ const onChange = async (): void => {
     emit('error', error);
   } else if (state.editor) {
     internalChange.value = true;
-    emit('update:value', json);
+    emit('update:json', json);
+    emit('update:jsonString', jsonString);
     await nextTick();
     internalChange.value = false;
   }
-  options.onChange && options.onChange(...arguments);
+  options.onChange && options.onChange();
 };
 
 const destroyView = (): void => {
@@ -117,14 +147,8 @@ const destroyView = (): void => {
     state.editor.destroy();
     state.editor = null;
   }
-};
 
-const displayButton = computed((): boolean => {
-  return options.mode === 'code' && props.plus;
-});
-
-const onButtonClick = (): void => {
-  max.value = !max.value;
+  removeFullWidthButton();
 };
 
 const $collapseAll = (): void => {
@@ -135,12 +159,8 @@ const $expandAll = (): void => {
   state.editor?.expandAll();
 };
 
-const $expand = (options: ExpandOptions): void => {
-  state.editor?.expand(options);
-};
-
 const $getNodesByRange = (start: {path: string[]}, end: {path: string[]}): SerializableNode[] => {
-  state.editor?.getNodesByRange(start, end);
+  return state.editor?.getNodesByRange(start, end);
 };
 
 watch(
@@ -163,12 +183,6 @@ watch(
     }
   }
 );
-
-watch(max, () => {
-  nextTick(() => {
-    initView();
-  });
-});
 
 watch(
   () => options.mode,
@@ -206,13 +220,17 @@ onMounted(() => {
 onBeforeUnmount(() => {
   destroyView();
 });
+
+defineExpose({
+  $collapseAll,
+  $expandAll,
+  $getNodesByRange,
+});
 </script>
 
 <style scoped lang="scss">
 .json-editor {
   $root: &;
-
-  position: relative;
   min-width: 300px;
   width: 100%;
 
@@ -220,35 +238,42 @@ onBeforeUnmount(() => {
     position: fixed;
     top: 0;
     left: 0;
-    width: 100%;
-    height: 100%;
+    width: 100vw;
+    height: 100vh;
     z-index: 10000;
   }
 
-  &__box {
-    height: 100%;
-  }
+  :deep() {
+    .jsoneditor {
+      &__full-width-button {
+        margin: 3px 0 0 10px;
+        padding: 0;
+        color: #fff;
+        opacity: 0.8;
+        width: 26px;
+        height: 26px;
+        background: rgba(0, 0, 0, 0) url(./src/assets/icons/full.svg) 3px no-repeat;
+        border: 1px solid rgba(0, 0, 0, 0);
+        border-radius: 3px;
 
-  &__max-button {
-    display: none;
-    position: absolute;
-    top: 7px;
-    right: 110px;
-    color: #fff;
-    width: 24px;
-    height: 24px;
-    background: rgba(0, 0, 0, 0) url(./assets/icons/json-editor/plus.svg) 3px no-repeat;
-    border: 1px solid rgba(0, 0, 0, 0);
-    border-radius: 3px;
+        &:hover {
+          background-color: rgba(255, 255, 255, 0.15);
+        }
 
-    &:hover {
-      border-color: #d7e6fe;
-    }
-  }
+        &:active {
+          background-color: rgba(255, 255, 255, 0.3);
+        }
 
-  &:hover {
-    #{$root}__max-button {
-      display: block;
+        &--active {
+          background-color: rgba(255, 255, 255, 0.22);
+        }
+
+        &:hover,
+        &:active,
+        &--active {
+          border-color: rgba(255, 255, 255, 0.6);
+        }
+      }
     }
   }
 }

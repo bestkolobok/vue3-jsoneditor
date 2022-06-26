@@ -1,46 +1,113 @@
-# vue3-jsoneditor
+# vue3-ts-jsoneditor
 
-This template should help get you started developing with Vue 3 in Vite.
+## Installation
 
-## Recommended IDE Setup
+```bash
+npm install vue3-ts-jsoneditor
+```
 
-[VSCode](https://code.visualstudio.com/) + [Volar](https://marketplace.visualstudio.com/items?itemName=Vue.volar) (and disable Vetur) + [TypeScript Vue Plugin (Volar)](https://marketplace.visualstudio.com/items?itemName=Vue.vscode-typescript-vue-plugin).
+## Using
 
-## Type Support for `.vue` Imports in TS
+### Import globally
 
-TypeScript cannot handle type information for `.vue` imports by default, so we replace the `tsc` CLI with `vue-tsc` for type checking. In editors, we need [TypeScript Vue Plugin (Volar)](https://marketplace.visualstudio.com/items?itemName=Vue.vscode-typescript-vue-plugin) to make the TypeScript language service aware of `.vue` types.
+```javascript
+import {createApp} from 'vue';
+import App from './App.vue';
+import vue3TsJsoneditor from 'vue3-ts-jsoneditor';
+import 'vue3-ts-jsoneditor/styles.css'
 
-If the standalone TypeScript plugin doesn't feel fast enough to you, Volar has also implemented a [Take Over Mode](https://github.com/johnsoncodehk/volar/discussions/471#discussioncomment-1361669) that is more performant. You can enable it by the following steps:
+const app = createApp(App);
 
-1. Disable the built-in TypeScript Extension
-    1) Run `Extensions: Show Built-in Extensions` from VSCode's command palette
-    2) Find `TypeScript and JavaScript Language Features`, right click and select `Disable (Workspace)`
-2. Reload the VSCode window by running `Developer: Reload Window` from the command palette.
+app.use(vue3TsJsoneditor, {
+  // options
+});
 
-## Customize configuration
+app.mount('#app');
+```
 
-See [Vite Configuration Reference](https://vitejs.dev/config/).
+### Import locally
 
-## Project Setup
+```javascript
+<script setup>
+  import vueJsoneditor from 'vue3-ts-jsoneditor';
+  import 'vue3-ts-jsoneditor/styles.css'
+</script>
+```
 
-```sh
+### Use in template
+
+```html
+<template>
+  <vue-jsoneditor 
+    expand-on-init 
+    height="400" 
+    :options="{modes}" 
+    v-model:json="json" 
+    @error="onError" 
+  />
+</template>
+
+// or
+
+<template>
+  <vue-jsoneditor
+    height="400" 
+    :options="{modes}" 
+    v-model:jsonString="jsonString"
+  />
+</template>
+
+<script setup>
+  import {reactive} from 'vue';
+
+  const json = reactive({
+    array: [1, 2, 3],
+    boolean: true,
+    Null: null,
+    number: 123,
+    object: {a: 'b', c: 'd'},
+    string: 'Hello World',
+  });
+
+  const jsonString = reactive(JSON.stringify({
+    array: [1, 2, 3],
+    boolean: true,
+    Null: null,
+    number: 123,
+    object: {a: 'b', c: 'd'},
+    string: 'Hello World',
+  }));
+
+  const modes = reactive(['tree', 'view', 'form', 'code', 'text', 'preview']);
+  
+  const onError = (error) => {
+    //
+  }
+</script>
+```
+### Props
+| Name                  | Description                                                                                                                                                   | type            | default          |
+| --------------        | ------------------------------------------------------------------------------------------------------------------------------------------------------------- | :-----:         | :--------------: |
+| options               | Jsoneditor params, You can look at the detailed  [configuration](https://github.com/josdejong/jsoneditor/blob/master/docs/api.md#configuration-options?blank) | Object          | { mode: 'tree' } |
+| json (v-model)        | Object value                                                                                                                                                  | Object          | { }              |
+| jsonString (v-model)  | String value                                                                                                                                                  | String          | undefined        |
+| fullWidthButton       | Whether full screen switching is added                                                                                                                        | Boolean         | true             |
+| height                | Default height                                                                                                                                                | String / Number | undefined        |
+| expandOnInit          | Expand all fields. Only applicable for mode 'tree', 'view', and 'form'                                                                                        | Boolean         | false            | 
+
+### Events
+| Name  | Description      |
+| ----- | --------------   |
+| error | Wrong data error |
+
+## Build Setup
+
+``` bash
+# install dependencies
 npm install
-```
 
-### Compile and Hot-Reload for Development
-
-```sh
+# serve with hot reload at localhost:3080
 npm run dev
-```
 
-### Type-Check, Compile and Minify for Production
-
-```sh
+# build for production with minification
 npm run build
-```
-
-### Lint with [ESLint](https://eslint.org/)
-
-```sh
-npm run lint
-```
