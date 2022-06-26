@@ -12,7 +12,7 @@
 
 <script setup lang="ts">
 // import JsonEditor from '@/components/JsonEditor.vue';
-import {reactive, ref} from 'vue';
+import {reactive} from 'vue';
 
 const json = reactive({
   array: [1, 2, 3],
