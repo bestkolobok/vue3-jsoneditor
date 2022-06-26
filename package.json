@@ -1,6 +1,20 @@
 {
   "name": "vue3-jsoneditor",
-  "version": "0.0.0",
+  "version": "0.0.1",
+  "license": "Apache-2.0",
+  "main": "dist/index.cjs",
+  "module": "dist/index.js",
+  "exports": {
+    ".": "./dist/index.js",
+    "./styles.css": "./dist/style.css"
+  },
+  "browser": {
+    "./styles.css": "./dist/style.css"
+  },
+  "types": "dist/ViewerPlugin.d.ts",
+  "files": [
+    "dist"
+  ],
   "scripts": {
     "dev": "vite",
     "build": "run-p type-check build-only",
@@ -11,6 +25,7 @@
   },
   "dependencies": {
     "jsoneditor": "^9.9.0",
+    "rollup-plugin-typescript2": "^0.32.1",
     "vue": "^3.2.37"
   },
   "devDependencies": {
