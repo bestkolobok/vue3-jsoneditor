@@ -1,6 +1,6 @@
 {
   "name": "vue3-ts-jsoneditor",
-  "version": "0.0.4",
+  "version": "0.0.5",
   "author": {
     "name": "Alex Guzey",
     "email": "alex.guzey@gmail.com"
@@ -73,44 +73,44 @@
   ],
   "funding": [
     {
-      "type" : "patreon",
-      "url" : "https://uahelp.monobank.ua/"
+      "type": "patreon",
+      "url": "https://uahelp.monobank.ua/"
     },
     {
-      "type" : "patreon",
-      "url" : "https://bank.gov.ua/en/news/all/natsionalniy-bank-vidkriv-spetsrahunok-dlya-zboru-koshtiv-na-potrebi-armiyi"
+      "type": "patreon",
+      "url": "https://bank.gov.ua/en/news/all/natsionalniy-bank-vidkriv-spetsrahunok-dlya-zboru-koshtiv-na-potrebi-armiyi"
     },
     {
-      "type" : "patreon",
-      "url" : "https://www.comebackalive.in.ua/"
+      "type": "patreon",
+      "url": "https://www.comebackalive.in.ua/"
     },
     {
-      "type" : "patreon",
-      "url" : "https://armysos.com.ua/donate/"
+      "type": "patreon",
+      "url": "https://armysos.com.ua/donate/"
     },
     {
-      "type" : "patreon",
-      "url" : "http://wings-phoenix.org.ua/en/about-fund/"
+      "type": "patreon",
+      "url": "http://wings-phoenix.org.ua/en/about-fund/"
     },
     {
-      "type" : "patreon",
-      "url" : "https://novaposhta.ua/eng/"
+      "type": "patreon",
+      "url": "https://novaposhta.ua/eng/"
     },
     {
-      "type" : "patreon",
-      "url" : "https://voices.org.ua/en/donat/"
+      "type": "patreon",
+      "url": "https://voices.org.ua/en/donat/"
     },
     {
-      "type" : "patreon",
-      "url" : "https://www.unicef.org.uk/donate/donate-now-to-protect-children-in-ukraine/"
+      "type": "patreon",
+      "url": "https://www.unicef.org.uk/donate/donate-now-to-protect-children-in-ukraine/"
     },
     {
-      "type" : "patreon",
-      "url" : "https://www.paypal.com/donate/?cmd=_s-xclick&hosted_button_id=FYFZPVQN8J7YC&source=url"
+      "type": "patreon",
+      "url": "https://www.paypal.com/donate/?cmd=_s-xclick&hosted_button_id=FYFZPVQN8J7YC&source=url"
     },
     {
-      "type" : "patreon",
-      "url" : "https://novaukraine.org/"
+      "type": "patreon",
+      "url": "https://novaukraine.org/"
     }
   ]
 }
