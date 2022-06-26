@@ -38,13 +38,23 @@ app.mount('#app');
 
 ```html
 <template>
-  <vue-jsoneditor expand-on-init height="400" :options="{modes}" v-model:json="json" @error="onError">
+  <vue-jsoneditor 
+    expand-on-init 
+    height="400" 
+    :options="{modes}" 
+    v-model:json="json" 
+    @error="onError" 
+  />
 </template>
 
 // or
 
 <template>
-  <vue-jsoneditor expand-on-init height="400" :options="{modes}" v-model:jsonString="jsonString">
+  <vue-jsoneditor
+    height="400" 
+    :options="{modes}" 
+    v-model:jsonString="jsonString"
+  />
 </template>
 
 <script setup>
@@ -83,6 +93,7 @@ app.mount('#app');
 | jsonString (v-model)  | String value                                                                                                                                                  | String          | undefined        |
 | fullWidthButton       | Whether full screen switching is added                                                                                                                        | Boolean         | true             |
 | height                | Default height                                                                                                                                                | String / Number | undefined        |
+| expandOnInit          | Expand all fields. Only applicable for mode 'tree', 'view', and 'form'                                                                                        | Boolean         | false            | 
 
 ### Events
 | Name  | Description      |
