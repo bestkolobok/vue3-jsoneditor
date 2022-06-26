@@ -86,6 +86,16 @@ const removeFullWidthButton = (): void => {
   fullWidthButton.value = null;
 };
 
+const onButtonClick = (): void => {
+  max.value = !max.value;
+
+  if (max.value) {
+    fullWidthButton.value?.classList.add('jsoneditor__full-width-button--active');
+  } else {
+    fullWidthButton.value?.classList.remove('jsoneditor__full-width-button--active');
+  }
+};
+
 const initView = async (): Promise<void> => {
   if (!state.editor) {
     const cacheChange = options.onChange;
@@ -139,10 +149,6 @@ const destroyView = (): void => {
   }
 
   removeFullWidthButton();
-};
-
-const onButtonClick = (): void => {
-  max.value = !max.value;
 };
 
 const $collapseAll = (): void => {
@@ -239,12 +245,6 @@ defineExpose({
 
   :deep() {
     .jsoneditor {
-      &__full-width-button-container {
-        margin-left: 10px;
-        display: inline-block;
-        float: left;
-      }
-
       &__full-width-button {
         margin: 3px 0 0 10px;
         padding: 0;
@@ -257,12 +257,21 @@ defineExpose({
         border-radius: 3px;
 
         &:hover {
-          border-color: rgba(255, 255, 255, 0.6);
           background-color: rgba(255, 255, 255, 0.15);
         }
 
         &:active {
           background-color: rgba(255, 255, 255, 0.3);
+        }
+
+        &--active {
+          background-color: rgba(255, 255, 255, 0.22);
+        }
+
+        &:hover,
+        &:active,
+        &--active {
+          border-color: rgba(255, 255, 255, 0.6);
         }
       }
     }

@@ -5,16 +5,14 @@
     </header>
 
     <main>
-      <json-editor expand-on-init plus height="400" :options="{modes}" v-model:json="json" ref="editor" />
+      <json-editor expand-on-init height="400" :options="{modes}" v-model:json="json" />
     </main>
   </div>
 </template>
 
 <script setup lang="ts">
 // import JsonEditor from '@/components/JsonEditor.vue';
-import {onMounted, reactive, ref} from 'vue';
-
-const editor = ref();
+import {reactive, ref} from 'vue';
 
 const json = reactive({
   array: [1, 2, 3],
@@ -26,10 +24,6 @@ const json = reactive({
 });
 
 const modes = reactive(['tree', 'view', 'form', 'code', 'text', 'preview']);
-
-onMounted(() => {
-  console.log('>>>>>>', editor);
-});
 </script>
 
 <style scoped lang="scss">
