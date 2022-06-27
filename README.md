@@ -25,7 +25,10 @@ import 'vue3-ts-jsoneditor/styles.css'
 const app = createApp(App);
 
 app.use(vue3TsJsoneditor, {
-  // options
+  componentName: '/componentName/', // Default: 'JsonEditor',
+  options: {
+    // Jsoneditor options, You can look at the detailed  https://github.com/josdejong/jsoneditor/blob/master/docs/api.md#configuration-options?blank
+  }
 });
 
 app.mount('#app');
@@ -94,7 +97,7 @@ app.mount('#app');
 ### Props
 | Name                  | Description                                                                                                                                                   | type            | default          |
 | --------------        | ------------------------------------------------------------------------------------------------------------------------------------------------------------- | :-----:         | :--------------: |
-| options               | Jsoneditor params, You can look at the detailed  [configuration](https://github.com/josdejong/jsoneditor/blob/master/docs/api.md#configuration-options?blank) | Object          | { mode: 'tree' } |
+| options               | Jsoneditor options, You can look at the detailed  [configuration](https://github.com/josdejong/jsoneditor/blob/master/docs/api.md#configuration-options?blank) | Object          | { mode: 'tree' } |
 | json (v-model)        | Object value                                                                                                                                                  | Object          | { }              |
 | jsonString (v-model)  | String value                                                                                                                                                  | String          | undefined        |
 | fullWidthButton       | Whether full screen switching is added                                                                                                                        | Boolean         | true             |
