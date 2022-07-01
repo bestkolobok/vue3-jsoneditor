@@ -33,7 +33,9 @@
   },
   "scripts": {
     "dev": "vite",
+    "deploy": "sh ./deploy.sh",
     "build": "run-p type-check build-only",
+    "build:gh": "VITECONFIG_build_lib=false VITECONFIG_build_cssCodeSplit=true VITECONFIG_build_outDir=gh-dist VITECONFIG_base=vue3-jsoneditor run-p build-only",
     "preview": "vite preview --port 4173",
     "build-only": "vite build",
     "type-check": "vue-tsc --noEmit",
@@ -61,6 +63,7 @@
     "sass-loader": "^13.0.0",
     "typescript": "~4.7.4",
     "vite": "^2.9.12",
+    "vite-plugin-env-config": "^2.0.0",
     "vue-tsc": "^0.38.1"
   },
   "keywords": [

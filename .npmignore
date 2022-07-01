@@ -80,7 +80,15 @@ pnpm-debug.log*
 modules.xml
 *.ipr
 
+.npmignore
+.gitignore
+.prettierrc
+.eslint.cjs
+yarn.lock
+vite.config.ts
+tsconfig.config.json
+tsconfig.json
+
+
 #Build generated
-dist
-build
 gh-dist
