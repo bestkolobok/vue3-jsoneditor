@@ -6,15 +6,19 @@
 
 # vue3-ts-jsoneditor
 
-## Installation
+## 🕹 Demo
+
+> you can 👀 a live demo [here](https://bestkolobok.github.io/vue3-jsoneditor/)
+
+## ☑️ Installation
 
 ```bash
 npm install vue3-ts-jsoneditor
 ```
 
-## Using
+## ✅ Using
 
-### Import globally
+### 👉 Import globally
 
 ```javascript
 import {createApp} from 'vue';
@@ -34,7 +38,7 @@ app.use(vue3TsJsoneditor, {
 app.mount('#app');
 ```
 
-### Import locally
+### 👉 Import locally
 
 ```javascript
 <script setup>
@@ -43,7 +47,7 @@ app.mount('#app');
 </script>
 ```
 
-### Use in template
+### 👉 Use in template
 
 ```html
 <template>
@@ -94,7 +98,7 @@ app.mount('#app');
   }
 </script>
 ```
-### Props
+### ☑️ Props
 | Name                  | Description                                                                                                                                                   | type            | default          |
 | --------------        | ------------------------------------------------------------------------------------------------------------------------------------------------------------- | :-----:         | :--------------: |
 | options               | Jsoneditor options, You can look at the detailed  [configuration](https://github.com/josdejong/jsoneditor/blob/master/docs/api.md#configuration-options?blank) | Object          | { mode: 'tree' } |
@@ -104,12 +108,12 @@ app.mount('#app');
 | height                | Default height                                                                                                                                                | String / Number | undefined        |
 | expandOnInit          | Expand all fields. Only applicable for mode 'tree', 'view', and 'form'                                                                                        | Boolean         | false            | 
 
-### Events
+### ☑️ Events
 | Name  | Description      |
 | ----- | --------------   |
 | error | Wrong data error |
 
-## Build Setup
+## 🔨Build Setup
 
 ``` bash
 # install dependencies

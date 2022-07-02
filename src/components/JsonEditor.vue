@@ -1,7 +1,7 @@
 <template>
   <div
-    class="json-editor"
-    :class="{'json-editor--max-box': max}"
+    class="vue-ts-json-editor"
+    :class="{'vue-ts-json-editor--max-box': max}"
     :style="getHeight"
     ref="container"
     @keydown.stop
@@ -228,8 +228,8 @@ defineExpose({
 });
 </script>
 
-<style scoped lang="scss">
-.json-editor {
+<style lang="scss">
+.vue-ts-json-editor {
   $root: &;
   min-width: 300px;
   width: 100%;
@@ -243,36 +243,34 @@ defineExpose({
     z-index: 10000;
   }
 
-  :deep() {
-    .jsoneditor {
-      &__full-width-button {
-        margin: 3px 0 0 10px;
-        padding: 0;
-        color: #fff;
-        opacity: 0.8;
-        width: 26px;
-        height: 26px;
-        background: rgba(0, 0, 0, 0) url(./src/assets/icons/full.svg) 3px no-repeat;
-        border: 1px solid rgba(0, 0, 0, 0);
-        border-radius: 3px;
+  .jsoneditor {
+    &__full-width-button {
+      margin: 3px 0 0 10px;
+      padding: 0;
+      color: #fff;
+      opacity: 0.8;
+      width: 26px;
+      height: 26px;
+      background: rgba(0, 0, 0, 0) url(@/assets/icons/full.svg) 3px no-repeat;
+      border: 1px solid rgba(0, 0, 0, 0);
+      border-radius: 3px;
 
-        &:hover {
-          background-color: rgba(255, 255, 255, 0.15);
-        }
+      &:hover {
+        background-color: rgba(255, 255, 255, 0.15);
+      }
 
-        &:active {
-          background-color: rgba(255, 255, 255, 0.3);
-        }
+      &:active {
+        background-color: rgba(255, 255, 255, 0.3);
+      }
 
-        &--active {
-          background-color: rgba(255, 255, 255, 0.22);
-        }
+      &--active {
+        background-color: rgba(255, 255, 255, 0.22);
+      }
 
-        &:hover,
-        &:active,
-        &--active {
-          border-color: rgba(255, 255, 255, 0.6);
-        }
+      &:hover,
+      &:active,
+      &--active {
+        border-color: rgba(255, 255, 255, 0.6);
       }
     }
   }
