@@ -8,14 +8,14 @@ git add -A
 git commit -m 'deploy'
 
 # update package version
-npm version patch
+npm version minor
 
 # build
 npm run build
 npm run build:gh
 
 # publish
-npm run publish
+npm publish
 
 # navigate into the build output directory
 cd gh-dist
