@@ -37,7 +37,7 @@
     "deploy:minor": "sh deploy/minor.sh",
     "deploy:major": "sh deploy/major.sh",
     "build": "run-p type-check build-only",
-    "build:gh": "VITECONFIG_build_lib=false VITECONFIG_build_rollupOptions=false VITECONFIG_build_cssCodeSplit=true VITECONFIG_build_outDir=gh-dist VITECONFIG_base=vue3-jsoneditor run-p build-only",
+    "build:gh": "VITECONFIG_build_lib=false VITECONFIG_build_rollupOptions=false VITECONFIG_build_cssCodeSplit=true VITECONFIG_build_outDir=gh-dist VITECONFIG_base='/vue553-jsoneditor' run-p build-only",
     "preview": "vite preview --port 4173",
     "build-only": "vite build",
     "type-check": "vue-tsc --noEmit",
