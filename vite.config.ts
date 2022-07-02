@@ -41,13 +41,13 @@ export default defineConfig({
       name: 'JsonEditorPlugin',
       fileName: (format) => (format === 'es' ? 'index.js' : 'index.cjs'),
     },
-    rollupOptions: {
-      external: ['vue'],
-      output: {
-        globals: {
-          vue: 'Vue',
-        },
-      },
-    },
+    // rollupOptions: {
+    //   external: ['vue'],
+    //   output: {
+    //     globals: {
+    //       vue: 'Vue',
+    //     },
+    //   },
+    // },
   },
 });
