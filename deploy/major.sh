@@ -1,11 +1,11 @@
 #!/usr/bin/env sh
 
-# abort on errors
-set -e
-
 # final commit
 git add -A
 git commit -m 'deploy'
+
+# abort on errors
+set -e
 
 # update package version
 npm version major
