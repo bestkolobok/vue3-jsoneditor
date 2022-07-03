@@ -10,10 +10,10 @@
   "main": "dist/index.cjs",
   "module": "dist/index.js",
   "exports": {
-    ".": "./dist/index.js",
+    "./": "./dist/index.js",
     "./styles.css": "./dist/style.css"
   },
-  "types": "dist/ViewerPlugin.d.ts",
+  "types": "dist/JsonEditorPlugin.d.ts",
   "files": [
     "dist"
   ],
