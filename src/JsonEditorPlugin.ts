@@ -7,9 +7,10 @@ interface Params {
   options: JSONEditorOptions;
 }
 
-JsonEditor.install = (app: App, params: Params = {componentName: 'JsonEditor', options: {mode: 'tree'}}) => {
-  app.component(params.componentName, JsonEditor);
-  app.provide('jsonEditorOptions', params.options);
+export default {
+  ...JsonEditor,
+  install: (app: App, params: Params = {componentName: 'JsonEditor', options: {mode: 'tree'}}) => {
+    app.component(params.componentName, JsonEditor);
+    app.provide('jsonEditorOptions', params.options);
+  },
 };
-
-export default JsonEditor;
