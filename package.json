@@ -10,13 +10,6 @@
   "main": "dist/index.cjs",
   "module": "dist/index.js",
   "exports": {
-    ".": {
-      "import": "./dist/index.js",
-      "require": "./dist/index.cjs"
-    },
-    "./styles.css": "./dist/style.css"
-  },
-  "browser": {
     ".": "./dist/index.js",
     "./styles.css": "./dist/style.css"
   },
