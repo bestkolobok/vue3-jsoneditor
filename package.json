@@ -8,9 +8,9 @@
   "private": false,
   "license": "Apache-2.0",
   "main": "dist/index.cjs",
-  "module": "dist/index.js",
+  "module": "dist/index.mjs",
   "exports": {
-    ".": "./dist/index.js",
+    ".": "./dist/index.mjs",
     "./styles.css": "./dist/style.css"
   },
   "types": "dist/JsonEditorPlugin.d.ts",
