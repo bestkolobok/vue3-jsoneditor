@@ -13,6 +13,7 @@ export default defineConfig({
     vueJsx(),
     typescript2({
       check: false,
+      clean: true,
       include: ['src/components/*.vue'],
       tsconfigOverride: {
         compilerOptions: {

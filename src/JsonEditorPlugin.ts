@@ -2,7 +2,7 @@ import type {App} from 'vue';
 import {JsonEditor} from './components';
 import type {JSONEditorOptions} from 'jsoneditor';
 
-interface Params {
+export interface Params {
   componentName: string;
   options: JSONEditorOptions;
 }

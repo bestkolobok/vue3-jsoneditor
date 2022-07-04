@@ -11,7 +11,7 @@
 </template>
 
 <script setup lang="ts">
-// import JsonEditor from '@/components/JsonEditor.vue';
+import JsonEditor from '@/components/JsonEditor.vue';
 import {reactive} from 'vue';
 
 const json = reactive({

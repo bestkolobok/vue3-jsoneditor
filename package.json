@@ -38,7 +38,6 @@
   },
   "dependencies": {
     "jsoneditor": "^9.9.0",
-    "rollup-plugin-typescript2": "^0.32.1",
     "vue": "^3.2.37"
   },
   "devDependencies": {
@@ -54,6 +53,7 @@
     "eslint-plugin-vue": "^9.0.0",
     "npm-run-all": "^4.1.5",
     "prettier": "^2.5.1",
+    "rollup-plugin-typescript2": "^0.32.1",
     "sass": "^1.53.0",
     "sass-loader": "^13.0.0",
     "typescript": "~4.7.4",

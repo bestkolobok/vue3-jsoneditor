@@ -21,7 +21,11 @@ import type {JSONEditorOptions, SerializableNode} from 'jsoneditor';
 
 import {inject, ref, reactive, computed, watch, nextTick, onMounted, onBeforeUnmount} from 'vue';
 
-const pluginOptions = inject('jsonEditorOptions', {}) as object;
+export type test = {
+  option: string;
+};
+
+const pluginOptions = inject('jsonEditorOptions', {}) as JSONEditorOptions;
 
 const emit = defineEmits(['update:json', 'update:jsonString', 'error']);
 
@@ -44,8 +48,8 @@ const props = defineProps({
 });
 
 const options: JSONEditorOptions = reactive({
-  ...pluginOptions,
-  ...props.options,
+  ...(pluginOptions as JSONEditorOptions),
+  ...(props.options as JSONEditorOptions),
 });
 
 const max = ref(false);
