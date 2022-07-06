@@ -31,7 +31,13 @@ const app = createApp(App);
 app.use(vue3TsJsoneditor, {
   componentName: '/componentName/', // Default: 'JsonEditor',
   options: {
-    // Jsoneditor options, You can look at the detailed  https://github.com/josdejong/jsoneditor/blob/master/docs/api.md#configuration-options?blank
+    /**
+     *
+     * SET GLOBAL OPTIONS
+     * Jsoneditor options, You can look at the detailed
+     * https://github.com/josdejong/jsoneditor/blob/master/docs/api.md#configuration-options?blank
+     *
+     * */
   }
 });
 
@@ -99,14 +105,14 @@ app.mount('#app');
 </script>
 ```
 ### ☑️ Props
-| Name                  | Description                                                                                                                                                   | type            | default          |
-| --------------        | ------------------------------------------------------------------------------------------------------------------------------------------------------------- | :-----:         | :--------------: |
-| options               | Jsoneditor options, You can look at the detailed  [configuration](https://github.com/josdejong/jsoneditor/blob/master/docs/api.md#configuration-options?blank) | Object          | { mode: 'tree' } |
-| json (v-model)        | Object value                                                                                                                                                  | Object          | { }              |
-| jsonString (v-model)  | String value                                                                                                                                                  | String          | undefined        |
-| fullWidthButton       | Whether full screen switching is added                                                                                                                        | Boolean         | true             |
-| height                | Default height                                                                                                                                                | String / Number | undefined        |
-| expandOnInit          | Expand all fields. Only applicable for mode 'tree', 'view', and 'form'                                                                                        | Boolean         | false            | 
+| Name                  | Description                                                                                                                                                           | type            | default             |
+| --------------        | --------------------------------------------------------------------------------------------------------------------------------------------------------------------- | :------------:  | :-----------------: |
+| options               | Local Jsoneditor options, You can look at the detailed  [configuration](https://github.com/josdejong/jsoneditor/blob/master/docs/api.md#configuration-options?blank)  | Object          | { mode: 'tree' }    |
+| json (v-model)        | Object value                                                                                                                                                          | Object          | { }                 |
+| jsonString (v-model)  | String value                                                                                                                                                          | String          | undefined           |
+| fullWidthButton       | Whether full screen switching is added                                                                                                                                | Boolean         | true                |
+| height                | Default height                                                                                                                                                        | String / Number | undefined           |
+| expandOnInit          | Expand all fields. Only applicable for mode 'tree', 'view', and 'form'                                                                                                | Boolean         | false               | 
 
 ### ☑️ Events
 | Name  | Description      |

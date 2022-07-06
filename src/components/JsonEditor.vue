@@ -20,18 +20,13 @@ import 'jsoneditor/dist/jsoneditor.min.css';
 import type {JSONEditorOptions, SerializableNode} from 'jsoneditor';
 
 import {inject, ref, reactive, computed, watch, nextTick, onMounted, onBeforeUnmount} from 'vue';
-
-export type test = {
-  option: string;
-};
-
-const pluginOptions = inject('jsonEditorOptions', {}) as JSONEditorOptions;
+import type {PropType} from 'vue';
 
 const emit = defineEmits(['update:json', 'update:jsonString', 'error']);
 
 const props = defineProps({
   options: {
-    type: Object,
+    type: Object as PropType<JSONEditorOptions>,
     default: () => ({}),
   },
   json: [Object, Array, Number, String, Boolean],
@@ -47,20 +42,19 @@ const props = defineProps({
   },
 });
 
+const pluginOptions: JSONEditorOptions = inject('jsonEditorOptions', {});
+
 const options: JSONEditorOptions = reactive({
   ...(pluginOptions as JSONEditorOptions),
   ...(props.options as JSONEditorOptions),
 });
 
-const max = ref(false);
-const internalChange = ref(false);
-const container = ref();
-const fullWidthButton = ref(null);
+const max = ref<boolean>(false);
+const internalChange = ref<boolean>(false);
+const container = ref<HTMLDivElement>();
+const fullWidthButton = ref<HTMLButtonElement>(null);
 
-const state = reactive({
-  editor: null,
-  style: {},
-});
+const editor = ref<JSONEditor>(null);
 
 const getHeight = computed(() => {
   if (props.height && !max.value) {
@@ -101,24 +95,24 @@ const onButtonClick = (): void => {
 };
 
 const initView = async (): Promise<void> => {
-  if (!state.editor) {
+  if (!editor.value) {
     const cacheChange = options.onChange;
     delete options.onChange;
     const temporaryOptions = {...options, onChange};
     await nextTick();
-    state.editor = new JSONEditor(container.value, temporaryOptions);
+    editor.value = new JSONEditor(container.value, temporaryOptions);
     options.onChange = cacheChange;
   }
   if (props.json !== undefined) {
-    state.editor.set(props.json);
+    editor.value.set(props.json);
   } else if (props.jsonString !== undefined) {
-    state.editor.setText(props.jsonString);
+    editor.value.setText(props.jsonString);
   } else {
-    state.editor.set({});
+    editor.value.set({});
   }
-  state.editor.focus();
+  editor.value.focus();
   if (props.expandOnInit) {
-    state.editor.expandAll();
+    editor.value.expandAll();
   }
   setFullWidthButton();
 };
@@ -128,15 +122,15 @@ const onChange = async (): Promise<void> => {
   let json = {};
   let jsonString = '';
   try {
-    json = state.editor.get();
-    jsonString = state.editor.get();
+    json = editor.value.get();
+    jsonString = editor.value.get();
   } catch (err) {
     error = err;
   }
 
   if (error) {
     emit('error', error);
-  } else if (state.editor) {
+  } else if (editor.value) {
     internalChange.value = true;
     emit('update:json', json);
     emit('update:jsonString', jsonString);
@@ -147,31 +141,31 @@ const onChange = async (): Promise<void> => {
 };
 
 const destroyView = (): void => {
-  if (state.editor) {
-    state.editor.destroy();
-    state.editor = null;
+  if (editor.value) {
+    editor.value.destroy();
+    editor.value = null;
   }
 
   removeFullWidthButton();
 };
 
 const $collapseAll = (): void => {
-  state.editor?.collapseAll();
+  editor.value?.collapseAll();
 };
 
 const $expandAll = (): void => {
-  state.editor?.expandAll();
+  editor.value?.expandAll();
 };
 
 const $getNodesByRange = (start: {path: string[]}, end: {path: string[]}): SerializableNode[] => {
-  return state.editor?.getNodesByRange(start, end);
+  return editor.value?.getNodesByRange(start, end);
 };
 
 watch(
   () => props.json,
   (value) => {
-    if (state.editor && value !== undefined && !internalChange.value) {
-      state.editor.update(value);
+    if (editor.value && value !== undefined && !internalChange.value) {
+      editor.value.update(value);
     }
   },
   {
@@ -182,8 +176,8 @@ watch(
 watch(
   () => props.jsonString,
   (jsonString) => {
-    if (state.editor && jsonString !== undefined && !internalChange.value) {
-      state.editor.updateText(jsonString);
+    if (editor.value && jsonString !== undefined && !internalChange.value) {
+      editor.value.updateText(jsonString);
     }
   }
 );
@@ -191,8 +185,8 @@ watch(
 watch(
   () => options.mode,
   (mode) => {
-    if (mode && state.editor) {
-      state.editor.setMode(mode);
+    if (mode && editor.value) {
+      editor.value.setMode(mode);
     }
   }
 );
@@ -200,8 +194,8 @@ watch(
 watch(
   () => options.name,
   (name) => {
-    if (name && state.editor) {
-      state.editor.setName(name);
+    if (name && editor.value) {
+      editor.value.setName(name);
     }
   }
 );
@@ -209,8 +203,8 @@ watch(
 watch(
   () => options.schema,
   (schema) => {
-    if (schema && state.editor) {
-      state.editor.setSchema(schema);
+    if (schema && editor.value) {
+      editor.value.setSchema(schema);
     }
   }
 );
@@ -250,30 +244,10 @@ defineExpose({
   .jsoneditor {
     &__full-width-button {
       margin: 3px 0 0 10px;
-      padding: 0;
-      color: #fff;
-      opacity: 0.8;
-      width: 26px;
-      height: 26px;
       background: rgba(0, 0, 0, 0) url(@/assets/icons/full.svg) 3px no-repeat;
-      border: 1px solid rgba(0, 0, 0, 0);
-      border-radius: 3px;
-
-      &:hover {
-        background-color: rgba(255, 255, 255, 0.15);
-      }
-
-      &:active {
-        background-color: rgba(255, 255, 255, 0.3);
-      }
 
       &--active {
         background-color: rgba(255, 255, 255, 0.22);
-      }
-
-      &:hover,
-      &:active,
-      &--active {
         border-color: rgba(255, 255, 255, 0.6);
       }
     }
