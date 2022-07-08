@@ -9,220 +9,221 @@
 </template>
 
 <script lang="ts">
-export default {
-  name: 'JsonEditor',
-};
-</script>
-
-<script setup lang="ts">
 import JSONEditor from 'jsoneditor';
 import 'jsoneditor/dist/jsoneditor.min.css';
 import type {JSONEditorOptions, SerializableNode} from 'jsoneditor';
 
-import {inject, ref, reactive, computed, watch, nextTick, onMounted, onBeforeUnmount} from 'vue';
+import {defineComponent, inject, ref, reactive, computed, watch, nextTick, onMounted, onBeforeUnmount} from 'vue';
+
 import type {PropType} from 'vue';
 
-const emit = defineEmits(['update:json', 'update:jsonString', 'error']);
+export default defineComponent({
+  name: 'JsonEditor',
 
-const props = defineProps({
-  options: {
-    type: Object as PropType<JSONEditorOptions>,
-    default: () => ({}),
+  props: {
+    options: {
+      type: Object as PropType<JSONEditorOptions>,
+      default: () => ({}),
+    },
+    json: [Object, Array, Number, String, Boolean],
+    jsonString: String,
+    height: [String, Number],
+    fullWidthButton: {
+      type: Boolean,
+      default: true,
+    },
+    expandOnInit: {
+      type: Boolean,
+      default: false,
+    },
   },
-  json: [Object, Array, Number, String, Boolean],
-  jsonString: String,
-  height: [String, Number],
-  fullWidthButton: {
-    type: Boolean,
-    default: true,
-  },
-  expandOnInit: {
-    type: Boolean,
-    default: false,
-  },
-});
 
-const pluginOptions: JSONEditorOptions = inject('jsonEditorOptions', {});
+  emits: ['update:json', 'update:jsonString', 'error'],
 
-const options: JSONEditorOptions = reactive({
-  ...(pluginOptions as JSONEditorOptions),
-  ...(props.options as JSONEditorOptions),
-});
+  setup(props, {expose, emit}) {
+    const pluginOptions: JSONEditorOptions = inject('jsonEditorOptions', {});
 
-const max = ref<boolean>(false);
-const internalChange = ref<boolean>(false);
-const container = ref<HTMLDivElement>();
-const fullWidthButton = ref<HTMLButtonElement>(null);
+    const options: JSONEditorOptions = reactive({
+      ...(pluginOptions as JSONEditorOptions),
+      ...(props.options as JSONEditorOptions),
+    });
 
-const editor = ref<JSONEditor>(null);
+    const max = ref<boolean>(false);
+    const internalChange = ref<boolean>(false);
+    const container = ref<HTMLDivElement>();
+    const fullWidthButton = ref<HTMLButtonElement>(null);
 
-const getHeight = computed(() => {
-  if (props.height && !max.value) {
-    return {
-      height: props.height + 'px',
+    const editor = ref<JSONEditor>(null);
+
+    const getHeight = computed(() => {
+      if (props.height && !max.value) {
+        return {
+          height: props.height + 'px',
+        };
+      }
+      return {};
+    });
+
+    const setFullWidthButton = (): void => {
+      if (!props.fullWidthButton || fullWidthButton.value) return;
+
+      const menu = document.querySelector('.jsoneditor-menu');
+      fullWidthButton.value = document.createElement('button');
+      fullWidthButton.value.classList.add('jsoneditor__full-width-button');
+
+      menu.appendChild(fullWidthButton.value);
+
+      fullWidthButton.value.addEventListener('click', onButtonClick);
     };
-  }
-  return {};
-});
 
-const setFullWidthButton = (): void => {
-  if (!props.fullWidthButton || fullWidthButton.value) return;
+    const removeFullWidthButton = (): void => {
+      if (!fullWidthButton.value) return;
 
-  const menu = document.querySelector('.jsoneditor-menu');
-  fullWidthButton.value = document.createElement('button');
-  fullWidthButton.value.classList.add('jsoneditor__full-width-button');
+      fullWidthButton.value.removeEventListener('click', onButtonClick);
+      fullWidthButton.value = null;
+    };
 
-  menu.appendChild(fullWidthButton.value);
+    const onButtonClick = (): void => {
+      max.value = !max.value;
 
-  fullWidthButton.value.addEventListener('click', onButtonClick);
-};
+      if (max.value) {
+        fullWidthButton.value?.classList.add('jsoneditor__full-width-button--active');
+      } else {
+        fullWidthButton.value?.classList.remove('jsoneditor__full-width-button--active');
+      }
+    };
 
-const removeFullWidthButton = (): void => {
-  if (!fullWidthButton.value) return;
+    const initView = async (): Promise<void> => {
+      if (!editor.value) {
+        const cacheChange = options.onChange;
+        delete options.onChange;
+        const temporaryOptions = {...options, onChange};
+        await nextTick();
+        editor.value = new JSONEditor(container.value, temporaryOptions);
+        options.onChange = cacheChange;
+      }
+      if (props.json !== undefined) {
+        editor.value.set(props.json);
+      } else if (props.jsonString !== undefined) {
+        editor.value.setText(props.jsonString);
+      } else {
+        editor.value.set({});
+      }
+      editor.value.focus();
+      if (props.expandOnInit) {
+        editor.value.expandAll();
+      }
+      setFullWidthButton();
+    };
 
-  fullWidthButton.value.removeEventListener('click', onButtonClick);
-  fullWidthButton.value = null;
-};
+    const onChange = async (): Promise<void> => {
+      let error = null;
+      let json = {};
+      let jsonString = '';
+      try {
+        json = editor.value.get();
+        jsonString = editor.value.get();
+      } catch (err) {
+        error = err;
+      }
 
-const onButtonClick = (): void => {
-  max.value = !max.value;
+      if (error) {
+        emit('error', error);
+      } else if (editor.value) {
+        internalChange.value = true;
+        emit('update:json', json);
+        emit('update:jsonString', jsonString);
+        await nextTick();
+        internalChange.value = false;
+      }
+      options.onChange && options.onChange();
+    };
 
-  if (max.value) {
-    fullWidthButton.value?.classList.add('jsoneditor__full-width-button--active');
-  } else {
-    fullWidthButton.value?.classList.remove('jsoneditor__full-width-button--active');
-  }
-};
+    const destroyView = (): void => {
+      if (editor.value) {
+        editor.value.destroy();
+        editor.value = null;
+      }
 
-const initView = async (): Promise<void> => {
-  if (!editor.value) {
-    const cacheChange = options.onChange;
-    delete options.onChange;
-    const temporaryOptions = {...options, onChange};
-    await nextTick();
-    editor.value = new JSONEditor(container.value, temporaryOptions);
-    options.onChange = cacheChange;
-  }
-  if (props.json !== undefined) {
-    editor.value.set(props.json);
-  } else if (props.jsonString !== undefined) {
-    editor.value.setText(props.jsonString);
-  } else {
-    editor.value.set({});
-  }
-  editor.value.focus();
-  if (props.expandOnInit) {
-    editor.value.expandAll();
-  }
-  setFullWidthButton();
-};
+      removeFullWidthButton();
+    };
 
-const onChange = async (): Promise<void> => {
-  let error = null;
-  let json = {};
-  let jsonString = '';
-  try {
-    json = editor.value.get();
-    jsonString = editor.value.get();
-  } catch (err) {
-    error = err;
-  }
+    watch(
+      () => props.json,
+      (value) => {
+        if (editor.value && value !== undefined && !internalChange.value) {
+          editor.value.update(value);
+        }
+      },
+      {
+        deep: true,
+      }
+    );
 
-  if (error) {
-    emit('error', error);
-  } else if (editor.value) {
-    internalChange.value = true;
-    emit('update:json', json);
-    emit('update:jsonString', jsonString);
-    await nextTick();
-    internalChange.value = false;
-  }
-  options.onChange && options.onChange();
-};
+    watch(
+      () => props.jsonString,
+      (jsonString) => {
+        if (editor.value && jsonString !== undefined && !internalChange.value) {
+          editor.value.updateText(jsonString);
+        }
+      }
+    );
 
-const destroyView = (): void => {
-  if (editor.value) {
-    editor.value.destroy();
-    editor.value = null;
-  }
+    watch(
+      () => options.mode,
+      (mode) => {
+        if (mode && editor.value) {
+          editor.value.setMode(mode);
+        }
+      }
+    );
 
-  removeFullWidthButton();
-};
+    watch(
+      () => options.name,
+      (name) => {
+        if (name && editor.value) {
+          editor.value.setName(name);
+        }
+      }
+    );
 
-const $collapseAll = (): void => {
-  editor.value?.collapseAll();
-};
+    watch(
+      () => options.schema,
+      (schema) => {
+        if (schema && editor.value) {
+          editor.value.setSchema(schema);
+        }
+      }
+    );
 
-const $expandAll = (): void => {
-  editor.value?.expandAll();
-};
+    onMounted(() => {
+      nextTick(() => {
+        initView();
+      });
+    });
 
-const $getNodesByRange = (start: {path: string[]}, end: {path: string[]}): SerializableNode[] => {
-  return editor.value?.getNodesByRange(start, end);
-};
+    onBeforeUnmount(() => {
+      destroyView();
+    });
 
-watch(
-  () => props.json,
-  (value) => {
-    if (editor.value && value !== undefined && !internalChange.value) {
-      editor.value.update(value);
-    }
+    expose({
+      $collapseAll(): void {
+        editor.value?.collapseAll();
+      },
+      $expandAll(): void {
+        editor.value?.expandAll();
+      },
+      $getNodesByRange(start: {path: string[]}, end: {path: string[]}): SerializableNode[] {
+        return editor.value?.getNodesByRange(start, end);
+      },
+    });
+
+    return {
+      max,
+      getHeight,
+      container,
+    };
   },
-  {
-    deep: true,
-  }
-);
-
-watch(
-  () => props.jsonString,
-  (jsonString) => {
-    if (editor.value && jsonString !== undefined && !internalChange.value) {
-      editor.value.updateText(jsonString);
-    }
-  }
-);
-
-watch(
-  () => options.mode,
-  (mode) => {
-    if (mode && editor.value) {
-      editor.value.setMode(mode);
-    }
-  }
-);
-
-watch(
-  () => options.name,
-  (name) => {
-    if (name && editor.value) {
-      editor.value.setName(name);
-    }
-  }
-);
-
-watch(
-  () => options.schema,
-  (schema) => {
-    if (schema && editor.value) {
-      editor.value.setSchema(schema);
-    }
-  }
-);
-
-onMounted(() => {
-  nextTick(() => {
-    initView();
-  });
-});
-
-onBeforeUnmount(() => {
-  destroyView();
-});
-
-defineExpose({
-  $collapseAll,
-  $expandAll,
-  $getNodesByRange,
 });
 </script>
 

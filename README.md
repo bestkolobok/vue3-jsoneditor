@@ -60,7 +60,7 @@ app.mount('#app');
   <vue-jsoneditor 
     expand-on-init 
     height="400" 
-    :options="{modes}" 
+    :options="options" 
     v-model:json="json" 
     @error="onError" 
   />
@@ -71,7 +71,7 @@ app.mount('#app');
 <template>
   <vue-jsoneditor
     height="400" 
-    :options="{modes}" 
+    :options="options" 
     v-model:jsonString="jsonString"
   />
 </template>
@@ -96,8 +96,10 @@ app.mount('#app');
     object: {a: 'b', c: 'd'},
     string: 'Hello World',
   }));
-
-  const modes = reactive(['tree', 'view', 'form', 'code', 'text', 'preview']);
+  
+  const options = reactive({
+    modes: ['tree', 'view', 'form', 'code', 'text', 'preview']
+  });
   
   const onError = (error) => {
     //
@@ -118,6 +120,63 @@ app.mount('#app');
 | Name  | Description      |
 | ----- | --------------   |
 | error | Wrong data error |
+
+### ☑️ Use expose functions
+- <b>$collapseAll</b> - collapse all nodes
+- <b>$expandAll</b> - expand all nodes
+- <b>$getNodesByRange</b> - get nodes from <i>start</i> to <i>end</i> range
+
+```html
+<template>
+  <vue-jsoneditor
+    height="400" 
+    :options="options" 
+    ref="editor"
+    v-model:json="json"
+  />
+
+  <div>
+    <button @click="onCollapse">collapse all</button>
+
+    <button @click="onExpand">expand all</button>
+
+    <button @click="onGetNodesByRange">get node by range</button>
+  </div>
+</template>
+
+<script setup>
+  import {reactive, ref} from 'vue';
+
+  const json = reactive({
+    array: [1, 2, 3],
+    boolean: true,
+    Null: null,
+    number: 123,
+    object: {a: 'b', c: 'd'},
+    string: 'Hello World',
+  });
+
+  const options = reactive({
+    modes: ['tree', 'view', 'form', 'code', 'text', 'preview']
+  });
+
+  const editor = ref();
+
+  const onCollapse = () => {
+    editor.value.$collapseAll();
+  };
+
+  const onExpand = () => {
+    editor.value.$expandAll();
+  };
+
+  const onGetNodesByRange = () => {
+    const node = editor.value.$getNodesByRange({path: ['boolean']}, {path: ['object']});
+
+    console.log('NODE: ', node);
+  };
+</script>
+```
 
 ## 🔨Build Setup
 
