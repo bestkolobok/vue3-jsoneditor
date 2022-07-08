@@ -2,7 +2,7 @@ import type {App} from 'vue';
 import {JsonEditor} from './components';
 import type {JSONEditorOptions} from 'jsoneditor';
 
-export type {JSONEditorOptions, Node, SelectionPosition, SerializableNode} from 'jsoneditor';
+export * from 'jsoneditor';
 
 export interface Params {
   componentName?: string;
