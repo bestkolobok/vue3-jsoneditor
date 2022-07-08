@@ -55,7 +55,7 @@ app.mount('#app');
 
 ### 👉 Use in template
 
-```html
+```vue
 <template>
   <vue-jsoneditor 
     expand-on-init 
@@ -76,8 +76,9 @@ app.mount('#app');
   />
 </template>
 
-<script setup>
+<script setup lang="ts">
   import {reactive} from 'vue';
+  import type {JSONEditorOptions} from 'vue3-ts-jsoneditor';
 
   const json = reactive({
     array: [1, 2, 3],
@@ -97,7 +98,7 @@ app.mount('#app');
     string: 'Hello World',
   }));
   
-  const options = reactive({
+  const options: JSONEditorOptions = reactive({
     modes: ['tree', 'view', 'form', 'code', 'text', 'preview']
   });
   
@@ -126,7 +127,7 @@ app.mount('#app');
 - <b>$expandAll</b> - expand all nodes
 - <b>$getNodesByRange</b> - get nodes from <i>start</i> to <i>end</i> range
 
-```html
+```vue
 <template>
   <vue-jsoneditor
     height="400" 
@@ -144,8 +145,9 @@ app.mount('#app');
   </div>
 </template>
 
-<script setup>
+<script setup lang="ts">
   import {reactive, ref} from 'vue';
+  import type {JSONEditorOptions, SerializableNode} from 'vue3-ts-jsoneditor';
 
   const json = reactive({
     array: [1, 2, 3],
@@ -156,7 +158,7 @@ app.mount('#app');
     string: 'Hello World',
   });
 
-  const options = reactive({
+  const options: JSONEditorOptions = reactive({
     modes: ['tree', 'view', 'form', 'code', 'text', 'preview']
   });
 
@@ -171,7 +173,10 @@ app.mount('#app');
   };
 
   const onGetNodesByRange = () => {
-    const node = editor.value.$getNodesByRange({path: ['boolean']}, {path: ['object']});
+    const node: SerializableNode = editor.value.$getNodesByRange(
+      {path: ['boolean']}, 
+      {path: ['object']}
+    );
 
     console.log('NODE: ', node);
   };

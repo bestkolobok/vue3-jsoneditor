@@ -5,7 +5,7 @@
     </header>
 
     <main class="body-container">
-      <json-editor expand-on-init height="400" :options="{modes}" v-model:json="json" ref="editor" />
+      <json-editor expand-on-init height="400" :options="options" v-model:json="json" ref="editor" />
 
       <div class="body-container__buttons">
         <button @click="onCollapse">collapse all</button>
@@ -31,7 +31,9 @@ const json = reactive({
   string: 'Hello World',
 });
 
-const modes = reactive(['tree', 'view', 'form', 'code', 'text', 'preview']);
+const options = reactive({
+  modes: ['tree', 'view', 'form', 'code', 'text', 'preview'],
+});
 
 const editor = ref();
 
