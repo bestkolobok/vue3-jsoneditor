@@ -5,14 +5,16 @@
     </header>
 
     <main class="body-container">
-      <json-editor expand-on-init height="400" :options="options" v-model:json="json" ref="editor" />
+      <json-editor expand-on-init height="400" :mode="mode" v-model:json="state.json" ref="editor" />
 
       <div class="body-container__buttons">
         <button @click="onCollapse">collapse all</button>
 
         <button @click="onExpand">expand all</button>
 
-        <button @click="onGetNodesByRange">get node by range</button>
+        <button @click="toggleMode">Toggle mode</button>
+
+        <button @click="changeJson">Change json</button>
       </div>
     </main>
   </div>
@@ -22,18 +24,30 @@
 // import JsonEditor from '@/components/JsonEditor.vue';
 import {reactive, ref} from 'vue';
 
-const json = reactive({
-  array: [1, 2, 3],
-  boolean: true,
-  Null: null,
-  number: 123,
-  object: {a: 'b', c: 'd'},
-  string: 'Hello World',
+const state = reactive({
+  json: {
+    array: [1, 2, 3],
+    boolean: true,
+    Null: null,
+    number: 123,
+    object: {a: 'b', c: 'd'},
+    string: 'Hello World',
+  },
 });
 
-const options = reactive({
-  modes: ['tree', 'view', 'form', 'code', 'text', 'preview'],
-});
+const mode = ref('tree');
+
+const toggleMode = () => {
+  if (mode.value === 'tree') {
+    mode.value = 'text';
+  } else {
+    mode.value = 'tree';
+  }
+};
+
+const changeJson = () => {
+  state.json.number++;
+};
 
 const editor = ref();
 
@@ -43,12 +57,6 @@ const onCollapse = () => {
 
 const onExpand = () => {
   editor.value.$expandAll();
-};
-
-const onGetNodesByRange = () => {
-  const node = editor.value.$getNodesByRange({path: ['boolean']}, {path: ['object']});
-
-  console.log('NODE: ', node);
 };
 </script>
 
@@ -73,6 +81,11 @@ const onGetNodesByRange = () => {
       border-radius: 6px;
       text-transform: uppercase;
       font-size: 16px;
+      cursor: pointer;
+
+      &:active {
+        background: gray;
+      }
     }
   }
 }

@@ -9,72 +9,259 @@
 </template>
 
 <script lang="ts">
-import JSONEditor from 'jsoneditor';
-import 'jsoneditor/dist/jsoneditor.min.css';
-import type {JSONEditorOptions, SerializableNode} from 'jsoneditor';
-
-import {defineComponent, inject, ref, reactive, computed, watch, nextTick, onMounted, onBeforeUnmount} from 'vue';
-
+import {JSONEditor} from 'vanilla-jsoneditor';
+import type {
+  JSONData,
+  QueryLanguage,
+  JSONPatchResult,
+  OnClassName,
+  OnRenderValue,
+  OnRenderMenu,
+  Validator,
+  Mode,
+  MenuItem,
+} from 'vanilla-jsoneditor';
+import {defineComponent, inject, ref, computed, watch, nextTick, onMounted, onBeforeUnmount} from 'vue';
 import type {PropType} from 'vue';
+import {pickDefinedProps, fullWidthIcon} from './utils';
+import type {JSONEditorOptions, Content} from '@/types';
 
 export default defineComponent({
   name: 'JsonEditor',
 
   props: {
-    options: {
-      type: Object as PropType<JSONEditorOptions>,
-      default: () => ({}),
-    },
-    json: [Object, Array, Number, String, Boolean],
+    /**
+     * ### json: JSONData
+     * Pass the JSON contents to be rendered in the JSONEditor.
+     * Only one of the json or jsonString must be defined.
+     * */
+    json: [Object, Array, Number, String, Boolean] as PropType<JSONData>,
+    /**
+     * ### jsonString: string
+     * Pass the JSON contents to be rendered in the JSONEditor.
+     * Only one of the json or jsonString must be defined.
+     * */
     jsonString: String,
+    /**
+     * ### mode: 'tree' | 'text'.
+     * Open the editor in 'tree' mode (default) or 'text' mode (formerly: code mode).
+     * */
+    mode: {
+      type: String as PropType<Mode>,
+      default: 'tree',
+      validator: (value: string): boolean => ['tree', 'text'].includes(value as string),
+    },
+    /**
+     * ### mainMenuBar: boolean
+     * Show the main menu bar. Default value is true.
+     * */
+    mainMenuBar: {
+      type: Boolean,
+      default: undefined,
+    },
+    /**
+     * ### navigationBar: boolean
+     * Show the navigation bar with, where you can see the selected path and navigate through your
+     * document from there. Default value is true.
+     * */
+    navigationBar: {
+      type: Boolean,
+      default: undefined,
+    },
+    /**
+     * ### statusBar: boolean
+     * Show a status bar at the bottom of the 'text' editor, showing information about the cursor
+     * location and selected contents. Default value is true.
+     * */
+    statusBar: {
+      type: Boolean,
+      default: undefined,
+    },
+    /**
+     * ### readOnly: boolean
+     * Open the editor in read-only mode: no changes can be made, non-relevant buttons are hidden
+     * from the menu, and the context menu is not enabled. Default value is false.
+     * */
+    readOnly: {
+      type: Boolean,
+      default: undefined,
+    },
+    /**
+     * ### indentation: number | string
+     * Number of spaces use for indentation when stringifying JSON, or a string to be used as indentation
+     * like '\t' to use a tab as indentation, or ' ' to use 4 spaces (which is equivalent to configuring
+     * indentation: 4). See also property tabSize.
+     * */
+    indentation: [String, Number],
+    /**
+     * ### tabSize: number
+     * When indentation is configured as a tab character (indentation: '\t'), tabSize configures how
+     * large a tab character is rendered. Default value is 4. Only applicable to text mode.
+     * */
+    tabSize: Number,
+    /**
+     * ### escapeControlCharacters: boolean.
+     * False by default. When true, control characters like newline and tab are rendered as escaped
+     * characters \n and \t. Only applicable for 'tree' mode, in 'text' mode control characters are
+     * always escaped.
+     * */
+    escapeControlCharacters: {
+      type: Boolean,
+      default: undefined,
+    },
+    /**
+     * ### escapeUnicodeCharacters: boolean.
+     * False by default. When true, unicode characters like ☎ and 😀 are rendered escaped
+     * like \u260e and \ud83d\ude00.
+     * */
+    escapeUnicodeCharacters: {
+      type: Boolean,
+      default: undefined,
+    },
+    /**
+     * ### validator: function (json: JSONData): ValidationError[].
+     * Validate the JSON document. For example use the built-in JSON Schema validator
+     * powered by Ajv:
+     * ```ts
+     *  import { createAjvValidator } from 'svelte-jsoneditor'
+     *  const validator = createAjvValidator(schema, schemaDefinitions)
+     * ```
+     * */
+    validator: Function as PropType<Validator>,
+    /**
+     * ### queryLanguages: QueryLanguage[].
+     * Configure one or multiple query language that can be used in the Transform modal.
+     * The library comes with three languages:
+     * ```ts
+     *  import {
+     *    jmespathQueryLanguage,
+     *    lodashQueryLanguage,
+     *    javascriptQueryLanguage
+     *  } from 'svelte-jsoneditor'
+     *
+     *  const allQueryLanguages = [jmespathQueryLanguage, lodashQueryLanguage, javascriptQueryLanguage]
+     * ```
+     * */
+    queryLanguages: Array as PropType<QueryLanguage[]>,
+    /**
+     * ### queryLanguageId: string.
+     * The id of the currently selected query language.
+     * */
+    queryLanguageId: String,
+    /**
+     * ### onClassName(path: Path, value: any): string | undefined.
+     * Add a custom class name to specific nodes, based on their path and/or value.
+     * */
+    onClassName: Function as PropType<OnClassName>,
+    /**
+     * ### onRenderValue(props: RenderValueProps) : RenderValueComponentDescription[]
+     *
+     * ## EXPERIMENTAL! This API will most likely change in future versions.
+     * Customize rendering of the values. By default, renderValue is used, which renders a value as an
+     * editable div and depending on the value can also render a boolean toggle, a color picker, and a
+     * timestamp tag. Multiple components can be rendered alongside each other, like the boolean toggle
+     * and color picker being rendered left from the editable div. Built in value renderer components:
+     *
+     *  > EditableValue, ReadonlyValue, BooleanToggle, ColorPicker, TimestampTag, EnumValue.
+     *
+     *
+     * ```ts
+     *  import { renderJSONSchemaEnum, renderValue } from 'svelte-jsoneditor'
+     *
+     *  function onRenderValue(props) {
+     *    // use the enum renderer, and fallback on the default renderer
+     *    return renderJSONSchemaEnum(props, schema, schemaDefinitions) || renderValue(props)
+     *  }
+     * ```
+     * */
+    onRenderValue: Function as PropType<OnRenderValue>,
+    /**
+     * ### onRenderMenu(mode: 'tree' | 'text', items: MenuItem[]) : MenuItem[] | undefined.
+     * Callback which can be used to make changes to the menu items. New items can be added, or
+     * existing items can be removed or reorganized. When the function returns undefined,
+     * the original items will be applied.
+     *
+     *  A menu item MenuItem can be one of the following types:
+     *
+     *  - Button:
+     *  ```ts
+     *  interface MenuButtonItem {
+     *    onClick: () => void
+     *    icon?: FontAwesomeIcon
+     *    text?: string
+     *    title?: string
+     *    className?: string
+     *    disabled?: boolean
+     *  }
+     *  ```
+     *
+     *  - Separator (gray vertical line between a group of items):
+     *  ```ts
+     *    interface MenuSeparatorItem {
+     *      separator: true
+     *    }
+     *  ```
+     *
+     *  - Space (fills up empty space):
+     *  ```ts
+     *    interface MenuSpaceItem {
+     *      space: true
+     *    }
+     *  ```
+     * */
+    onRenderMenu: Function as PropType<OnRenderMenu>,
+    /**
+     * ### height: string | number
+     * Height of render container
+     * */
     height: [String, Number],
+    /**
+     * ### fullWidthButton: boolean
+     * Show full screen button
+     * */
     fullWidthButton: {
       type: Boolean,
-      default: true,
-    },
-    expandOnInit: {
-      type: Boolean,
-      default: false,
+      default: undefined,
     },
   },
 
-  emits: ['update:json', 'update:jsonString', 'error'],
+  emits: [
+    'update:json',
+    'update:jsonString',
+    'change',
+    'error',
+    'change-mode',
+    'change-query-language',
+    'focus',
+    'blur',
+  ],
 
   setup(props, {expose, emit}) {
     const pluginOptions: JSONEditorOptions = inject('jsonEditorOptions', {});
 
-    const options: JSONEditorOptions = reactive({
-      ...(pluginOptions as JSONEditorOptions),
-      ...(props.options as JSONEditorOptions),
-    });
-
     const max = ref<boolean>(false);
-    const internalChange = ref<boolean>(false);
     const container = ref<HTMLDivElement>();
     const fullWidthButton = ref<HTMLButtonElement>(null);
 
-    const editor = ref<JSONEditor>(null);
+    const editor = ref(null);
 
     const getHeight = computed(() => {
-      if (props.height && !max.value) {
+      const height = props.height || pluginOptions?.height;
+
+      if (height && !max.value) {
         return {
-          height: props.height + 'px',
+          height: height + 'px',
         };
       }
       return {};
     });
 
-    const setFullWidthButton = (): void => {
-      if (!props.fullWidthButton || fullWidthButton.value) return;
-
-      const menu = document.querySelector('.jsoneditor-menu');
-      fullWidthButton.value = document.createElement('button');
-      fullWidthButton.value.classList.add('jsoneditor__full-width-button');
-
-      menu.appendChild(fullWidthButton.value);
-
-      fullWidthButton.value.addEventListener('click', onButtonClick);
-    };
+    const content = computed(() => {
+      return {
+        json: props.json,
+        text: props.jsonString,
+      };
+    });
 
     const removeFullWidthButton = (): void => {
       if (!fullWidthButton.value) return;
@@ -83,60 +270,128 @@ export default defineComponent({
       fullWidthButton.value = null;
     };
 
+    const setFullWidthButton = (): void => {
+      const oldButton = document.querySelector('.jse-full-width');
+
+      const pluginOptionFlag = pluginOptions?.fullWidthButton !== undefined ? pluginOptions?.fullWidthButton : true;
+
+      const fullWidthButtonFlag = props.fullWidthButton !== undefined ? props.fullWidthButton : pluginOptionFlag;
+
+      if (!fullWidthButtonFlag || oldButton) return;
+
+      if (fullWidthButton.value) {
+        removeFullWidthButton();
+      }
+
+      const menu = document.querySelector('.jse-menu');
+      fullWidthButton.value = document.createElement('button');
+      fullWidthButton.value.classList.add('jse-full-width');
+      fullWidthButton.value.classList.add('jse-button');
+      fullWidthButton.value.classList.add('svelte-v4jelk');
+
+      fullWidthButton.value.innerHTML += fullWidthIcon;
+
+      menu.appendChild(fullWidthButton.value);
+
+      fullWidthButton.value.addEventListener('click', onButtonClick);
+    };
+
     const onButtonClick = (): void => {
       max.value = !max.value;
 
       if (max.value) {
-        fullWidthButton.value?.classList.add('jsoneditor__full-width-button--active');
+        fullWidthButton.value?.classList.add('jse-full-width--active');
       } else {
-        fullWidthButton.value?.classList.remove('jsoneditor__full-width-button--active');
+        fullWidthButton.value?.classList.remove('jse-full-width--active');
       }
     };
 
-    const initView = async (): Promise<void> => {
+    const expandCollapseAll = (value: boolean): void => {
+      if (props.mode === 'text') return;
+
+      editor.value?.expand(() => value);
+    };
+
+    const onChange = (content: Content, previousContent: Content, patchResult: JSONPatchResult | null): void => {
+      if (!!content.json) {
+        emit('update:json', content.json);
+      }
+
+      if (!!content.text) {
+        emit('update:jsonString', content.text);
+      }
+
+      emit('change', content, previousContent, patchResult);
+    };
+
+    const onError = (err: Error): void => {
+      emit('error', err);
+    };
+
+    const onChangeMode = (mode: Mode): void => {
+      emit('change-mode', mode);
+    };
+
+    const onChangeQueryLanguage = (queryLanguageId: string): void => {
+      emit('change-query-language', queryLanguageId);
+    };
+
+    const onFocus = (): void => {
+      emit('focus');
+    };
+
+    const onBlur = (): void => {
+      emit('blur');
+    };
+
+    const onRenderMenu: OnRenderMenu = (
+      mode: 'tree' | 'text' | 'repair',
+      items: MenuItem[]
+    ): MenuItem[] | undefined | void => {
+      nextTick(() => {
+        setFullWidthButton();
+      });
+
+      if (typeof props.onRenderMenu === 'function') {
+        return props.onRenderMenu(mode, items);
+      }
+
+      return items;
+    };
+
+    const makeEditorProps = () => {
+      const options = {fullWidthButton: true, ...(pluginOptions || {})};
+
+      return {
+        ...pickDefinedProps(options, props),
+        content: content.value,
+        onChange,
+        onError,
+        onChangeMode,
+        onChangeQueryLanguage,
+        onFocus,
+        onBlur,
+        onRenderMenu,
+      };
+    };
+
+    const initView = (): void => {
       if (!editor.value) {
-        const cacheChange = options.onChange;
-        delete options.onChange;
-        const temporaryOptions = {...options, onChange};
-        await nextTick();
-        editor.value = new JSONEditor(container.value, temporaryOptions);
-        options.onChange = cacheChange;
+        editor.value = new JSONEditor({
+          target: container.value,
+          props: makeEditorProps(),
+        });
       }
-      if (props.json !== undefined) {
-        editor.value.set(props.json);
-      } else if (props.jsonString !== undefined) {
-        editor.value.setText(props.jsonString);
-      } else {
-        editor.value.set({});
-      }
+
       editor.value.focus();
-      if (props.expandOnInit) {
-        editor.value.expandAll();
-      }
-      setFullWidthButton();
     };
 
-    const onChange = async (): Promise<void> => {
-      let error = null;
-      let json = {};
-      let jsonString = '';
-      try {
-        json = editor.value.get();
-        jsonString = editor.value.get();
-      } catch (err) {
-        error = err;
-      }
+    const updateProps = (): void => {
+      editor.value.updateProps(makeEditorProps());
+    };
 
-      if (error) {
-        emit('error', error);
-      } else if (editor.value) {
-        internalChange.value = true;
-        emit('update:json', json);
-        emit('update:jsonString', jsonString);
-        await nextTick();
-        internalChange.value = false;
-      }
-      options.onChange && options.onChange();
+    const updateContent = (): void => {
+      editor.value.set(content.value);
     };
 
     const destroyView = (): void => {
@@ -148,53 +403,11 @@ export default defineComponent({
       removeFullWidthButton();
     };
 
-    watch(
-      () => props.json,
-      (value) => {
-        if (editor.value && value !== undefined && !internalChange.value) {
-          editor.value.update(value);
-        }
-      },
-      {
-        deep: true,
-      }
-    );
+    watch(props, updateProps);
 
-    watch(
-      () => props.jsonString,
-      (jsonString) => {
-        if (editor.value && jsonString !== undefined && !internalChange.value) {
-          editor.value.updateText(jsonString);
-        }
-      }
-    );
+    watch(() => props.json, updateContent, {deep: true});
 
-    watch(
-      () => options.mode,
-      (mode) => {
-        if (mode && editor.value) {
-          editor.value.setMode(mode);
-        }
-      }
-    );
-
-    watch(
-      () => options.name,
-      (name) => {
-        if (name && editor.value) {
-          editor.value.setName(name);
-        }
-      }
-    );
-
-    watch(
-      () => options.schema,
-      (schema) => {
-        if (schema && editor.value) {
-          editor.value.setSchema(schema);
-        }
-      }
-    );
+    watch(() => props.jsonString, updateContent);
 
     onMounted(() => {
       nextTick(() => {
@@ -208,20 +421,32 @@ export default defineComponent({
 
     expose({
       $collapseAll(): void {
-        editor.value?.collapseAll();
+        expandCollapseAll(false);
       },
+
       $expandAll(): void {
-        editor.value?.expandAll();
+        expandCollapseAll(true);
       },
-      $getNodesByRange(start: {path: string[]}, end: {path: string[]}): SerializableNode[] {
-        return editor.value?.getNodesByRange(start, end);
-      },
+
+      $expand: editor.value?.expand,
+      $get: editor.value?.get,
+      $set: editor.value?.set,
+      $update: editor.value?.update,
+      $updateProps: editor.value?.updateProps,
+      $refresh: editor.value?.refresh,
+      $focus: editor.value?.focus,
+      $patch: editor.value?.patch,
+      $transform: editor.value?.transform,
+      $scrollTo: editor.value?.scrollTo,
+      $findElement: editor.value?.findElement,
+      $acceptAutoRepair: editor.value?.acceptAutoRepair,
     });
 
     return {
       max,
       getHeight,
       container,
+      content,
     };
   },
 });
@@ -242,14 +467,13 @@ export default defineComponent({
     z-index: 10000;
   }
 
-  .jsoneditor {
-    &__full-width-button {
-      margin: 3px 0 0 10px;
-      background: rgba(0, 0, 0, 0) url(@/assets/icons/full.svg) 3px no-repeat;
+  .jse-menu {
+    .jse-full-width {
+      display: flex;
 
       &--active {
-        background-color: rgba(255, 255, 255, 0.22);
-        border-color: rgba(255, 255, 255, 0.6);
+        background-color: rgba(255, 255, 255, 0.22) !important;
+        border-color: rgba(255, 255, 255, 0.6) !important;
       }
     }
   }

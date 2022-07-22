@@ -1,1 +1,1 @@
-export {default as JsonEditor} from './JsonEditor.vue';
+export {default as VueJsonEditor} from './JsonEditor.vue';

@@ -1,18 +1,69 @@
 import type {App} from 'vue';
-import {JsonEditor} from './components';
-import type {JSONEditorOptions} from 'jsoneditor';
+import {VueJsonEditor} from './components';
+import type {JSONEditorOptions, TextContent, JSONContent, Content, Path} from './types';
 
-export type {JSONEditorOptions, Node, SelectionPosition, SerializableNode} from 'jsoneditor';
+import type {
+  JSONData,
+  JSONPatchDocument,
+  JSONPatchResult,
+  ValidationError,
+  QueryLanguage,
+  QueryLanguageOptions,
+  RenderValuePropsOptional,
+  RenderValueProps,
+  ValueNormalization,
+  SearchResultItem,
+  RenderValueComponentDescription,
+  OnClassName,
+  OnRenderValue,
+  OnRenderMenu,
+  Validator,
+  Mode,
+  MenuItem,
+  JSONEditor,
+  JSONNodeItem,
+  JSONNodeProp,
+} from 'vanilla-jsoneditor';
 
-export interface Params {
+interface Params {
   componentName?: string;
   options?: JSONEditorOptions;
 }
 
+export {jmespathQueryLanguage, lodashQueryLanguage, javascriptQueryLanguage} from 'vanilla-jsoneditor';
+
+export type {
+  Params,
+  TextContent,
+  JSONContent,
+  Content,
+  Path,
+  JSONData,
+  JSONPatchDocument,
+  JSONPatchResult,
+  ValidationError,
+  QueryLanguage,
+  QueryLanguageOptions,
+  RenderValuePropsOptional,
+  RenderValueProps,
+  ValueNormalization,
+  SearchResultItem,
+  RenderValueComponentDescription,
+  OnClassName,
+  OnRenderValue,
+  OnRenderMenu,
+  Validator,
+  Mode,
+  MenuItem,
+  JSONEditor,
+  JSONNodeItem,
+  JSONNodeProp,
+};
+
 export default {
-  ...JsonEditor,
-  install: (app: App, params: Params = {componentName: 'JsonEditor', options: {mode: 'tree'}}) => {
-    app.component(params.componentName, JsonEditor);
+  ...VueJsonEditor,
+  install: (app: App, params: Params = {}) => {
+    app.component(params.componentName || 'JsonEditor', VueJsonEditor);
     app.provide('jsonEditorOptions', params.options);
   },
 };

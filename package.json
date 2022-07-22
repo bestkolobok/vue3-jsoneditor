@@ -38,6 +38,7 @@
   },
   "dependencies": {
     "jsoneditor": "^9.9.0",
+    "vanilla-jsoneditor": "^0.5.0",
     "vue": "^3.2.37"
   },
   "devDependencies": {
@@ -62,15 +63,10 @@
     "vue-tsc": "^0.38.1"
   },
   "keywords": [
-    "vue3",
     "vue",
     "jsoneditor",
-    "jsonformatter",
-    "jsonviewer",
     "json",
-    "editor",
-    "viewer",
-    "formatter"
+    "editor"
   ],
   "funding": [
     "https://uahelp.monobank.ua/",
