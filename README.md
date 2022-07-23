@@ -5,7 +5,7 @@
 ## 🇺🇦🇺🇦🇺🇦 [Stand With Ukraine](https://www.standwithukraine.how/) 🇺🇦🇺🇦🇺🇦
 
 # vue3-ts-jsoneditor
-####_Based on [vanilla-jsoneditor](https://www.npmjs.com/package/svelte-jsoneditor)_
+#### Based on [vanilla-jsoneditor](https://www.npmjs.com/package/svelte-jsoneditor)
 
 ## 🕹 Demo
 
@@ -67,7 +67,7 @@ interface JSONEditorOptions {
 }
 ```
 Read more in [vanilla-jsoneditor](https://www.npmjs.com/package/svelte-jsoneditor) properties
-
+<br>
 
 ### 👉 Import locally
 
@@ -77,7 +77,7 @@ Read more in [vanilla-jsoneditor](https://www.npmjs.com/package/svelte-jsonedito
   import 'vue3-ts-jsoneditor/styles.css'
 </script>
 ```
-
+<br>
 ### 👉 Use in template
 
 ```vue
@@ -140,6 +140,8 @@ Read more in [vanilla-jsoneditor](https://www.npmjs.com/package/svelte-jsonedito
   }
 </script>
 ```
+<br>
+
 ### ☑️ Props
 | Name                      | Description                                                                                                                                                                                                                                       | type                                                                                                  | default                   |
 | -----------------------   | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------                                                                             | :------------:                                                                                        | :-----------------:   |
@@ -164,6 +166,8 @@ Read more in [vanilla-jsoneditor](https://www.npmjs.com/package/svelte-jsonedito
 | height                    | Default height                                                                                                                                                                                                                                    | <code>string &vert; number</code>                                                                     | undefined             |
 | darkTheme                 | Switch to dark theme                                                                                                                                                                                                                              | <code>boolean</code>                                                                                  | false                 | 
 
+<br>
+
 ### ☑️ Use query languages
 ```javascript
 import {
@@ -175,6 +179,8 @@ import {
 const allQueryLanguages = [jmespathQueryLanguage, lodashQueryLanguage, javascriptQueryLanguage]
 ```
 
+<br>
+
 ### ☑️ Events
 | Name                  | Description                                                                                                                                                                                                               | Arguments                                                                                 |
 | -------------         | --------------------------------------------------------------------                                                                                                                                                      | ----------------------------------------------------------------------------              |
@@ -184,6 +190,8 @@ const allQueryLanguages = [jmespathQueryLanguage, lodashQueryLanguage, javascrip
 | change-query-language | Invoked when the user changes the selected query language in the TransformModal via the configuration button top right.                                                                                                   | (queryLanguageId: string)                                                                 |
 | focus                 | Fired when the editor got focus.                                                                                                                                                                                          | ()                                                                                        |
 | blur                  | Fired when the editor lost focus.                                                                                                                                                                                         | ()                                                                                        |
+
+<br>
 
 ### ☑️ Use expose functions
 - <b>$collapseAll</b> - collapse all nodes
@@ -201,6 +209,8 @@ const allQueryLanguages = [jmespathQueryLanguage, lodashQueryLanguage, javascrip
 - <b>$findElement</b> - Find the DOM element of a given path. Returns null when not found. [See more](https://www.npmjs.com/package/svelte-jsoneditor) about <code>findElement()</code>
 - <b>$acceptAutoRepair</b> - In tree mode, invalid JSON is automatically repaired when loaded. [See more](https://www.npmjs.com/package/svelte-jsoneditor) about <code>acceptAutoRepair()</code>
 
+
+<br>
 
 ```vue
 <template>
@@ -243,6 +253,8 @@ const allQueryLanguages = [jmespathQueryLanguage, lodashQueryLanguage, javascrip
 </script>
 ```
 
+<br>
+
 ### 🟥🟧🟨🟩🟦🟪️ Styling
 The editor can be styled using the available CSS variables. A full list with all variables can be found [here](https://github.com/josdejong/svelte-jsoneditor/blob/main/src/lib/themes/jse-theme-default.css)
 ```vue
@@ -278,6 +290,8 @@ const state = reactive({
 }
 </style>
 ```
+
+<br>
 
 ## 🔨Build Setup
 
