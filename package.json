@@ -40,7 +40,6 @@
     "lint": "eslint . --ext .vue,.js,.jsx,.cjs,.mjs,.ts,.tsx,.cts,.mts --fix --ignore-path .gitignore"
   },
   "dependencies": {
-    "jsoneditor": "^9.9.0",
     "vanilla-jsoneditor": "^0.5.0",
     "vue": "^3.2.37"
   },
