@@ -1,7 +1,7 @@
 <template>
   <div
     class="vue-ts-json-editor"
-    :class="{'vue-ts-json-editor--max-box': max}"
+    :class="{'vue-ts-json-editor--max-box': max, 'jse-theme-dark': darkTheme}"
     :style="getHeight"
     ref="container"
     @keydown.stop
@@ -25,6 +25,7 @@ import {defineComponent, inject, ref, computed, watch, nextTick, onMounted, onBe
 import type {PropType} from 'vue';
 import {pickDefinedProps, fullWidthIcon} from './utils';
 import type {JSONEditorOptions, Content} from '@/types';
+import 'vanilla-jsoneditor/themes/jse-theme-dark.css';
 
 export default defineComponent({
   name: 'JsonEditor',
@@ -223,6 +224,14 @@ export default defineComponent({
       type: Boolean,
       default: undefined,
     },
+    /**
+     * ### darkTheme: boolean
+     * Switch to dark theme
+     * */
+    darkTheme: {
+      type: Boolean,
+      default: undefined,
+    },
   },
 
   emits: [
@@ -261,6 +270,10 @@ export default defineComponent({
         json: props.json,
         text: props.jsonString,
       };
+    });
+
+    const darkTheme = computed(() => {
+      return props.darkTheme || pluginOptions?.darkTheme;
     });
 
     const removeFullWidthButton = (): void => {
@@ -447,6 +460,7 @@ export default defineComponent({
       getHeight,
       container,
       content,
+      darkTheme,
     };
   },
 });

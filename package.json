@@ -10,7 +10,10 @@
   "main": "dist/index.cjs",
   "module": "dist/index.mjs",
   "exports": {
-    ".": "./dist/index.mjs",
+    ".": {
+      "import": "./dist/index.mjs",
+      "require": "./dist/index.cjs"
+    },
     "./styles.css": "./dist/style.css"
   },
   "types": "dist/JsonEditorPlugin.d.ts",

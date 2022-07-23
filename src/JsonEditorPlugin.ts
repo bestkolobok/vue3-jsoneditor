@@ -1,5 +1,5 @@
-import type {App} from 'vue';
 import {VueJsonEditor} from './components';
+import type {App} from 'vue';
 import type {JSONEditorOptions, TextContent, JSONContent, Content, Path} from './types';
 
 import type {

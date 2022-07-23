@@ -26,6 +26,7 @@ export interface JSONEditorOptions {
   onRenderMenu?: OnRenderMenu;
   height?: string | number;
   fullWidthButton?: boolean;
+  darkTheme?: boolean;
 }
 
 export type TextContent = {
