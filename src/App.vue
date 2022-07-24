@@ -5,7 +5,7 @@
     </header>
 
     <main class="body-container">
-      <json-editor height="400" dark-theme :mode="mode" v-model:json="state.json" ref="editor" />
+      <json-editor height="400" :mode="mode" v-model:json="state.json" ref="editor" />
 
       <div class="body-container__buttons">
         <button @click="onCollapse">collapse all</button>
