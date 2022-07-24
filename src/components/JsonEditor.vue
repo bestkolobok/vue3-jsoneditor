@@ -1,7 +1,7 @@
 <template>
   <div
     class="vue-ts-json-editor"
-    :class="{'vue-ts-json-editor--max-box': max, 'jse-theme-dark': darkTheme}"
+    :class="{'vue-ts-json-editor--max-box': max, 'jse-theme-dark': darkThemeStyle}"
     :style="getHeight"
     ref="container"
     @keydown.stop
@@ -272,7 +272,7 @@ export default defineComponent({
       };
     });
 
-    const darkTheme = computed(() => {
+    const darkThemeStyle = computed(() => {
       return props.darkTheme || pluginOptions?.darkTheme;
     });
 
@@ -460,7 +460,7 @@ export default defineComponent({
       getHeight,
       container,
       content,
-      darkTheme,
+      darkThemeStyle,
     };
   },
 });

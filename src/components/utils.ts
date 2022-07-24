@@ -20,7 +20,10 @@ export const pickDefinedProps = (options: object = {}, props: object) => {
   const computedProps: object = {};
 
   for (const propName of propNames) {
-    const prop = props[propName as keyof typeof props] || options[propName as keyof typeof options];
+    const prop =
+      props[propName as keyof typeof props] !== undefined
+        ? props[propName as keyof typeof props]
+        : options[propName as keyof typeof options];
     if (prop !== undefined) {
       computedProps[propName as keyof typeof computedProps] = prop;
     }
