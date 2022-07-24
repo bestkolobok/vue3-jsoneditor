@@ -78,6 +78,7 @@ Read more in [vanilla-jsoneditor](https://www.npmjs.com/package/svelte-jsonedito
 </script>
 ```
 <br>
+
 ### 👉 Use in template
 
 ```vue
