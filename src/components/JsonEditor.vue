@@ -389,6 +389,8 @@ export default defineComponent({
     };
 
     const initView = (): void => {
+      if (!document) return;
+
       if (!editor.value) {
         editor.value = new JSONEditor({
           target: container.value,
