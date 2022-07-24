@@ -388,7 +388,7 @@ export default defineComponent({
     };
 
     const initView = async (): Promise<void> => {
-      if (!document) return;
+      if (typeof window === 'undefined') return;
 
       if (!editor.value) {
         const {JSONEditor} = await import('vanilla-jsoneditor');
