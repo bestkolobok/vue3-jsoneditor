@@ -283,6 +283,8 @@ export default defineComponent({
     };
 
     const setFullWidthButton = (): void => {
+      if (typeof window === 'undefined') return;
+
       const oldButton = document.querySelector('.jse-full-width');
 
       const pluginOptionFlag = pluginOptions?.fullWidthButton !== undefined ? pluginOptions?.fullWidthButton : true;
