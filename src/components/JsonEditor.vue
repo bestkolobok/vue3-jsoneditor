@@ -1,12 +1,11 @@
 <template>
-  <div class="vue-ts-json-editor" :class="{'jse-theme-dark': darkThemeStyle}" :style="{'--editor-height': getHeight}">
-    <div
-      class="vue-ts-json-editor__container"
-      :class="{'vue-ts-json-editor__container--max-box': max}"
-      ref="container"
-      @keydown.stop
-    ></div>
-  </div>
+  <div
+    class="vue-ts-json-editor"
+    :class="{'vue-ts-json-editor--max-box': max, 'jse-theme-dark': darkThemeStyle}"
+    :style="getHeight"
+    ref="container"
+    @keydown.stop
+  ></div>
 </template>
 
 <script lang="ts">
@@ -259,9 +258,11 @@ export default defineComponent({
       const height = props.height || pluginOptions?.height;
 
       if (height && !max.value) {
-        return height + 'px';
+        return {
+          height: height + 'px',
+        };
       }
-      return 'initial';
+      return {};
     });
 
     const content = computed(() => {
@@ -422,7 +423,9 @@ export default defineComponent({
     watch(() => props.jsonString, updateContent);
 
     onMounted(() => {
-      initView();
+      nextTick(() => {
+        initView();
+      });
     });
 
     onBeforeUnmount(() => {
@@ -469,18 +472,13 @@ export default defineComponent({
   min-width: 300px;
   width: 100%;
 
-  &__container {
-    width: 100%;
-    height: var(--editor-height);
-
-    &--max-box {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100vw;
-      height: 100vh;
-      z-index: 10000;
-    }
+  &--max-box {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    z-index: 10000;
   }
 
   .jse-menu {
