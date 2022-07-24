@@ -9,7 +9,6 @@
 </template>
 
 <script lang="ts">
-import {JSONEditor} from 'vanilla-jsoneditor';
 import type {
   JSONData,
   QueryLanguage,
@@ -388,10 +387,12 @@ export default defineComponent({
       };
     };
 
-    const initView = (): void => {
+    const initView = async (): Promise<void> => {
       if (!document) return;
 
       if (!editor.value) {
+        const {JSONEditor} = await import('vanilla-jsoneditor');
+
         editor.value = new JSONEditor({
           target: container.value,
           props: makeEditorProps(),
