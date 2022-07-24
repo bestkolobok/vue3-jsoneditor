@@ -423,9 +423,7 @@ export default defineComponent({
     watch(() => props.jsonString, updateContent);
 
     onMounted(() => {
-      nextTick(() => {
-        initView();
-      });
+      initView();
     });
 
     onBeforeUnmount(() => {
