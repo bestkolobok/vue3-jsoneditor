@@ -46,7 +46,7 @@
   "devDependencies": {
     "@rushstack/eslint-patch": "^1.1.0",
     "@types/jsoneditor": "^9.5.1",
-    "@types/node": "^16.11.41",
+    "@types/node": "^18.6.1",
     "@vitejs/plugin-vue": "^2.3.3",
     "@vitejs/plugin-vue-jsx": "^1.3.10",
     "@vue/eslint-config-prettier": "^7.0.0",
@@ -61,6 +61,7 @@
     "sass-loader": "^13.0.0",
     "typescript": "~4.7.4",
     "vite": "^2.9.12",
+    "vite-plugin-chunk-split": "^0.2.5",
     "vite-plugin-env-config": "^2.0.0",
     "vue-tsc": "^0.38.1"
   },

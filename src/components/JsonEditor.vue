@@ -25,6 +25,7 @@ import type {PropType} from 'vue';
 import {pickDefinedProps, fullWidthIcon} from './utils';
 import type {JSONEditorOptions, Content} from '@/types';
 import 'vanilla-jsoneditor/themes/jse-theme-dark.css';
+import {createElement, getElement} from '@/components/full-width-button-handler';
 
 export default defineComponent({
   name: 'JsonEditor',
@@ -285,7 +286,8 @@ export default defineComponent({
     const setFullWidthButton = async (): Promise<void> => {
       if (typeof window === 'undefined') return;
 
-      const oldButton = window?.document.querySelector('.jse-full-width');
+      const {getElement, createElement} = await import('./full-width-button-handler');
+      const oldButton = getElement('.jse-full-width');
 
       const pluginOptionFlag = pluginOptions?.fullWidthButton !== undefined ? pluginOptions?.fullWidthButton : true;
 
@@ -297,8 +299,8 @@ export default defineComponent({
         removeFullWidthButton();
       }
 
-      const menu = window?.document.querySelector('.jse-menu');
-      fullWidthButton.value = window?.document.createElement('button');
+      const menu = getElement('.jse-menu');
+      fullWidthButton.value = createElement('button') as HTMLButtonElement;
       fullWidthButton.value.classList.add('jse-full-width');
       fullWidthButton.value.classList.add('jse-button');
       fullWidthButton.value.classList.add('svelte-v4jelk');

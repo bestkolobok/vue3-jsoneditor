@@ -5,6 +5,7 @@ import vue from '@vitejs/plugin-vue';
 import vueJsx from '@vitejs/plugin-vue-jsx';
 import typescript2 from 'rollup-plugin-typescript2';
 import {envConfig} from 'vite-plugin-env-config';
+import {chunkSplitPlugin} from 'vite-plugin-chunk-split';
 
 // https://vitejs.dev/config/
 export default defineConfig({
@@ -28,6 +29,12 @@ export default defineConfig({
       prefix: 'VITECONFIG_',
       separator: '_',
     }),
+    chunkSplitPlugin({
+      strategy: 'single-vendor',
+      customSplitting: {
+        'vanilla-jsoneditor': ['vanilla-jsoneditor'],
+      },
+    }),
   ],
   resolve: {
     alias: {
@@ -38,7 +45,7 @@ export default defineConfig({
     cssCodeSplit: false,
     lib: {
       entry: './src/JsonEditorPlugin.ts',
-      formats: ['es', 'cjs'],
+      formats: ['cjs', 'es'],
       name: 'JsonEditorPlugin',
       fileName: (format) => (format === 'es' ? 'index.mjs' : 'index.cjs'),
     },
