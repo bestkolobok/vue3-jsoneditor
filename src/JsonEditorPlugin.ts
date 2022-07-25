@@ -30,20 +30,20 @@ interface Params {
   options?: JSONEditorOptions;
 }
 
-let jmespathQuery, lodashQuery, javascriptQuery;
-if (typeof window !== undefined) {
-  import('vanilla-jsoneditor').then(({jmespathQueryLanguage, lodashQueryLanguage, javascriptQueryLanguage}) => {
-    jmespathQuery = jmespathQueryLanguage;
-    lodashQuery = lodashQueryLanguage;
-    javascriptQuery = javascriptQueryLanguage;
-  });
-}
-
-export {
-  jmespathQuery as jmespathQueryLanguage,
-  lodashQuery as lodashQueryLanguage,
-  javascriptQuery as javascriptQueryLanguage,
-};
+// let jmespathQuery, lodashQuery, javascriptQuery;
+// if (typeof window !== undefined) {
+//   import('vanilla-jsoneditor').then(({jmespathQueryLanguage, lodashQueryLanguage, javascriptQueryLanguage}) => {
+//     jmespathQuery = jmespathQueryLanguage;
+//     lodashQuery = lodashQueryLanguage;
+//     javascriptQuery = javascriptQueryLanguage;
+//   });
+// }
+//
+// export {
+//   jmespathQuery as jmespathQueryLanguage,
+//   lodashQuery as lodashQueryLanguage,
+//   javascriptQuery as javascriptQueryLanguage,
+// };
 
 export type {
   Params,
