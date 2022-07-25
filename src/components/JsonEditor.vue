@@ -5,7 +5,9 @@
     :style="getHeight"
     ref="container"
     @keydown.stop
-  ></div>
+  >
+    <slot v-if="fallbackSlot" />
+  </div>
 </template>
 
 <script lang="ts">
@@ -391,11 +393,14 @@ export default defineComponent({
       };
     };
 
+    const fallbackSlot = ref<boolean>(true);
+
     const initView = async (): Promise<void> => {
       if (typeof window === 'undefined') return;
 
       if (!editor.value) {
         const {JSONEditor} = await import('vanilla-jsoneditor');
+        fallbackSlot.value = false;
 
         editor.value = new JSONEditor({
           target: container.value,
@@ -468,6 +473,7 @@ export default defineComponent({
       container,
       content,
       darkThemeStyle,
+      fallbackSlot,
     };
   },
 });

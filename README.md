@@ -7,6 +7,8 @@
 # vue3-ts-jsoneditor
 #### Based on [vanilla-jsoneditor](https://www.npmjs.com/package/svelte-jsoneditor)
 
+### 👍 SSR support
+
 ## 🕹 Demo
 
 > you can 👀 a live demo [here](https://bestkolobok.github.io/vue3-jsoneditor/)
@@ -141,6 +143,13 @@ Read more in [vanilla-jsoneditor](https://www.npmjs.com/package/svelte-jsonedito
   }
 </script>
 ```
+<br>
+
+### ☑️ Slots
+| Slot          | Description                                                           |
+| ----------    | ------------------                                                    |
+| default       | Slot content displayed before the editor is rendered. Useful for SSR  | 
+
 <br>
 
 ### ☑️ Props

@@ -7,13 +7,10 @@
   },
   "private": false,
   "license": "Apache-2.0",
-  "main": "dist/index.cjs",
-  "module": "dist/index.mjs",
+  "main": "dist/index.js",
+  "module": "dist/index.js",
   "exports": {
-    ".": {
-      "import": "./dist/index.mjs",
-      "require": "./dist/index.cjs"
-    },
+    ".": "./dist/index.js",
     "./styles.css": "./dist/style.css"
   },
   "types": "dist/JsonEditorPlugin.d.ts",

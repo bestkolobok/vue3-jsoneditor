@@ -5,7 +5,7 @@
     </header>
 
     <main class="body-container">
-      <json-editor height="400" :mode="mode" v-model:json="state.json" ref="editor" />
+      <json-editor height="400" :dark-theme="darkTheme" :mode="mode" v-model:json="state.json" ref="editor" />
 
       <div class="body-container__buttons">
         <button @click="onCollapse">collapse all</button>
@@ -15,6 +15,8 @@
         <button @click="toggleMode">Toggle mode</button>
 
         <button @click="changeJson">Change json</button>
+
+        <button @click="darkTheme = !darkTheme">Change theme</button>
       </div>
     </main>
   </div>
@@ -44,6 +46,8 @@ const toggleMode = () => {
     mode.value = 'tree';
   }
 };
+
+const darkTheme = ref(false);
 
 const changeJson = () => {
   state.json.number++;
