@@ -285,9 +285,7 @@ export default defineComponent({
     const setFullWidthButton = async (): Promise<void> => {
       if (typeof window === 'undefined') return;
 
-      const {getElement, createElement} = await import('./full-width-button-handler');
-
-      const oldButton = getElement('.jse-full-width');
+      const oldButton = window?.document.querySelector('.jse-full-width');
 
       const pluginOptionFlag = pluginOptions?.fullWidthButton !== undefined ? pluginOptions?.fullWidthButton : true;
 
@@ -299,8 +297,8 @@ export default defineComponent({
         removeFullWidthButton();
       }
 
-      const menu = getElement('.jse-menu');
-      fullWidthButton.value = createElement('button') as HTMLButtonElement;
+      const menu = window?.document.querySelector('.jse-menu');
+      fullWidthButton.value = window?.document.createElement('button');
       fullWidthButton.value.classList.add('jse-full-width');
       fullWidthButton.value.classList.add('jse-button');
       fullWidthButton.value.classList.add('svelte-v4jelk');

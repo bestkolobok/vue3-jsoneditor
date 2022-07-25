@@ -1,3 +1,3 @@
-export const getElement = (selector: string): HTMLElement | null => document.querySelector(selector);
+export const getElement = (selector: string): HTMLElement | null => window?.document.querySelector(selector);
 
-export const createElement = (tagName: string): HTMLElement => document.createElement(tagName);
+export const createElement = (tagName: string): HTMLElement => window?.document.createElement(tagName);
