@@ -29,7 +29,7 @@ interface Params {
   componentName?: string;
   options?: JSONEditorOptions;
 }
-
+export {jmespathQueryLanguage, lodashQueryLanguage, javascriptQueryLanguage} from 'vanilla-jsoneditor';
 // let jmespathQuery, lodashQuery, javascriptQuery;
 // if (typeof window !== undefined) {
 //   import('vanilla-jsoneditor').then(({jmespathQueryLanguage, lodashQueryLanguage, javascriptQueryLanguage}) => {
