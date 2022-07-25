@@ -24,7 +24,7 @@ import {defineComponent, inject, ref, computed, watch, nextTick, onMounted, onBe
 import type {PropType} from 'vue';
 import {pickDefinedProps, fullWidthIcon} from './utils';
 import type {JSONEditorOptions, Content} from '@/types';
-// import 'vanilla-jsoneditor/themes/jse-theme-dark.css';
+import 'vanilla-jsoneditor/themes/jse-theme-dark.css';
 
 export default defineComponent({
   name: 'JsonEditor',
