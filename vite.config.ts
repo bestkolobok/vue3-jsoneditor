@@ -33,6 +33,7 @@ export default defineConfig({
       strategy: 'single-vendor',
       customSplitting: {
         'vanilla-jsoneditor': ['vanilla-jsoneditor'],
+        // 'query-languages': ['/src/query-languages.js'],
       },
     }),
   ],
@@ -51,6 +52,10 @@ export default defineConfig({
     },
     rollupOptions: {
       external: ['vue'],
+      input: {
+        main: './src/JsonEditorPlugin.ts',
+        languages: './src/query-languages.js',
+      },
       output: {
         globals: {
           vue: 'Vue',

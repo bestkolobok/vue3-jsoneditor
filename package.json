@@ -11,7 +11,7 @@
   "module": "dist/index.mjs",
   "exports": {
     ".": "./dist/index.mjs",
-    "./query-languages.js": "./dist/vanilla-jsoneditor.js",
+    "./query-languages.js": "./dist/index2.mjs",
     "./styles.css": "./dist/style.css"
   },
   "types": "dist/JsonEditorPlugin.d.ts",
