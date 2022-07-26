@@ -47,7 +47,7 @@ export default defineConfig({
       entry: './src/JsonEditorPlugin.ts',
       formats: ['es'],
       name: 'JsonEditorPlugin',
-      fileName: () => 'index.js',
+      fileName: () => 'index.mjs',
     },
     rollupOptions: {
       external: ['vue'],
