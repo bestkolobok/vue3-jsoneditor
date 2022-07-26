@@ -428,7 +428,7 @@ export default defineComponent({
       removeFullWidthButton();
     };
 
-    watch(props, updateProps);
+    watch(() => props, updateProps, {deep: true});
 
     watch(() => props.json, updateContent, {deep: true});
 
