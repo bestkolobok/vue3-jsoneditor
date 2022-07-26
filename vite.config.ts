@@ -54,7 +54,7 @@ export default defineConfig({
       external: ['vue'],
       input: {
         main: './src/JsonEditorPlugin.ts',
-        languages: './src/query-languages.js',
+        languages: './src/query-languages.ts',
       },
       output: {
         globals: {

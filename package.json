@@ -12,6 +12,8 @@
   "exports": {
     ".": "./dist/index.mjs",
     "./query-languages.mjs": "./dist/index2.mjs",
+    "./query-languages.d.ts": "./dist/query-languages.d.ts",
+    "./query-languages.d.ts.map": "./dist/query-languages.d.ts.map",
     "./styles.css": "./dist/style.css"
   },
   "types": "dist/JsonEditorPlugin.d.ts",
