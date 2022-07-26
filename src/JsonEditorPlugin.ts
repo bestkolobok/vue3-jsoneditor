@@ -30,8 +30,6 @@ interface Params {
   options?: JSONEditorOptions;
 }
 
-export {jmespathQueryLanguage, lodashQueryLanguage, javascriptQueryLanguage} from 'vanilla-jsoneditor';
-
 export type {
   Params,
   TextContent,

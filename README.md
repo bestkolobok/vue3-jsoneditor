@@ -184,7 +184,7 @@ import {
   jmespathQueryLanguage,
   lodashQueryLanguage,
   javascriptQueryLanguage
-} from 'vue3-ts-jsoneditor'
+} from 'vue3-ts-jsoneditor/query-languages'
 
 const allQueryLanguages = [jmespathQueryLanguage, lodashQueryLanguage, javascriptQueryLanguage]
 ```
