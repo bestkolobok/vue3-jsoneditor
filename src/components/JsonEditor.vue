@@ -21,13 +21,20 @@ import type {
   Validator,
   Mode,
   MenuItem,
+  JSONEditorPropsOptional,
 } from 'vanilla-jsoneditor';
-import {defineComponent, inject, ref, computed, watch, nextTick, onMounted, onBeforeUnmount} from 'vue';
+import {defineComponent, inject, ref, reactive, computed, watch, nextTick, onMounted, onBeforeUnmount} from 'vue';
 import type {PropType} from 'vue';
 import {pickDefinedProps, fullWidthIcon} from './utils';
-import type {JSONEditorOptions, Content} from '@/types';
+import type {JSONEditorOptions, Content, QueryLanguageId} from '@/types';
 import 'vanilla-jsoneditor/themes/jse-theme-dark.css';
 import {createElement, getElement} from '@/components/full-width-button-handler';
+
+interface QueryLanguagesBuffer {
+  javascript?: QueryLanguage;
+  lodash?: QueryLanguage;
+  jmespath?: QueryLanguage;
+}
 
 export default defineComponent({
   name: 'JsonEditor',
@@ -134,23 +141,16 @@ export default defineComponent({
     /**
      * ### queryLanguages: QueryLanguage[].
      * Configure one or multiple query language that can be used in the Transform modal.
-     * The library comes with three languages:
-     * ```ts
-     *  import {
-     *    jmespathQueryLanguage,
-     *    lodashQueryLanguage,
-     *    javascriptQueryLanguage
-     *  } from 'svelte-jsoneditor'
-     *
-     *  const allQueryLanguages = [jmespathQueryLanguage, lodashQueryLanguage, javascriptQueryLanguage]
-     * ```
+     * An array of available query languages id's
+     * [javascript', 'lodash', 'jmespath']
      * */
-    queryLanguages: Array as PropType<QueryLanguage[]>,
+    queryLanguagesIds: Array as PropType<QueryLanguageId[]>,
     /**
      * ### queryLanguageId: string.
      * The id of the currently selected query language.
+     * 'javascript' | 'lodash' | 'jmespath'
      * */
-    queryLanguageId: String,
+    queryLanguageId: String as PropType<QueryLanguageId>,
     /**
      * ### onClassName(path: Path, value: any): string | undefined.
      * Add a custom class name to specific nodes, based on their path and/or value.
@@ -267,16 +267,69 @@ export default defineComponent({
       return {};
     });
 
-    const content = computed(() => {
+    const content = computed<Content>(() => {
       return {
         json: props.json,
         text: props.jsonString,
-      };
+      } as Content;
     });
 
-    const darkThemeStyle = computed(() => {
+    const darkThemeStyle = computed<boolean>(() => {
       return props.darkTheme || pluginOptions?.darkTheme;
     });
+
+    const queryLanguagesIds = computed<QueryLanguageId[]>(() => {
+      return props.queryLanguagesIds || pluginOptions?.queryLanguagesIds;
+    });
+
+    const queryLanguageId = computed<QueryLanguageId>(() => {
+      return props.queryLanguageId || pluginOptions?.queryLanguageId;
+    });
+
+    const queryLanguagesBuffer = reactive<QueryLanguagesBuffer>({});
+
+    const makeQueryLanguages = async (): Promise<QueryLanguage[] | undefined> => {
+      if (
+        typeof window === 'undefined' ||
+        typeof queryLanguagesIds.value === 'undefined' ||
+        !queryLanguagesIds.value?.length
+      ) {
+        return;
+      }
+
+      for (const languageId of queryLanguagesIds.value) {
+        if (!queryLanguagesBuffer[languageId]) {
+          switch (languageId) {
+            case 'javascript': {
+              const {javascriptQueryLanguage} = await import('vanilla-jsoneditor');
+              queryLanguagesBuffer[languageId] = javascriptQueryLanguage;
+              break;
+            }
+            case 'lodash': {
+              const {lodashQueryLanguage} = await import('vanilla-jsoneditor');
+              queryLanguagesBuffer[languageId] = lodashQueryLanguage;
+              break;
+            }
+            case 'jmespath': {
+              const {jmespathQueryLanguage} = await import('vanilla-jsoneditor');
+              queryLanguagesBuffer[languageId] = jmespathQueryLanguage;
+              break;
+            }
+            default: {
+              break;
+            }
+          }
+        }
+      }
+
+      const allQueryLanguages: QueryLanguage[] = Object.values(queryLanguagesBuffer);
+
+      if (allQueryLanguages.length === 0) {
+        return;
+      }
+
+      return allQueryLanguages;
+    };
 
     const removeFullWidthButton = (): void => {
       if (!fullWidthButton.value) return;
@@ -377,12 +430,15 @@ export default defineComponent({
       return items;
     };
 
-    const makeEditorProps = () => {
+    const makeEditorProps = async (): Promise<JSONEditorPropsOptional> => {
       const options = {fullWidthButton: true, ...(pluginOptions || {})};
+      const queryLanguages = await makeQueryLanguages();
 
       return {
         ...pickDefinedProps(options, props),
         content: content.value,
+        queryLanguages,
+        queryLanguageId: queryLanguageId.value,
         onChange,
         onError,
         onChangeMode,
@@ -399,12 +455,13 @@ export default defineComponent({
       if (typeof window === 'undefined') return;
 
       if (!editor.value) {
+        const props = await makeEditorProps();
         const {JSONEditor} = await import('vanilla-jsoneditor');
         fallbackSlot.value = false;
 
         editor.value = new JSONEditor({
           target: container.value,
-          props: makeEditorProps(),
+          props,
         });
       }
 

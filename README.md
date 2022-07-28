@@ -58,8 +58,8 @@ interface JSONEditorOptions {
   escapeControlCharacters?: boolean;
   escapeUnicodeCharacters?: boolean;
   validator?: Validator;
-  queryLanguages?: QueryLanguage[];
-  queryLanguageId?: string;
+  queryLanguagesIds?: QueryLanguageId[];
+  queryLanguageId?: QueryLanguageId;
   onRenderValue?: OnRenderValue;
   onClassName?: OnClassName;
   onRenderMenu?: OnRenderMenu;
@@ -67,6 +67,10 @@ interface JSONEditorOptions {
   fullWidthButton?: boolean;
   darkTheme?: boolean;
 }
+
+type Mode = "text" | "tree";
+
+type QueryLanguageId = 'javascript' | 'lodash' | 'jmespath';
 ```
 Read more in [vanilla-jsoneditor](https://www.npmjs.com/package/svelte-jsoneditor) properties
 <br>
@@ -87,7 +91,8 @@ Read more in [vanilla-jsoneditor](https://www.npmjs.com/package/svelte-jsonedito
 <template>
   <vue-jsoneditor
     height="400" 
-    :mode="mode" 
+    :mode="mode"
+    :queryLanguagesIds="queryLanguages"
     v-model:json="state.json" 
     @error="onError" 
     @focus="onFocus" 
@@ -107,6 +112,8 @@ Read more in [vanilla-jsoneditor](https://www.npmjs.com/package/svelte-jsonedito
 
 <script setup lang="ts">
   import {reactive, ref} from 'vue';
+  
+  import type {QueryLanguageId} from 'vue3-ts-jsoneditor'
 
   const state = reactive({
     json: {
@@ -129,6 +136,8 @@ Read more in [vanilla-jsoneditor](https://www.npmjs.com/package/svelte-jsonedito
   });
 
   const mode = ref('tree');
+
+  const queryLanguages = ref<QueryLanguageId[]>(['javascript', 'lodash', 'jmespath']);
   
   const onError = (error) => {
     //
@@ -153,8 +162,8 @@ Read more in [vanilla-jsoneditor](https://www.npmjs.com/package/svelte-jsonedito
 <br>
 
 ### ☑️ Props
-| Name                      | Description                                                                                                                                                                                                                                       | type                                                                                                  | default                   |
-| -----------------------   | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------                                                                             | :------------:                                                                                        | :-----------------:   |
+| Name                      | Description                                                                                                                                                                                                                                       | type                                                                                                  | default               |
+| ----------------------    | -----------------------------------------------------------------------------------------------------------------------------------------------------------------------                                                                           | :------------:                                                                                        | :-----------------:   |
 | json (v-model)            | Object value                                                                                                                                                                                                                                      | <code>object</code>                                                                                   | { }                   |
 | jsonString (v-model)      | String value                                                                                                                                                                                                                                      | <code>string</code>                                                                                   | undefined             |
 | mode                      | Open the editor in 'tree' mode or 'text' mode (formerly: code mode).                                                                                                                                                                              | <code>string</code>                                                                                   | 'tree'                |
@@ -167,8 +176,8 @@ Read more in [vanilla-jsoneditor](https://www.npmjs.com/package/svelte-jsonedito
 | escapeControlCharacters   | When true, control characters like newline and tab are rendered as escaped characters \n and \t. Only applicable for 'tree' mode, in 'text' mode control characters are always escaped.                                                           | <code>boolean</code>                                                                                  | false                 |
 | escapeUnicodeCharacters   | When true, unicode characters like ☎ and 😀 are rendered escaped like \u260e and \ud83d\ude00                                                                                                                                                      | <code>boolean</code>                                                                                  | false                 |
 | validator                 | Validate the JSON document. Details in [vanilla-jsoneditor](https://www.npmjs.com/package/svelte-jsoneditor)                                                                                                                                      | <code>function (json: JSONData): ValidationError[]</code>                                             |                       |
-| queryLanguages            | Configure one or multiple query language that can be used in the Transform modal. The library comes with three languages: jmespathQueryLanguage, lodashQueryLanguage, javascriptQueryLanguage                                                     | <code>QueryLanguage[]</code>                                                                          | [javascriptQueryLanguage] |
-| queryLanguageId           | The id of the currently selected query language                                                                                                                                                                                                   | <code>string</code>                                                                                   |                       |
+| queryLanguagesIds         | Configure one or multiple query language that can be used in the Transform modal. The library comes with three languages: <code>javascript</code>, <code>lodash</code> or <code>jmespath</code>                                                   | <code>QueryLanguage[]</code>                                                                          | [javascript]          |
+| queryLanguageId           | The id of the currently selected query language <code>javascript</code>, <code>lodash</code> or <code>jmespath</code>                                                                                                                             | <code>string</code>                                                                                   |                       |
 | onClassName               | Add a custom class name to specific nodes, based on their path and/or value.                                                                                                                                                                      | <code>function (path: Path, value: any): string &vert; undefined</code>                               |                       |
 | onRenderValue             | Details in [vanilla-jsoneditor](https://www.npmjs.com/package/svelte-jsoneditor)                                                                                                                                                                  | <code>function (props: RenderValueProps) : RenderValueComponentDescription[]</code>                   |                       |
 | onRenderMenu              | Details in [vanilla-jsoneditor](https://www.npmjs.com/package/svelte-jsoneditor)                                                                                                                                                                  | <code>function (mode: 'tree' &vert; 'text', items: MenuItem[]) : MenuItem[] &vert; undefined</code>   |                       |
@@ -176,18 +185,6 @@ Read more in [vanilla-jsoneditor](https://www.npmjs.com/package/svelte-jsonedito
 | height                    | Default height                                                                                                                                                                                                                                    | <code>string &vert; number</code>                                                                     | undefined             |
 | darkTheme                 | Switch to dark theme                                                                                                                                                                                                                              | <code>boolean</code>                                                                                  | false                 | 
 
-<br>
-
-### ☑️ Use query languages
-```javascript
-import {
-  jmespathQueryLanguage,
-  lodashQueryLanguage,
-  javascriptQueryLanguage
-} from 'vue3-ts-jsoneditor/query-languages'
-
-const allQueryLanguages = [jmespathQueryLanguage, lodashQueryLanguage, javascriptQueryLanguage]
-```
 
 <br>
 

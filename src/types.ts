@@ -1,12 +1,4 @@
-import type {
-  Validator,
-  QueryLanguage,
-  OnRenderValue,
-  OnClassName,
-  OnRenderMenu,
-  Mode,
-  JSONData,
-} from 'vanilla-jsoneditor';
+import type {Validator, OnRenderValue, OnClassName, OnRenderMenu, Mode, JSONData} from 'vanilla-jsoneditor';
 
 export interface JSONEditorOptions {
   readOnly?: boolean;
@@ -19,8 +11,8 @@ export interface JSONEditorOptions {
   escapeControlCharacters?: boolean;
   escapeUnicodeCharacters?: boolean;
   validator?: Validator;
-  queryLanguages?: QueryLanguage[];
-  queryLanguageId?: string;
+  queryLanguagesIds?: QueryLanguageId[];
+  queryLanguageId?: QueryLanguageId;
   onRenderValue?: OnRenderValue;
   onClassName?: OnClassName;
   onRenderMenu?: OnRenderMenu;
@@ -42,3 +34,5 @@ export type JSONContent = {
 export type Content = JSONContent | TextContent;
 
 export type Path = Array<string | number | symbol>;
+
+export type QueryLanguageId = 'javascript' | 'lodash' | 'jmespath';

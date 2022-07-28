@@ -9,8 +9,6 @@ export const propNames: string[] = [
   'escapeControlCharacters',
   'escapeUnicodeCharacters',
   'validator',
-  'queryLanguages',
-  'queryLanguageId',
   'onClassName',
   'onRenderValue',
   'onRenderMenu',

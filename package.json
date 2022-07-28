@@ -7,19 +7,18 @@
   },
   "private": false,
   "license": "Apache-2.0",
+  "type": "module",
   "main": "dist/index.mjs",
   "module": "dist/index.mjs",
   "exports": {
     ".": "./dist/index.mjs",
-    "./query-languages.mjs": "./dist/index2.mjs",
-    "./query-languages.d.ts": "./dist/query-languages.d.ts",
-    "./query-languages.d.ts.map": "./dist/query-languages.d.ts.map",
+    "./dist/vanilla-jsoneditor.js": "./dist/vanilla-jsoneditor.js",
     "./styles.css": "./dist/style.css"
   },
+  "imports": {
+    "#query-languages.mjs": "./dist/index2.mjs"
+  },
   "types": "dist/JsonEditorPlugin.d.ts",
-  "files": [
-    "dist"
-  ],
   "repository": {
     "type": "git",
     "url": "https://github.com/bestkolobok/vue3-jsoneditor.git"
