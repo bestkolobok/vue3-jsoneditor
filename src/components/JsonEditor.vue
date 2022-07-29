@@ -468,8 +468,9 @@ export default defineComponent({
       editor.value.focus();
     };
 
-    const updateProps = (): void => {
-      editor.value.updateProps(makeEditorProps());
+    const updateProps = async (): Promise<void> => {
+      const props = await makeEditorProps();
+      editor.value.updateProps(props);
     };
 
     const updateContent = (): void => {
