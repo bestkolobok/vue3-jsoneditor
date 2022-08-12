@@ -269,7 +269,7 @@ export default defineComponent({
 
     const content = computed<Content>(() => {
       return {
-        json: props.json,
+        json: props.json || undefined,
         text: props.jsonString,
       } as Content;
     });
