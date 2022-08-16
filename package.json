@@ -62,6 +62,7 @@
     "vite": "^2.9.12",
     "vite-plugin-chunk-split": "^0.2.5",
     "vite-plugin-env-config": "^2.0.0",
+    "vite-plugin-libcss": "^1.0.5",
     "vue-tsc": "^0.38.1"
   },
   "keywords": [

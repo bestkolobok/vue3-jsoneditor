@@ -27,7 +27,6 @@ npm install vue3-ts-jsoneditor
 import {createApp} from 'vue';
 import App from './App.vue';
 import vue3TsJsoneditor from 'vue3-ts-jsoneditor';
-import 'vue3-ts-jsoneditor/styles.css'
 
 const app = createApp(App);
 
@@ -80,7 +79,6 @@ Read more in [vanilla-jsoneditor](https://www.npmjs.com/package/svelte-jsonedito
 ```javascript
 <script setup>
   import vueJsoneditor from 'vue3-ts-jsoneditor';
-  import 'vue3-ts-jsoneditor/styles.css'
 </script>
 ```
 <br>
