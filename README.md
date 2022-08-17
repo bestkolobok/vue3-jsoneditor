@@ -78,7 +78,7 @@ Read more in [vanilla-jsoneditor](https://www.npmjs.com/package/svelte-jsonedito
 
 ```javascript
 <script setup>
-  import vueJsoneditor from 'vue3-ts-jsoneditor';
+  import VueJsoneditor from 'vue3-ts-jsoneditor';
 </script>
 ```
 <br>
