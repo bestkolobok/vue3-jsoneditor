@@ -5,13 +5,11 @@ import vue from '@vitejs/plugin-vue';
 import typescript2 from 'rollup-plugin-typescript2';
 import {envConfig} from 'vite-plugin-env-config';
 import {chunkSplitPlugin} from 'vite-plugin-chunk-split';
-import libCss from 'vite-plugin-libcss';
 
 // https://vitejs.dev/config/
 export default defineConfig({
   plugins: [
     vue(),
-    libCss(),
     typescript2({
       check: false,
       clean: true,

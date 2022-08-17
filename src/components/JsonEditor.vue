@@ -27,8 +27,6 @@ import {defineComponent, inject, ref, reactive, computed, watch, nextTick, onMou
 import type {PropType} from 'vue';
 import {pickDefinedProps, fullWidthIcon} from './utils';
 import type {JSONEditorOptions, Content, QueryLanguageId} from '@/types';
-import 'vanilla-jsoneditor/themes/jse-theme-dark.css';
-import {createElement, getElement} from '@/components/full-width-button-handler';
 
 interface QueryLanguagesBuffer {
   javascript?: QueryLanguage;
@@ -342,6 +340,9 @@ export default defineComponent({
       if (typeof window === 'undefined') return;
 
       const {getElement, createElement} = await import('./full-width-button-handler');
+      const {setFullWidthButtonStyle} = await import('./styles-handler');
+      await setFullWidthButtonStyle();
+
       const oldButton = getElement('.jse-full-width');
 
       const pluginOptionFlag = pluginOptions?.fullWidthButton !== undefined ? pluginOptions?.fullWidthButton : true;
@@ -492,6 +493,17 @@ export default defineComponent({
 
     watch(() => props.jsonString, updateContent);
 
+    watch(
+      () => darkThemeStyle.value,
+      async (value) => {
+        if (!!value) {
+          const {setDarkThemeStyle} = await import('./styles-handler');
+          await setDarkThemeStyle();
+        }
+      },
+      {immediate: true}
+    );
+
     onMounted(() => {
       nextTick(() => {
         initView();
@@ -536,31 +548,3 @@ export default defineComponent({
   },
 });
 </script>
-
-<style lang="scss">
-.vue-ts-json-editor {
-  $root: &;
-  min-width: 300px;
-  width: 100%;
-
-  &--max-box {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100vw;
-    height: 100vh;
-    z-index: 10000;
-  }
-
-  .jse-menu {
-    .jse-full-width {
-      display: flex;
-
-      &--active {
-        background-color: rgba(255, 255, 255, 0.22) !important;
-        border-color: rgba(255, 255, 255, 0.6) !important;
-      }
-    }
-  }
-}
-</style>
