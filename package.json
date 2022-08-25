@@ -28,9 +28,9 @@
   },
   "scripts": {
     "dev": "vite",
-    "deploy": "sh deploy/patch.sh",
-    "deploy:minor": "sh deploy/minor.sh",
-    "deploy:major": "sh deploy/major.sh",
+    "deploy": "sh deploy.sh patch",
+    "deploy:minor": "sh deploy.sh minor",
+    "deploy:major": "sh deploy.sh major",
     "build": "run-p type-check build-only",
     "build:gh": "VITECONFIG_build_lib=false VITECONFIG_build_rollupOptions=false VITECONFIG_build_cssCodeSplit=true VITECONFIG_build_outDir=gh-dist VITECONFIG_base='/vue3-jsoneditor' run-p build-only",
     "preview": "vite preview --port 4173",
