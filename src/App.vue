@@ -9,7 +9,7 @@
         height="400"
         :dark-theme="darkTheme"
         :mode="mode"
-        v-model:json="state.json"
+        v-model="jsonData"
         ref="editor"
         :queryLanguagesIds="queryLanguages"
       />
@@ -31,18 +31,17 @@
 
 <script setup lang="ts">
 // import JsonEditor from '@/components/JsonEditor.vue';
-import {reactive, ref} from 'vue';
+import {ref} from 'vue';
 import type {QueryLanguageId} from './types';
 
-const state = reactive({
-  json: {
-    array: [1, 2, 3],
-    boolean: true,
-    Null: null,
-    number: 123,
-    object: {a: 'b', c: 'd'},
-    string: 'Hello World',
-  },
+const jsonData = ref({
+  array: [1, 2, 3],
+  boolean: true,
+  Null: null,
+  number: 123,
+  seconds: 0,
+  object: {a: 'b', c: 'd'},
+  string: 'Hello World',
 });
 
 const mode = ref('tree');
@@ -60,7 +59,7 @@ const toggleMode = () => {
 const darkTheme = ref(false);
 
 const changeJson = () => {
-  state.json.number++;
+  jsonData.value.number++;
 };
 
 const editor = ref();

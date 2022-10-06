@@ -12,7 +12,7 @@
 
 <script lang="ts">
 import type {
-  JSONData,
+  JSONValue,
   QueryLanguage,
   JSONPatchResult,
   OnClassName,
@@ -23,7 +23,18 @@ import type {
   MenuItem,
   JSONEditorPropsOptional,
 } from 'vanilla-jsoneditor';
-import {defineComponent, inject, ref, reactive, computed, watch, nextTick, onMounted, onBeforeUnmount} from 'vue';
+import {
+  defineComponent,
+  inject,
+  ref,
+  reactive,
+  computed,
+  watch,
+  nextTick,
+  onBeforeMount,
+  onMounted,
+  onBeforeUnmount,
+} from 'vue';
 import type {PropType} from 'vue';
 import {pickDefinedProps, fullWidthIcon} from './utils';
 import type {JSONEditorOptions, Content, QueryLanguageId} from '@/types';
@@ -39,19 +50,24 @@ export default defineComponent({
 
   props: {
     /**
-     * ### json: JSONData
-     * Pass the JSON contents to be rendered in the JSONEditor.
-     * Only one of the json or jsonString must be defined.
+     * ### modelValue: JSONValue | string
+     * Pass the JSON value or string to be rendered in the JSONEditor.
      * */
-    json: [Object, Array, Number, String, Boolean] as PropType<JSONData>,
+    modelValue: [Object, Array, Number, String, Boolean, String, null] as PropType<JSONValue | string>,
+    /**
+     * ### json: JSONValue
+     * Pass the JSON value to be rendered in the JSONEditor.
+     * */
+    json: [Object, Array, Number, String, Boolean, null] as PropType<JSONValue>,
     /**
      * ### jsonString: string
-     * Pass the JSON contents to be rendered in the JSONEditor.
-     * Only one of the json or jsonString must be defined.
+     * DEPRECATED!!!
+     * Pass the JSON string to be rendered in the JSONEditor.
      * */
     jsonString: String,
     /**
      * ### mode: 'tree' | 'text'.
+     * DEPRECATED!!!
      * Open the editor in 'tree' mode (default) or 'text' mode (formerly: code mode).
      * */
     mode: {
@@ -127,7 +143,7 @@ export default defineComponent({
       default: undefined,
     },
     /**
-     * ### validator: function (json: JSONData): ValidationError[].
+     * ### validator: function (json: JSONValue): ValidationError[].
      * Validate the JSON document. For example use the built-in JSON Schema validator
      * powered by Ajv:
      * ```ts
@@ -235,11 +251,13 @@ export default defineComponent({
   },
 
   emits: [
+    'update:modelValue',
     'update:json',
     'update:jsonString',
     'change',
     'error',
     'change-mode',
+    'update:mode',
     'change-query-language',
     'focus',
     'blur',
@@ -248,9 +266,13 @@ export default defineComponent({
   setup(props, {expose, emit}) {
     const pluginOptions: JSONEditorOptions = inject('jsonEditorOptions', {});
 
-    const max = ref<boolean>(false);
     const container = ref<HTMLDivElement>();
     const fullWidthButton = ref<HTMLButtonElement>(null);
+
+    const max = ref<boolean>(false);
+    const blockUpdate = ref(false);
+    const blockChange = ref(false);
+    const mode = ref('tree');
 
     const editor = ref(null);
 
@@ -263,13 +285,6 @@ export default defineComponent({
         };
       }
       return {};
-    });
-
-    const content = computed<Content>(() => {
-      return {
-        json: props.json || undefined,
-        text: props.jsonString,
-      } as Content;
     });
 
     const darkThemeStyle = computed<boolean>(() => {
@@ -385,12 +400,20 @@ export default defineComponent({
     };
 
     const onChange = (content: Content, previousContent: Content, patchResult: JSONPatchResult | null): void => {
+      if (blockChange.value) {
+        blockChange.value = false;
+        return;
+      }
+      blockUpdate.value = true;
+
       if (!!content.json) {
         emit('update:json', content.json);
+        emit('update:modelValue', content.json);
       }
 
       if (!!content.text) {
         emit('update:jsonString', content.text);
+        emit('update:modelValue', content.text);
       }
 
       emit('change', content, previousContent, patchResult);
@@ -400,8 +423,9 @@ export default defineComponent({
       emit('error', err);
     };
 
-    const onChangeMode = (mode: Mode): void => {
-      emit('change-mode', mode);
+    const onChangeMode = (newMode: Mode): void => {
+      emit('change-mode', newMode);
+      emit('update:mode', newMode);
     };
 
     const onChangeQueryLanguage = (queryLanguageId: string): void => {
@@ -437,7 +461,6 @@ export default defineComponent({
 
       return {
         ...pickDefinedProps(options, props),
-        content: content.value,
         queryLanguages,
         queryLanguageId: queryLanguageId.value,
         onChange,
@@ -452,18 +475,47 @@ export default defineComponent({
 
     const fallbackSlot = ref<boolean>(true);
 
+    const getContent = (): Content => {
+      const getJsonContent = (json: any = {}): Content => {
+        return {
+          json: {...json},
+        } as Content;
+      };
+      const getTextContent = (text: string = ''): Content => {
+        return {
+          text: text || '',
+        } as Content;
+      };
+      if (props.modelValue) {
+        if (typeof props.modelValue === 'string') {
+          return getTextContent(props.modelValue) as Content;
+        } else {
+          return getJsonContent(props.modelValue) as Content;
+        }
+      }
+      if (props.json) {
+        return getJsonContent(props.json) as Content;
+      }
+      if (props.jsonString) {
+        return getTextContent(props.jsonString) as Content;
+      }
+      return getTextContent() as Content;
+    };
+
     const initView = async (): Promise<void> => {
       if (typeof window === 'undefined') return;
 
       if (!editor.value) {
-        const props = await makeEditorProps();
+        const editorProps = await makeEditorProps();
         const {JSONEditor} = await import('vanilla-jsoneditor');
         fallbackSlot.value = false;
 
         editor.value = new JSONEditor({
           target: container.value,
-          props,
+          props: editorProps,
         });
+
+        editor.value.set(getContent());
       }
 
       editor.value.focus();
@@ -475,7 +527,12 @@ export default defineComponent({
     };
 
     const updateContent = (): void => {
-      editor.value.set(content.value);
+      if (blockUpdate.value) {
+        blockUpdate.value = false;
+        return;
+      }
+      blockChange.value = true;
+      editor.value.update(getContent());
     };
 
     const destroyView = (): void => {
@@ -489,9 +546,33 @@ export default defineComponent({
 
     watch(() => props, updateProps, {deep: true});
 
-    watch(() => props.json, updateContent, {deep: true});
+    watch(() => props.modelValue, updateContent, {deep: true});
 
-    watch(() => props.jsonString, updateContent);
+    watch(
+      () => props.json,
+      () => {
+        updateContent();
+        console.warn('Prop "json" deprecated. Use v-model instead!');
+      },
+      {deep: true}
+    );
+
+    watch(
+      () => props.jsonString,
+      () => {
+        updateContent();
+        console.warn('Prop "json" deprecated. Use v-model instead!');
+      }
+    );
+
+    watch(
+      () => props.mode,
+      (newMode) => {
+        if (newMode !== mode.value) {
+          mode.value = newMode;
+        }
+      }
+    );
 
     watch(
       () => darkThemeStyle.value,
@@ -541,7 +622,6 @@ export default defineComponent({
       max,
       getHeight,
       container,
-      content,
       darkThemeStyle,
       fallbackSlot,
     };

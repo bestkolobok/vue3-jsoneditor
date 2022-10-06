@@ -1,4 +1,4 @@
-import type {Validator, OnRenderValue, OnClassName, OnRenderMenu, Mode, JSONData} from 'vanilla-jsoneditor';
+import type {Validator, OnRenderValue, OnClassName, OnRenderMenu, Mode, JSONValue} from 'vanilla-jsoneditor';
 
 export interface JSONEditorOptions {
   readOnly?: boolean;
@@ -27,7 +27,7 @@ export type TextContent = {
 };
 
 export type JSONContent = {
-  json: JSONData;
+  json: JSONValue;
   text?: undefined;
 };
 

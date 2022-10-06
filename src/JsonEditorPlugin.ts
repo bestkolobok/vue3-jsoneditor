@@ -3,7 +3,7 @@ import type {App} from 'vue';
 import type {JSONEditorOptions, TextContent, JSONContent, Content, Path, QueryLanguageId} from './types';
 
 import type {
-  JSONData,
+  JSONValue,
   JSONPatchDocument,
   JSONPatchResult,
   ValidationError,
@@ -37,7 +37,7 @@ export type {
   Content,
   Path,
   QueryLanguageId,
-  JSONData,
+  JSONValue,
   JSONPatchDocument,
   JSONPatchResult,
   ValidationError,
