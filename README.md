@@ -5,9 +5,13 @@
 ## 🇺🇦🇺🇦🇺🇦 [Stand With Ukraine](https://www.standwithukraine.how/) 🇺🇦🇺🇦🇺🇦
 
 # vue3-ts-jsoneditor
-#### Based on [vanilla-jsoneditor](https://www.npmjs.com/package/svelte-jsoneditor)
+#### Powered by [svelte-jsoneditor](https://www.npmjs.com/package/svelte-jsoneditor)
 
-### 👍 SSR support
+### 🚀 Advantages
+- SSR support
+- Full width button
+- Automatic dynamic import of query languages
+- Automatic dynamic import of dark theme
 
 ## 🕹 Demo
 
@@ -91,7 +95,7 @@ Read more in [vanilla-jsoneditor](https://www.npmjs.com/package/svelte-jsonedito
     height="400" 
     :mode="mode"
     :queryLanguagesIds="queryLanguages"
-    v-model:json="state.json" 
+    v-model="jsonData" 
     @error="onError" 
     @focus="onFocus" 
     @blur="onBlur" 
@@ -104,34 +108,26 @@ Read more in [vanilla-jsoneditor](https://www.npmjs.com/package/svelte-jsonedito
   <vue-jsoneditor
     height="400" 
     :mode="mode" 
-    v-model:jsonString="state.jsonString"
+    v-model="jsonText"
   />
 </template>
 
 <script setup lang="ts">
-  import {reactive, ref} from 'vue';
+  import {ref} from 'vue';
   
   import type {QueryLanguageId} from 'vue3-ts-jsoneditor'
 
-  const state = reactive({
-    json: {
-      array: [1, 2, 3],
-      boolean: true,
-      Null: null,
-      number: 123,
-      object: {a: 'b', c: 'd'},
-      string: 'Hello World',
-    },
-    
-    jsonString: JSON.stringify({
-      array: [1, 2, 3],
-      boolean: true,
-      Null: null,
-      number: 123,
-      object: {a: 'b', c: 'd'},
-      string: 'Hello World',
-    })
+  const jsonData = ref({
+    array: [1, 2, 3],
+    boolean: true,
+    Null: null,
+    number: 123,
+    seconds: 0,
+    object: {a: 'b', c: 'd'},
+    string: 'Hello World',
   });
+
+  const jsonText = ref('{"array": [1, 2, 3]}');
 
   const mode = ref('tree');
 
@@ -222,7 +218,7 @@ Read more in [vanilla-jsoneditor](https://www.npmjs.com/package/svelte-jsonedito
   <vue-jsoneditor
     height="400"
     ref="editor"
-    v-model:json="state.json"
+    v-model="jsonData"
   />
 
   <div>
@@ -233,17 +229,16 @@ Read more in [vanilla-jsoneditor](https://www.npmjs.com/package/svelte-jsonedito
 </template>
 
 <script setup lang="ts">
-  import {reactive, ref} from 'vue';
+  import {ref} from 'vue';
 
-  const state = reactive({
-    json: {
-      array: [1, 2, 3],
-      boolean: true,
-      Null: null,
-      number: 123,
-      object: {a: 'b', c: 'd'},
-      string: 'Hello World',
-    }
+  const jsonData = ref({
+    array: [1, 2, 3],
+    boolean: true,
+    Null: null,
+    number: 123,
+    seconds: 0,
+    object: {a: 'b', c: 'd'},
+    string: 'Hello World',
   });
 
   const editor = ref();
@@ -267,22 +262,21 @@ The editor can be styled using the available CSS variables. A full list with all
   <vue-jsoneditor
     class="awesome-json-editor"
     height="400"
-    v-model:json="state.json"
+    v-model="jsonData"
   />
 </template>
 
 <script setup lang="ts">
-import {reactive} from 'vue';
+import {ref} from 'vue';
 
-const state = reactive({
-  json: {
-    array: [1, 2, 3],
-    boolean: true,
-    Null: null,
-    number: 123,
-    object: {a: 'b', c: 'd'},
-    string: 'Hello World',
-  }
+const jsonData = ref({
+  array: [1, 2, 3],
+  boolean: true,
+  Null: null,
+  number: 123,
+  seconds: 0,
+  object: {a: 'b', c: 'd'},
+  string: 'Hello World',
 });
 
 </script>

@@ -1,3 +1,18 @@
+export const watchPropNames: string[] = [
+  'mainMenuBar',
+  'navigationBar',
+  'statusBar',
+  'readOnly',
+  'indentation',
+  'tabSize',
+  'escapeControlCharacters',
+  'escapeUnicodeCharacters',
+  'validator',
+  'onClassName',
+  'onRenderValue',
+  'onRenderMenu',
+];
+
 export const propNames: string[] = [
   'mode',
   'mainMenuBar',

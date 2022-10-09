@@ -23,20 +23,9 @@ import type {
   MenuItem,
   JSONEditorPropsOptional,
 } from 'vanilla-jsoneditor';
-import {
-  defineComponent,
-  inject,
-  ref,
-  reactive,
-  computed,
-  watch,
-  nextTick,
-  onBeforeMount,
-  onMounted,
-  onBeforeUnmount,
-} from 'vue';
+import {defineComponent, inject, ref, reactive, computed, watch, nextTick, onMounted, onBeforeUnmount} from 'vue';
 import type {PropType} from 'vue';
-import {pickDefinedProps, fullWidthIcon} from './utils';
+import {pickDefinedProps, fullWidthIcon, watchPropNames} from './utils';
 import type {JSONEditorOptions, Content, QueryLanguageId} from '@/types';
 
 interface QueryLanguagesBuffer {
@@ -54,6 +43,12 @@ export default defineComponent({
      * Pass the JSON value or string to be rendered in the JSONEditor.
      * */
     modelValue: [Object, Array, Number, String, Boolean, String, null] as PropType<JSONValue | string>,
+    /**
+     * ### value: JSONValue | string
+     * props value is an alternative to modelValue
+     * Pass the JSON value or string to be rendered in the JSONEditor.
+     * */
+    value: [Object, Array, Number, String, Boolean, String, null] as PropType<JSONValue | string>,
     /**
      * ### json: JSONValue
      * Pass the JSON value to be rendered in the JSONEditor.
@@ -486,11 +481,14 @@ export default defineComponent({
           text: text || '',
         } as Content;
       };
-      if (props.modelValue) {
-        if (typeof props.modelValue === 'string') {
-          return getTextContent(props.modelValue) as Content;
+
+      const propValue = props.modelValue || props.value;
+
+      if (propValue) {
+        if (typeof propValue === 'string') {
+          return getTextContent(propValue) as Content;
         } else {
-          return getJsonContent(props.modelValue) as Content;
+          return getJsonContent(propValue) as Content;
         }
       }
       if (props.json) {
@@ -544,12 +542,18 @@ export default defineComponent({
       removeFullWidthButton();
     };
 
-    watch(() => props, updateProps, {deep: true});
+    watch(
+      watchPropNames.map((prop) => {
+        return () => props[prop];
+      }),
+      updateProps,
+      {deep: true}
+    );
 
-    watch(() => props.modelValue, updateContent, {deep: true});
+    watch([() => props.modelValue, () => props.value], updateContent, {deep: true});
 
     watch(
-      () => props.json,
+      [() => props.json, () => props.jsonString],
       () => {
         updateContent();
         console.warn('Prop "json" deprecated. Use v-model instead!');
@@ -558,18 +562,11 @@ export default defineComponent({
     );
 
     watch(
-      () => props.jsonString,
-      () => {
-        updateContent();
-        console.warn('Prop "json" deprecated. Use v-model instead!');
-      }
-    );
-
-    watch(
       () => props.mode,
       (newMode) => {
         if (newMode !== mode.value) {
           mode.value = newMode;
+          updateProps();
         }
       }
     );
