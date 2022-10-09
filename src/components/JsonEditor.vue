@@ -543,9 +543,11 @@ export default defineComponent({
     };
 
     watch(
-      watchPropNames.map((prop) => {
-        return () => props[prop];
-      }),
+      [
+        ...watchPropNames.map((propName) => {
+          return (): any => props[propName as keyof typeof props];
+        }),
+      ],
       updateProps,
       {deep: true}
     );
