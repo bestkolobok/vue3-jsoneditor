@@ -6,7 +6,7 @@
     "email": "alex.guzey@gmail.com"
   },
   "private": false,
-  "license": "Apache-2.0",
+  "license": "MIT",
   "type": "module",
   "main": "dist/index.mjs",
   "module": "dist/index.mjs",
