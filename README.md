@@ -90,24 +90,45 @@ Read more in [svelte-jsoneditor](https://www.npmjs.com/package/svelte-jsoneditor
 ### 👉 Use in template
 
 ```vue
+// You can use the "v-model:json" and pass json value
 <template>
   <vue-jsoneditor
-    height="400" 
-    :mode="mode"
+    height="400"
+    mode="tree"
     :queryLanguagesIds="queryLanguages"
-    v-model="jsonData" 
+    v-model:json="jsonData" 
     @error="onError" 
     @focus="onFocus" 
     @blur="onBlur" 
   />
 </template>
 
-// or
+// or you can use the "v-model:text" and pass json string
 
 <template>
   <vue-jsoneditor
-    height="400" 
-    :mode="mode" 
+    height="400"
+    mode="text"
+    v-model:text="jsonText"
+  />
+</template>
+
+// or you can use the "v-model" and pass json value. "mode" should be "tree"!!!
+
+<template>
+  <vue-jsoneditor
+    height="400"
+    mode="tree"
+    v-model="jsonData"
+  />
+</template>
+
+// or you can use the "v-model" and pass json string. "mode" should be "text"!!!
+
+<template>
+  <vue-jsoneditor
+    height="400"
+    mode="text"
     v-model="jsonText"
   />
 </template>
@@ -129,8 +150,6 @@ Read more in [svelte-jsoneditor](https://www.npmjs.com/package/svelte-jsoneditor
 
   const jsonText = ref('{"array": [1, 2, 3]}');
 
-  const mode = ref('tree');
-
   const queryLanguages = ref<QueryLanguageId[]>(['javascript', 'lodash', 'jmespath']);
   
   const onError = (error) => {
@@ -146,6 +165,17 @@ Read more in [svelte-jsoneditor](https://www.npmjs.com/package/svelte-jsoneditor
   }
 </script>
 ```
+
+### ❗️❗️❗️ Important
+
+> If you want use v-model (not v-model:json or v-model:text) then the type of data depends on the mode of the editor. 
+> If mode="tree", then the data type in the model is JSON value, if mode="text", 
+> then the data type is JSON string.
+> Please be aware that in text mode v-model can contain invalid JSON: whilst typing in text mode, 
+> a JSON document will be temporarily invalid, like when the user is typing a new string.
+> 
+> It is more clear to use v-model:json for tree mode and v-model:text for text mode.
+
 <br>
 
 ### ☑️ Slots
@@ -158,8 +188,10 @@ Read more in [svelte-jsoneditor](https://www.npmjs.com/package/svelte-jsoneditor
 ### ☑️ Props
 | Name                      | Description                                                                                                                                                                                                                                       | type                                                                                                  | default               |
 | ----------------------    | -----------------------------------------------------------------------------------------------------------------------------------------------------------------------                                                                           | :------------:                                                                                        | :-----------------:   |
-| modelValue (v-model)      | Json or string value                                                                                                                                                                                                                              | <code>object &vert; string</code>                                                                     | undefined             |
-| value                     | Same as modelValue                                                                                                                                                                                                                              | <code>object &vert; string</code>                                                                     | undefined             |
+| json (v-model)            | JSON value                                                                                                                                                                                                                                        | <code>object &vert; array &vert; true &vert; false &vert; null &vert; number &vert; string</code>     | undefined             |
+| text (v-model)            | JSON string                                                                                                                                                                                                                                       | <code>string</code>                                                                                   | undefined             |
+| modelValue (v-model)      | JSON value or JSON string                                                                                                                                                                                                                         | <code>object &vert; array &vert; true &vert; false &vert; null &vert; number &vert; string</code>     | undefined             |
+| value                     | Same as modelValue                                                                                                                                                                                                                                | <code>object &vert; string</code>                                                                     | undefined             |
 | mode                      | Open the editor in 'tree' mode or 'text' mode (formerly: code mode).                                                                                                                                                                              | <code>string</code>                                                                                   | 'tree'                |
 | mainMenuBar               | Show the main menu bar. Default value is true.                                                                                                                                                                                                    | <code>boolean</code>                                                                                  | true                  |
 | navigationBar             | Show the navigation bar with, where you can see the selected path and navigate through your document from there.                                                                                                                                  | <code>boolean</code>                                                                                  | true                  |
@@ -169,7 +201,7 @@ Read more in [svelte-jsoneditor](https://www.npmjs.com/package/svelte-jsoneditor
 | tabSize                   | When indentation is configured as a tab character (indentation: '\t'), tabSize configures how large a tab character is rendered. Default value is 4. Only applicable to text mode.                                                                | <code>number</code>                                                                                   | 4                     |
 | escapeControlCharacters   | When true, control characters like newline and tab are rendered as escaped characters \n and \t. Only applicable for 'tree' mode, in 'text' mode control characters are always escaped.                                                           | <code>boolean</code>                                                                                  | false                 |
 | escapeUnicodeCharacters   | When true, unicode characters like ☎ and 😀 are rendered escaped like \u260e and \ud83d\ude00                                                                                                                                                      | <code>boolean</code>                                                                                  | false                 |
-| validator                 | Validate the JSON document. Details in [svelte-jsoneditor](https://www.npmjs.com/package/svelte-jsoneditor)                                                                                                                                      | <code>function (json: JSONValue): ValidationError[]</code>                                             |                       |
+| validator                 | Validate the JSON document. Details in [svelte-jsoneditor](https://www.npmjs.com/package/svelte-jsoneditor)                                                                                                                                       | <code>function (json: JSONValue): ValidationError[]</code>                                            |                       |
 | queryLanguagesIds         | Configure one or multiple query language that can be used in the Transform modal. The library comes with three languages: <code>javascript</code>, <code>lodash</code> or <code>jmespath</code>                                                   | <code>QueryLanguage[]</code>                                                                          | [javascript]          |
 | queryLanguageId           | The id of the currently selected query language <code>javascript</code>, <code>lodash</code> or <code>jmespath</code>                                                                                                                             | <code>string</code>                                                                                   |                       |
 | onClassName               | Add a custom class name to specific nodes, based on their path and/or value.                                                                                                                                                                      | <code>function (path: Path, value: any): string &vert; undefined</code>                               |                       |
@@ -218,7 +250,7 @@ Read more in [svelte-jsoneditor](https://www.npmjs.com/package/svelte-jsoneditor
   <vue-jsoneditor
     height="400"
     ref="editor"
-    v-model="jsonData"
+    v-model:json="jsonData"
   />
 
   <div>
@@ -262,7 +294,7 @@ The editor can be styled using the available CSS variables. A full list with all
   <vue-jsoneditor
     class="awesome-json-editor"
     height="400"
-    v-model="jsonData"
+    v-model:json="jsonData"
   />
 </template>
 

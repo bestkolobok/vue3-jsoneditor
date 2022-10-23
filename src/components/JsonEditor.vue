@@ -55,14 +55,17 @@ export default defineComponent({
      * */
     json: [Object, Array, Number, String, Boolean, null] as PropType<JSONValue>,
     /**
-     * ### jsonString: string
-     * DEPRECATED!!!
+     * ### text: string
      * Pass the JSON string to be rendered in the JSONEditor.
+     * */
+    text: String,
+    /**
+     * ### jsonString: string
+     * Same as prop 'text'. Pass the JSON string to be rendered in the JSONEditor.
      * */
     jsonString: String,
     /**
      * ### mode: 'tree' | 'text'.
-     * DEPRECATED!!!
      * Open the editor in 'tree' mode (default) or 'text' mode (formerly: code mode).
      * */
     mode: {
@@ -248,6 +251,7 @@ export default defineComponent({
   emits: [
     'update:modelValue',
     'update:json',
+    'update:text',
     'update:jsonString',
     'change',
     'error',
@@ -407,6 +411,7 @@ export default defineComponent({
       }
 
       if (!!content.text) {
+        emit('update:text', content.text);
         emit('update:jsonString', content.text);
         emit('update:modelValue', content.text);
       }
@@ -485,14 +490,17 @@ export default defineComponent({
       const propValue = props.modelValue || props.value;
 
       if (propValue) {
-        if (typeof propValue === 'string') {
-          return getTextContent(propValue) as Content;
+        if (mode.value === 'text') {
+          return getTextContent(propValue as string) as Content;
         } else {
           return getJsonContent(propValue) as Content;
         }
       }
       if (props.json) {
         return getJsonContent(props.json) as Content;
+      }
+      if (props.text) {
+        return getTextContent(props.text) as Content;
       }
       if (props.jsonString) {
         return getTextContent(props.jsonString) as Content;
@@ -552,15 +560,12 @@ export default defineComponent({
       {deep: true}
     );
 
-    watch([() => props.modelValue, () => props.value], updateContent, {deep: true});
-
     watch(
-      [() => props.json, () => props.jsonString],
-      () => {
-        updateContent();
-        console.warn('Prop "json" deprecated. Use v-model instead!');
-      },
-      {deep: true}
+      [() => props.modelValue, () => props.value, () => props.json, () => props.text, () => props.jsonString],
+      updateContent,
+      {
+        deep: true,
+      }
     );
 
     watch(

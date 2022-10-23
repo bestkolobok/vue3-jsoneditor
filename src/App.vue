@@ -9,7 +9,7 @@
         height="400"
         :dark-theme="darkTheme"
         :mode="mode"
-        v-model="jsonData"
+        v-model:json="jsonData"
         ref="editor"
         :queryLanguagesIds="queryLanguages"
       />
