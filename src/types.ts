@@ -10,6 +10,7 @@ export interface JSONEditorOptions {
   statusBar?: boolean;
   escapeControlCharacters?: boolean;
   escapeUnicodeCharacters?: boolean;
+  flattenColumns?: boolean;
   validator?: Validator;
   queryLanguagesIds?: QueryLanguageId[];
   queryLanguageId?: QueryLanguageId;

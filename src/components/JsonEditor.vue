@@ -21,8 +21,8 @@ import type {
   Validator,
   Mode,
   MenuItem,
-  JSONEditorPropsOptional,
-} from 'vanilla-jsoneditor';
+  JSONEditorPropsOptional, RenderMenuContext
+} from "vanilla-jsoneditor";
 import {defineComponent, inject, ref, reactive, computed, watch, nextTick, onMounted, onBeforeUnmount} from 'vue';
 import type {PropType} from 'vue';
 import {pickDefinedProps, fullWidthIcon, watchPropNames} from './utils';
@@ -65,13 +65,13 @@ export default defineComponent({
      * */
     jsonString: String,
     /**
-     * ### mode: 'tree' | 'text'.
+     * ### mode: 'tree' | 'text' | 'table'.
      * Open the editor in 'tree' mode (default) or 'text' mode (formerly: code mode).
      * */
     mode: {
       type: String as PropType<Mode>,
       default: 'tree',
-      validator: (value: string): boolean => ['tree', 'text'].includes(value as string),
+      validator: (value: string): boolean => ['tree', 'text', 'table'].includes(value as string),
     },
     /**
      * ### mainMenuBar: boolean
@@ -191,10 +191,11 @@ export default defineComponent({
      * */
     onRenderValue: Function as PropType<OnRenderValue>,
     /**
-     * ### onRenderMenu(mode: 'tree' | 'text', items: MenuItem[]) : MenuItem[] | undefined.
-     * Callback which can be used to make changes to the menu items. New items can be added, or
-     * existing items can be removed or reorganized. When the function returns undefined,
-     * the original items will be applied.
+     * ### onRenderMenu(items: MenuItem[], context: { mode: 'tree' | 'text' | 'table', modal: boolean }) : MenuItem[] | undefined.
+     * Callback which can be used to make changes to the menu items. New items can be added, or existing items can be removed or
+     * reorganized. When the function returns undefined, the original items will be applied. Using the context values mode and
+     * modal, different actions can be taken depending on the mode of the editor and whether the editor is rendered inside a
+     * modal or not.
      *
      *  A menu item MenuItem can be one of the following types:
      *
@@ -373,7 +374,7 @@ export default defineComponent({
       fullWidthButton.value = createElement('button') as HTMLButtonElement;
       fullWidthButton.value.classList.add('jse-full-width');
       fullWidthButton.value.classList.add('jse-button');
-      fullWidthButton.value.classList.add('svelte-v4jelk');
+      fullWidthButton.value.classList.add('svelte-497ud4');
 
       fullWidthButton.value.innerHTML += fullWidthIcon;
 
@@ -393,7 +394,7 @@ export default defineComponent({
     };
 
     const expandCollapseAll = (value: boolean): void => {
-      if (props.mode === 'text') return;
+      if (props.mode !== 'tree') return;
 
       editor.value?.expand(() => value);
     };
@@ -441,15 +442,14 @@ export default defineComponent({
     };
 
     const onRenderMenu: OnRenderMenu = (
-      mode: 'tree' | 'text' | 'repair',
-      items: MenuItem[]
+      items: MenuItem[], context: RenderMenuContext
     ): MenuItem[] | undefined | void => {
       nextTick(() => {
         setFullWidthButton();
       });
 
       if (typeof props.onRenderMenu === 'function') {
-        return props.onRenderMenu(mode, items);
+        return props.onRenderMenu(items, context);
       }
 
       return items;
@@ -477,6 +477,23 @@ export default defineComponent({
 
     const getContent = (): Content => {
       const getJsonContent = (json: any = {}): Content => {
+        if (
+          json === null ||
+          typeof json === 'undefined' ||
+          typeof json === 'number' ||
+          typeof json === 'bigint' ||
+          typeof json === 'string' ||
+          typeof json === 'boolean'
+        ) {
+          return {
+            json: json,
+          } as Content;
+        }
+        if (Array.isArray(json)) {
+          return {
+            json: [...json],
+          } as Content;
+        }
         return {
           json: {...json},
         } as Content;
@@ -520,7 +537,6 @@ export default defineComponent({
           target: container.value,
           props: editorProps,
         });
-
         editor.value.set(getContent());
       }
 
