@@ -21,7 +21,10 @@ import type {
   Validator,
   Mode,
   MenuItem,
-  JSONEditorPropsOptional, RenderMenuContext
+  JSONEditorPropsOptional,
+  RenderMenuContext,
+  JSONPathParser,
+  JSONParser
 } from "vanilla-jsoneditor";
 import {defineComponent, inject, ref, reactive, computed, watch, nextTick, onMounted, onBeforeUnmount} from 'vue';
 import type {PropType} from 'vue';
@@ -43,27 +46,32 @@ export default defineComponent({
      * Pass the JSON value or string to be rendered in the JSONEditor.
      * */
     modelValue: [Object, Array, Number, String, Boolean, String, null] as PropType<JSONValue | string>,
+
     /**
      * ### value: JSONValue | string
      * props value is an alternative to modelValue
      * Pass the JSON value or string to be rendered in the JSONEditor.
      * */
     value: [Object, Array, Number, String, Boolean, String, null] as PropType<JSONValue | string>,
+
     /**
      * ### json: JSONValue
      * Pass the JSON value to be rendered in the JSONEditor.
      * */
     json: [Object, Array, Number, String, Boolean, null] as PropType<JSONValue>,
+
     /**
      * ### text: string
      * Pass the JSON string to be rendered in the JSONEditor.
      * */
     text: String,
+
     /**
      * ### jsonString: string
      * Same as prop 'text'. Pass the JSON string to be rendered in the JSONEditor.
      * */
     jsonString: String,
+
     /**
      * ### mode: 'tree' | 'text' | 'table'.
      * Open the editor in 'tree' mode (default) or 'text' mode (formerly: code mode).
@@ -73,6 +81,7 @@ export default defineComponent({
       default: 'tree',
       validator: (value: string): boolean => ['tree', 'text', 'table'].includes(value as string),
     },
+
     /**
      * ### mainMenuBar: boolean
      * Show the main menu bar. Default value is true.
@@ -81,6 +90,7 @@ export default defineComponent({
       type: Boolean,
       default: undefined,
     },
+
     /**
      * ### navigationBar: boolean
      * Show the navigation bar with, where you can see the selected path and navigate through your
@@ -90,6 +100,7 @@ export default defineComponent({
       type: Boolean,
       default: undefined,
     },
+
     /**
      * ### statusBar: boolean
      * Show a status bar at the bottom of the 'text' editor, showing information about the cursor
@@ -99,6 +110,7 @@ export default defineComponent({
       type: Boolean,
       default: undefined,
     },
+
     /**
      * ### readOnly: boolean
      * Open the editor in read-only mode: no changes can be made, non-relevant buttons are hidden
@@ -108,6 +120,7 @@ export default defineComponent({
       type: Boolean,
       default: undefined,
     },
+
     /**
      * ### indentation: number | string
      * Number of spaces use for indentation when stringifying JSON, or a string to be used as indentation
@@ -115,12 +128,14 @@ export default defineComponent({
      * indentation: 4). See also property tabSize.
      * */
     indentation: [String, Number],
+
     /**
      * ### tabSize: number
      * When indentation is configured as a tab character (indentation: '\t'), tabSize configures how
      * large a tab character is rendered. Default value is 4. Only applicable to text mode.
      * */
     tabSize: Number,
+
     /**
      * ### escapeControlCharacters: boolean.
      * False by default. When true, control characters like newline and tab are rendered as escaped
@@ -131,6 +146,7 @@ export default defineComponent({
       type: Boolean,
       default: undefined,
     },
+
     /**
      * ### escapeUnicodeCharacters: boolean.
      * False by default. When true, unicode characters like ☎ and 😀 are rendered escaped
@@ -140,6 +156,18 @@ export default defineComponent({
       type: Boolean,
       default: undefined,
     },
+
+    /**
+     * ### flattenColumns: boolean.
+     * True by default. Only applicable to 'table' mode. When true, nested object properties
+     * will be displayed each in their own column, with the nested path as column name. When false,
+     * nested objects will be rendered inline, and double-clicking them will open them in a popup
+     * */
+    flattenColumns: {
+      type: Boolean,
+      default: undefined,
+    },
+
     /**
      * ### validator: function (json: JSONValue): ValidationError[].
      * Validate the JSON document. For example use the built-in JSON Schema validator
@@ -150,24 +178,63 @@ export default defineComponent({
      * ```
      * */
     validator: Function as PropType<Validator>,
+
     /**
-     * ### queryLanguages: QueryLanguage[].
+     * ### parser: JSON = JSON
+     * Configure a custom JSON parser, like lossless-json. By default, the native JSON
+     * parser of JavaScript is used. The JSON interface is an object with a parse and
+     * stringify function.
+     * */
+    parser: Object as PropType<JSONParser>,
+
+    /**
+     * ### validationParser: JSONParser = JSON
+     * Only applicable when a validator is provided. This is the same as parser, except
+     * that this parser is used to parse the data before sending it to the validator.
+     * Configure a custom JSON parser that is used to parse JSON before passing it to the
+     * validator. By default, the built-in JSON parser is used. When passing a custom
+     * validationParser, make sure the output of the parser is supported by the configured
+     * validator. So, when the validationParser can output bigint numbers or other numeric
+     * types, the validator must also support that. In tree mode, when parser is not equal
+     * to validationParser, the JSON document will be converted before it is passed to the
+     * validator via validationParser.parse(parser.stringify(json))
+     * */
+    validationParser: Object as PropType<JSONParser>,
+
+    /**
+     * ### pathParser: JSONPathParser
+     * An optional object with a parse and stringify method to parse and stringify a JSONPath,
+     * which is an array with property names. The pathParser is used in the path editor in the
+     * navigation bar, which is opened by clicking the edit button on the right side of the
+     * navigation bar. The pathParser.parse function is allowed to throw an Error when the input
+     * is invalid. By default, a JSON Path notation is used, which looks like $.data[2].nested.property.
+     * Alternatively, it is possible to use for example a JSON Pointer notation
+     * like /data/2/nested/property or something custom-made. Related helper functions:
+     * parseJSONPath and stringifyJSONPath, parseJSONPointer and compileJSONPointer
+     * */
+    pathParser: Object as PropType<JSONPathParser>,
+
+    /**
+     * ### queryLanguagesIds: QueryLanguageId[].
      * Configure one or multiple query language that can be used in the Transform modal.
      * An array of available query languages id's
      * [javascript', 'lodash', 'jmespath']
      * */
     queryLanguagesIds: Array as PropType<QueryLanguageId[]>,
+
     /**
      * ### queryLanguageId: string.
      * The id of the currently selected query language.
      * 'javascript' | 'lodash' | 'jmespath'
      * */
     queryLanguageId: String as PropType<QueryLanguageId>,
+
     /**
      * ### onClassName(path: Path, value: any): string | undefined.
      * Add a custom class name to specific nodes, based on their path and/or value.
      * */
     onClassName: Function as PropType<OnClassName>,
+
     /**
      * ### onRenderValue(props: RenderValueProps) : RenderValueComponentDescription[]
      *
@@ -190,6 +257,7 @@ export default defineComponent({
      * ```
      * */
     onRenderValue: Function as PropType<OnRenderValue>,
+
     /**
      * ### onRenderMenu(items: MenuItem[], context: { mode: 'tree' | 'text' | 'table', modal: boolean }) : MenuItem[] | undefined.
      * Callback which can be used to make changes to the menu items. New items can be added, or existing items can be removed or
@@ -226,11 +294,13 @@ export default defineComponent({
      *  ```
      * */
     onRenderMenu: Function as PropType<OnRenderMenu>,
+
     /**
      * ### height: string | number
      * Height of render container
      * */
     height: [String, Number],
+
     /**
      * ### fullWidthButton: boolean
      * Show full screen button
@@ -239,6 +309,7 @@ export default defineComponent({
       type: Boolean,
       default: undefined,
     },
+
     /**
      * ### darkTheme: boolean
      * Switch to dark theme

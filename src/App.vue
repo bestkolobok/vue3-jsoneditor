@@ -31,7 +31,7 @@
 
 <script setup lang="ts">
 // import JsonEditor from '@/components/JsonEditor.vue';
-import {ref} from 'vue';
+import {ref, computed} from 'vue';
 import type {QueryLanguageId} from './types';
 
 const jsonData = ref({
@@ -44,15 +44,16 @@ const jsonData = ref({
   string: 'Hello World',
 });
 
-const mode = ref('tree');
-
 const queryLanguages = ref<QueryLanguageId[]>(['javascript', 'lodash', 'jmespath']);
 
+const modes = ['text', 'tree', 'table'];
+const currentModeIndex = ref(0)
+const mode = computed(() => modes[currentModeIndex.value]);
 const toggleMode = () => {
-  if (mode.value === 'tree') {
-    mode.value = 'text';
+  if (currentModeIndex.value === 2) {
+    currentModeIndex.value = 0;
   } else {
-    mode.value = 'tree';
+    currentModeIndex.value++;
   }
 };
 
