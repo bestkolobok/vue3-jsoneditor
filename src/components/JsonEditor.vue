@@ -514,7 +514,7 @@ export default defineComponent({
 
     const onRenderMenu: OnRenderMenu = (
       items: MenuItem[], context: RenderMenuContext
-    ): MenuItem[] | undefined | void => {
+    ): MenuItem[] | undefined => {
       nextTick(() => {
         setFullWidthButton();
       });
