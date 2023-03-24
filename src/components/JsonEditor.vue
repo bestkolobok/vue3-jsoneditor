@@ -14,7 +14,6 @@
 import type {
   JSONValue,
   QueryLanguage,
-  JSONPatchResult,
   OnClassName,
   OnRenderValue,
   OnRenderMenu,
@@ -24,7 +23,8 @@ import type {
   JSONEditorPropsOptional,
   RenderMenuContext,
   JSONPathParser,
-  JSONParser
+  JSONParser,
+  OnChangeStatus
 } from "vanilla-jsoneditor";
 import {defineComponent, inject, ref, reactive, computed, watch, nextTick, onMounted, onBeforeUnmount} from 'vue';
 import type {PropType} from 'vue';
@@ -470,7 +470,7 @@ export default defineComponent({
       editor.value?.expand(() => value);
     };
 
-    const onChange = (content: Content, previousContent: Content, patchResult: JSONPatchResult | null): void => {
+    const onChange = (content: Content, previousContent: Content, status: OnChangeStatus): void => {
       if (blockChange.value) {
         blockChange.value = false;
         return;
@@ -488,7 +488,7 @@ export default defineComponent({
         emit('update:modelValue', content.text);
       }
 
-      emit('change', content, previousContent, patchResult);
+      emit('change', content, previousContent, status);
     };
 
     const onError = (err: Error): void => {
