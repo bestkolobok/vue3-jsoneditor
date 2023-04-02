@@ -244,11 +244,13 @@ Read more in [svelte-jsoneditor](https://www.npmjs.com/package/svelte-jsoneditor
 - <b>$updateProps</b> - Update some or all of the properties [See more](https://www.npmjs.com/package/svelte-jsoneditor) about <code>updateProps()</code>
 - <b>$refresh</b> - Refresh rendering of the contents, for example after changing the font size. This is only available in text mode. [See more](https://www.npmjs.com/package/svelte-jsoneditor) about <code>refresh()</code>
 - <b>$focus</b> - Give the editor focus. [See more](https://www.npmjs.com/package/svelte-jsoneditor) about <code>focus()</code>
+- <b>$destroy</b> - Destroy the editor, remove it from the DOM. [See more](https://www.npmjs.com/package/svelte-jsoneditor) about <code>destroy()</code>
 - <b>$patch</b> - Apply a JSON patch document to update the contents of the JSON document. [See more](https://www.npmjs.com/package/svelte-jsoneditor) about <code>patch()</code>
 - <b>$transform</b> - Programmatically trigger clicking of the transform button in the main menu, opening the transform model.  [See more](https://www.npmjs.com/package/svelte-jsoneditor) about <code>transform()</code>
-- <b>$scrollTo</b> - Scroll the editor vertically such that the specified path comes into view. The path will be expanded when needed. [See more](https://www.npmjs.com/package/svelte-jsoneditor) about <code>scrollTo()</code>
+- <b>$scrollTo</b> - Scroll the editor vertically such that the specified path comes into view. Only applicable to modes tree and table. The path will be expanded when needed. The returned Promise is resolved after scrolling is finished. [See more](https://www.npmjs.com/package/svelte-jsoneditor) about <code>scrollTo()</code>
 - <b>$findElement</b> - Find the DOM element of a given path. Returns null when not found. [See more](https://www.npmjs.com/package/svelte-jsoneditor) about <code>findElement()</code>
 - <b>$acceptAutoRepair</b> - In tree mode, invalid JSON is automatically repaired when loaded. [See more](https://www.npmjs.com/package/svelte-jsoneditor) about <code>acceptAutoRepair()</code>
+- <b>$validate</b> - Get all current parse errors and validation errors. [See more](https://www.npmjs.com/package/svelte-jsoneditor) about <code>validate()</code>
 
 
 <br>

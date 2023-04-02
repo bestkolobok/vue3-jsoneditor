@@ -1,4 +1,4 @@
-import type {Validator, OnRenderValue, OnClassName, OnRenderMenu, Mode, JSONValue} from 'vanilla-jsoneditor';
+import type {Validator, OnRenderValue, OnClassName, OnRenderMenu, Mode, JSONValue, JSONPatchDocument} from 'vanilla-jsoneditor';
 
 export interface JSONEditorOptions {
   readOnly?: boolean;
@@ -37,3 +37,13 @@ export type Content = JSONContent | TextContent;
 export type Path = Array<string | number | symbol>;
 
 export type QueryLanguageId = 'javascript' | 'lodash' | 'jmespath';
+
+export interface OnTransformArguments {
+  operations: JSONPatchDocument, json: JSONValue, transformedJson: JSONValue
+}
+export interface TransformArguments {
+  id?: string,
+  rootPath?: [],
+  onTransform: (args: OnTransformArguments) => void,
+  onClose: () => void
+}

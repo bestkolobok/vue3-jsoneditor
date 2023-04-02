@@ -24,12 +24,15 @@ import type {
   RenderMenuContext,
   JSONPathParser,
   JSONParser,
-  OnChangeStatus
+  OnChangeStatus,
+  ContentErrors,
+  JSONPatchDocument,
+  JSONPatchResult,
 } from "vanilla-jsoneditor";
 import {defineComponent, inject, ref, reactive, computed, watch, nextTick, onMounted, onBeforeUnmount} from 'vue';
 import type {PropType} from 'vue';
 import {pickDefinedProps, fullWidthIcon, watchPropNames} from './utils';
-import type {JSONEditorOptions, Content, QueryLanguageId} from '@/types';
+import type {JSONEditorOptions, Content, QueryLanguageId, Path, TransformArguments} from '@/types';
 
 interface QueryLanguagesBuffer {
   javascript?: QueryLanguage;
@@ -464,10 +467,10 @@ export default defineComponent({
       }
     };
 
-    const expandCollapseAll = (value: boolean): void => {
-      if (props.mode !== 'tree') return;
+    const expandCollapseAll = async (value: boolean): Promise<void> => {
+      if (mode.value !== 'tree') return;
 
-      editor.value?.expand(() => value);
+      await editor.value?.expand(() => value);
     };
 
     const onChange = (content: Content, previousContent: Content, status: OnChangeStatus): void => {
@@ -496,6 +499,7 @@ export default defineComponent({
     };
 
     const onChangeMode = (newMode: Mode): void => {
+      mode.value = newMode;
       emit('change-mode', newMode);
       emit('update:mode', newMode);
     };
@@ -608,10 +612,10 @@ export default defineComponent({
           target: container.value,
           props: editorProps,
         });
-        editor.value.set(getContent());
+        await editor.value.set(getContent());
       }
 
-      editor.value.focus();
+      await editor.value.focus();
     };
 
     const updateProps = async (): Promise<void> => {
@@ -687,26 +691,54 @@ export default defineComponent({
     });
 
     expose({
-      $collapseAll(): void {
-        expandCollapseAll(false);
+      async $collapseAll(): Promise<void> {
+        await expandCollapseAll(false);
       },
-
-      $expandAll(): void {
-        expandCollapseAll(true);
+      async $expandAll(): Promise<void> {
+        await expandCollapseAll(true);
       },
-
-      $expand: editor.value?.expand,
-      $get: editor.value?.get,
-      $set: editor.value?.set,
-      $update: editor.value?.update,
-      $updateProps: editor.value?.updateProps,
-      $refresh: editor.value?.refresh,
-      $focus: editor.value?.focus,
-      $patch: editor.value?.patch,
-      $transform: editor.value?.transform,
-      $scrollTo: editor.value?.scrollTo,
-      $findElement: editor.value?.findElement,
-      $acceptAutoRepair: editor.value?.acceptAutoRepair,
+      async $expand(callback: (path: Path) => boolean): Promise<void> {
+        await editor.value?.expand(callback);
+      },
+      $get(): Content {
+        return editor.value?.get();
+      },
+      async $set(content: Content): Promise<void> {
+        await editor.value?.set(content);
+      },
+      async $update(content: Content): Promise<void> {
+        await editor.value?.update(content);
+      },
+      async $updateProps(props: object): Promise<void> {
+        await editor.value?.updateProps(props);
+      },
+      async $refresh(): Promise<void> {
+        await editor.value?.refresh();
+      },
+      async $focus(): Promise<void> {
+        await editor.value?.focus();
+      },
+      async $destroy(): Promise<void> {
+        await editor.value?.destroy();
+      },
+      async $patch(operations: JSONPatchDocument): Promise<JSONPatchResult> {
+        return await editor.value?.patch(operations);
+      },
+      $transform(args: TransformArguments): void {
+        editor.value?.transform(args);
+      },
+      async $scrollTo(path: Path): Promise<void> {
+        await editor.value?.scrollTo(path);
+      },
+      $findElement(path: Path): HTMLElement | null {
+        return editor.value?.findElement(path);
+      },
+      async $acceptAutoRepair(): Promise<Content> {
+        return await editor.value?.acceptAutoRepair();
+      },
+      $validate(): ContentErrors | null {
+        return editor.value?.validate();
+      },
     });
 
     return {

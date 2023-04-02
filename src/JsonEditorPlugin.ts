@@ -3,6 +3,7 @@ import type {App} from 'vue';
 import type {JSONEditorOptions, TextContent, JSONContent, Content, Path, QueryLanguageId} from './types';
 
 import type {
+  ContentErrors,
   JSONValue,
   JSONPatchDocument,
   JSONPatchResult,
@@ -17,12 +18,15 @@ import type {
   OnClassName,
   OnRenderValue,
   OnRenderMenu,
+  OnChangeStatus,
   Validator,
   Mode,
   MenuItem,
   JSONEditor,
   JSONNodeItem,
   JSONNodeProp,
+  JSONPathParser,
+  JSONParser
 } from 'vanilla-jsoneditor';
 
 interface Params {
@@ -31,6 +35,7 @@ interface Params {
 }
 
 export type {
+  ContentErrors,
   Params,
   TextContent,
   JSONContent,
@@ -51,12 +56,15 @@ export type {
   OnClassName,
   OnRenderValue,
   OnRenderMenu,
+  OnChangeStatus,
   Validator,
   Mode,
   MenuItem,
   JSONEditor,
   JSONNodeItem,
   JSONNodeProp,
+  JSONPathParser,
+  JSONParser
 };
 
 export default {

@@ -24,6 +24,10 @@
         <button @click="changeJson">Change json</button>
 
         <button @click="darkTheme = !darkTheme">Change theme</button>
+
+        <button @click="onFocus">Focus</button>
+
+        <button @click="onRefresh">Refresh</button>
       </div>
     </main>
   </div>
@@ -47,7 +51,7 @@ const jsonData = ref({
 const queryLanguages = ref<QueryLanguageId[]>(['javascript', 'lodash', 'jmespath']);
 
 const modes = ['text', 'tree', 'table'];
-const currentModeIndex = ref(0)
+const currentModeIndex = ref(1)
 const mode = computed(() => modes[currentModeIndex.value]);
 const toggleMode = () => {
   if (currentModeIndex.value === 2) {
@@ -72,6 +76,14 @@ const onCollapse = () => {
 const onExpand = () => {
   editor.value.$expandAll();
 };
+
+const onFocus = () => {
+  editor.value.$focus();
+};
+
+const onRefresh = () => {
+  editor.value.$refresh();
+};
 </script>
 
 <style scoped lang="scss">
@@ -87,6 +99,7 @@ const onExpand = () => {
     display: flex;
     margin-top: 48px;
     gap: 20px;
+    flex-wrap: wrap;
 
     button {
       padding: 8px 12px;
