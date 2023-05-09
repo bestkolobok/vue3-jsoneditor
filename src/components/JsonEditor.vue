@@ -115,6 +115,16 @@ export default defineComponent({
     },
 
     /**
+     * ### askToFormat: boolean
+     * When true (default), the user will be asked whether he/she wants to format the JSON document
+     * when a compact document is loaded or pasted in 'text' mode. Only applicable to 'text' mode.
+     */
+    askToFormat: {
+      type: Boolean,
+      default: undefined,
+    },
+
+    /**
      * ### readOnly: boolean
      * Open the editor in read-only mode: no changes can be made, non-relevant buttons are hidden
      * from the menu, and the context menu is not enabled. Default value is false.
