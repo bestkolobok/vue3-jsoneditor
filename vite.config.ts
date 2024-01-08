@@ -30,7 +30,7 @@ export default defineConfig({
     chunkSplitPlugin({
       strategy: 'single-vendor',
       customSplitting: {
-        'vanilla-jsoneditor': ['vanilla-jsoneditor'],
+        'vanilla-jsoneditor': [/vanilla-jsoneditor/],
       },
     }),
   ],
@@ -38,6 +38,9 @@ export default defineConfig({
     alias: {
       '@': fileURLToPath(new URL('./src', import.meta.url)),
     },
+  },
+  define:{
+    __VUE_PROD_HYDRATION_MISMATCH_DETAILS__: false
   },
   build: {
     cssCodeSplit: false,

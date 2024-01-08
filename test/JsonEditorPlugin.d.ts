@@ -1,7 +1,5 @@
-import type {JSONEditorOptions, TextContent, JSONContent, Content, Path} from './types';
+import type {JSONEditorOptions, TextContent, JSONContent, Content, Path, JSONPatchDocument, JSONValue} from './types';
 import type {
-  JSONValue,
-  JSONPatchDocument,
   JSONPatchResult,
   ValidationError,
   QueryLanguage,

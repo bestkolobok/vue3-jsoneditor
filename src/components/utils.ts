@@ -1,4 +1,5 @@
 export const watchPropNames: string[] = [
+  'selection',
   'mainMenuBar',
   'navigationBar',
   'statusBar',
@@ -16,6 +17,7 @@ export const watchPropNames: string[] = [
 ];
 
 export const propNames: string[] = [
+  'selection',
   'mode',
   'mainMenuBar',
   'navigationBar',
@@ -67,3 +69,11 @@ export const fullWidthIcon: string = `
     <path d="M958.029496 916.671553 958.029496 648.27471c0-18.935258-15.368012-34.304294-34.304294-34.304294-18.935258 0-34.304294 15.369036-34.304294 34.304294l0 193.683211L671.313425 623.781876c-12.82919-12.830213-33.618679-12.830213-46.515407 0-12.830213 12.897751-12.830213 33.686217 0 46.515407l218.176045 218.107483L649.290853 888.404766c-18.935258 0-34.304294 15.368012-34.304294 34.304294 0 18.936281 15.369036 34.304294 34.304294 34.304294l268.397866 0C942.79963 957.013353 958.029496 944.115602 958.029496 916.671553L958.029496 916.671553z" p-id="1931" fill="#e6e6e6"></path>
   </svg>
 `;
+
+export const hasProp = <T>(obj: any, propertyName: keyof T, isWarning = false): obj is T => {
+  const resolve = obj && typeof obj[propertyName] !== 'undefined';
+  if (!resolve && isWarning) {
+    console.warn('Typeguard warn!!! The object has no property: ', propertyName);
+  }
+  return resolve;
+};

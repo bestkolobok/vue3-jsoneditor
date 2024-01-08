@@ -1,9 +1,11 @@
-import type {Validator, OnRenderValue, OnClassName, OnRenderMenu, Mode, JSONValue, JSONPatchDocument} from 'vanilla-jsoneditor';
+import type {Validator, OnRenderValue, OnClassName, OnRenderMenu, Mode, JSONEditorSelection, JSONParser, JSONPathParser} from 'vanilla-jsoneditor';
+import type { JSONPatchDocument } from 'immutable-json-patch';
 
 export interface JSONEditorOptions {
   readOnly?: boolean;
   indentation?: number | string;
   tabSize?: number;
+  selection?: JSONEditorSelection;
   mode?: Mode;
   mainMenuBar?: boolean;
   navigationBar?: boolean;
@@ -13,6 +15,9 @@ export interface JSONEditorOptions {
   escapeUnicodeCharacters?: boolean;
   flattenColumns?: boolean;
   validator?: Validator;
+  parser?: JSONParser;
+  validationParser?: JSONParser;
+  pathParser?: JSONPathParser;
   queryLanguagesIds?: QueryLanguageId[];
   queryLanguageId?: QueryLanguageId;
   onRenderValue?: OnRenderValue;
@@ -23,14 +28,14 @@ export interface JSONEditorOptions {
   darkTheme?: boolean;
 }
 
+export type JSONValue = unknown;
+
 export type TextContent = {
-  json?: undefined;
   text: string;
 };
 
 export type JSONContent = {
   json: JSONValue;
-  text?: undefined;
 };
 
 export type Content = JSONContent | TextContent;
@@ -47,4 +52,8 @@ export interface TransformArguments {
   rootPath?: [],
   onTransform: (args: OnTransformArguments) => void,
   onClose: () => void
+}
+
+export type {
+  JSONPatchDocument
 }

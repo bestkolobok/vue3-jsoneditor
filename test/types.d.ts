@@ -5,8 +5,8 @@ import type {
   OnClassName,
   OnRenderMenu,
   Mode,
-  JSONValue,
 } from 'vanilla-jsoneditor';
+import type {JSONValue} from './types';
 export interface JSONEditorOptions {
   readOnly?: boolean;
   indentation?: number | string;

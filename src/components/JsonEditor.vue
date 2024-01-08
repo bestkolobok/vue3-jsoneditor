@@ -12,7 +12,6 @@
 
 <script lang="ts">
 import type {
-  JSONValue,
   QueryLanguage,
   OnClassName,
   OnRenderValue,
@@ -26,13 +25,13 @@ import type {
   JSONParser,
   OnChangeStatus,
   ContentErrors,
-  JSONPatchDocument,
   JSONPatchResult,
-} from "vanilla-jsoneditor";
+  JSONEditorSelection, JSONEditorContext
+} from 'vanilla-jsoneditor';
 import {defineComponent, inject, ref, reactive, computed, watch, nextTick, onMounted, onBeforeUnmount} from 'vue';
 import type {PropType} from 'vue';
-import {pickDefinedProps, fullWidthIcon, watchPropNames} from './utils';
-import type {JSONEditorOptions, Content, QueryLanguageId, Path, TransformArguments} from '@/types';
+import {pickDefinedProps, fullWidthIcon, watchPropNames, hasProp} from './utils';
+import type {JSONEditorOptions, Content, QueryLanguageId, Path, TransformArguments, JSONPatchDocument} from '@/types';
 
 interface QueryLanguagesBuffer {
   javascript?: QueryLanguage;
@@ -45,23 +44,23 @@ export default defineComponent({
 
   props: {
     /**
-     * ### modelValue: JSONValue | string
+     * ### modelValue: unknown
      * Pass the JSON value or string to be rendered in the JSONEditor.
      * */
-    modelValue: [Object, Array, Number, String, Boolean, String, null] as PropType<JSONValue | string>,
+    modelValue: [Object, Array, Number, String, Boolean, String, null] as PropType<unknown>,
 
     /**
-     * ### value: JSONValue | string
+     * ### value: unknown
      * props value is an alternative to modelValue
      * Pass the JSON value or string to be rendered in the JSONEditor.
      * */
-    value: [Object, Array, Number, String, Boolean, String, null] as PropType<JSONValue | string>,
+    value: [Object, Array, Number, String, Boolean, String, null] as PropType<unknown>,
 
     /**
-     * ### json: JSONValue
+     * ### json: unknown
      * Pass the JSON value to be rendered in the JSONEditor.
      * */
-    json: [Object, Array, Number, String, Boolean, null] as PropType<JSONValue>,
+    json: [Object, Array, Number, String, Boolean, null] as PropType<unknown>,
 
     /**
      * ### text: string
@@ -74,6 +73,17 @@ export default defineComponent({
      * Same as prop 'text'. Pass the JSON string to be rendered in the JSONEditor.
      * */
     jsonString: String,
+
+    /**
+     * ### selection: JSONEditorSelection | null.
+     * The current selected contents. You can use two-way binding using bind:selection. The tree mode
+     * supports MultiSelection, KeySelection, ValueSelection, InsideSelection, or AfterSelection. The
+     * table mode supports ValueSelection, and text mode supports TextSelection.
+     * */
+    selection: {
+      type: Object as PropType<JSONEditorSelection | null>,
+      default: null,
+    },
 
     /**
      * ### mode: 'tree' | 'text' | 'table'.
@@ -182,7 +192,7 @@ export default defineComponent({
     },
 
     /**
-     * ### validator: function (json: JSONValue): ValidationError[].
+     * ### validator: function (json: unknown): ValidationError[].
      * Validate the JSON document. For example use the built-in JSON Schema validator
      * powered by Ajv:
      * ```ts
@@ -338,6 +348,7 @@ export default defineComponent({
     'update:json',
     'update:text',
     'update:jsonString',
+    'update:selection',
     'change',
     'error',
     'change-mode',
@@ -351,7 +362,7 @@ export default defineComponent({
     const pluginOptions: JSONEditorOptions = inject('jsonEditorOptions', {});
 
     const container = ref<HTMLDivElement>();
-    const fullWidthButton = ref<HTMLButtonElement>(null);
+    const fullWidthButton = ref<HTMLButtonElement | null>(null);
 
     const max = ref<boolean>(false);
     const blockUpdate = ref(false);
@@ -490,12 +501,12 @@ export default defineComponent({
       }
       blockUpdate.value = true;
 
-      if (!!content.json) {
+      if (hasProp(content, 'json')) {
         emit('update:json', content.json);
         emit('update:modelValue', content.json);
       }
 
-      if (!!content.text) {
+      if (hasProp(content, 'text')) {
         emit('update:text', content.text);
         emit('update:jsonString', content.text);
         emit('update:modelValue', content.text);
@@ -524,6 +535,10 @@ export default defineComponent({
 
     const onBlur = (): void => {
       emit('blur');
+    };
+
+    const onSelect = (selection: JSONEditorSelection | null): void => {
+      emit('update:selection', selection);
     };
 
     const onRenderMenu: OnRenderMenu = (
@@ -555,6 +570,7 @@ export default defineComponent({
         onFocus,
         onBlur,
         onRenderMenu,
+        onSelect
       };
     };
 

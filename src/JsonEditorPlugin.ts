@@ -1,11 +1,9 @@
 import {VueJsonEditor} from './components';
 import type {App} from 'vue';
-import type {JSONEditorOptions, TextContent, JSONContent, Content, Path, QueryLanguageId} from './types';
+import type {JSONEditorOptions, TextContent, JSONContent, Content, Path, QueryLanguageId, JSONValue, JSONPatchDocument} from './types';
 
 import type {
   ContentErrors,
-  JSONValue,
-  JSONPatchDocument,
   JSONPatchResult,
   ValidationError,
   QueryLanguage,
@@ -26,7 +24,8 @@ import type {
   JSONNodeItem,
   JSONNodeProp,
   JSONPathParser,
-  JSONParser
+  JSONParser,
+  JSONEditorSelection
 } from 'vanilla-jsoneditor';
 
 interface Params {
@@ -64,7 +63,8 @@ export type {
   JSONNodeItem,
   JSONNodeProp,
   JSONPathParser,
-  JSONParser
+  JSONParser,
+  JSONEditorSelection
 };
 
 export default {
