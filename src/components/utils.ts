@@ -38,8 +38,8 @@ export const propNames: string[] = [
   'onRenderMenu',
 ];
 
-export const pickDefinedProps = (options: object = {}, props: object) => {
-  const computedProps: object = {};
+export const pickDefinedProps = (options: Record<string, any> = {}, props: Record<string, any>) => {
+  const computedProps: Record<string, any> = {};
 
   for (const propName of propNames) {
     const prop =
