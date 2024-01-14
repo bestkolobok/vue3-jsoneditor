@@ -19,14 +19,13 @@ import type {
   Validator,
   Mode,
   MenuItem,
-  JSONEditorPropsOptional,
   RenderMenuContext,
   JSONPathParser,
   JSONParser,
   OnChangeStatus,
   ContentErrors,
   JSONPatchResult,
-  JSONEditorSelection, JSONEditorContext
+  JSONEditorSelection,
 } from 'vanilla-jsoneditor';
 import {defineComponent, inject, ref, reactive, computed, watch, nextTick, onMounted, onBeforeUnmount} from 'vue';
 import type {PropType} from 'vue';
@@ -541,9 +540,7 @@ export default defineComponent({
       emit('update:selection', selection);
     };
 
-    const onRenderMenu: OnRenderMenu = (
-      items: MenuItem[], context: RenderMenuContext
-    ): MenuItem[] | undefined => {
+    const onRenderMenu: OnRenderMenu = (items: MenuItem[], context: RenderMenuContext): MenuItem[] | undefined => {
       nextTick(() => {
         setFullWidthButton();
       });
@@ -555,7 +552,7 @@ export default defineComponent({
       return items;
     };
 
-    const makeEditorProps = async (): Promise<JSONEditorPropsOptional> => {
+    const makeEditorProps = async (): Promise<Record<string, any>> => {
       const options = {fullWidthButton: true, ...(pluginOptions || {})};
       const queryLanguages = await makeQueryLanguages();
 
@@ -570,7 +567,7 @@ export default defineComponent({
         onFocus,
         onBlur,
         onRenderMenu,
-        onSelect
+        onSelect,
       };
     };
 
