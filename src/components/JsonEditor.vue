@@ -465,10 +465,12 @@ export default defineComponent({
       }
 
       const menu = getElement('.jse-menu');
+      const menuSvelteClass = [...menu.classList].find((menuClass) => menuClass.startsWith('svelte-'));
+
       fullWidthButton.value = createElement('button') as HTMLButtonElement;
       fullWidthButton.value.classList.add('jse-full-width');
       fullWidthButton.value.classList.add('jse-button');
-      fullWidthButton.value.classList.add('svelte-497ud4');
+      fullWidthButton.value.classList.add(menuSvelteClass);
 
       fullWidthButton.value.innerHTML += fullWidthIcon;
 
