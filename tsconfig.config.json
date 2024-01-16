@@ -1,6 +1,6 @@
 {
   "extends": "@tsconfig/node18/tsconfig.json",
-  "include": ["vite.config.*", "vitest.config.*", "cypress.config.*"],
+  "include": ["vite.config.ts"],
   "compilerOptions": {
     "composite": true,
     "types": ["node"]
