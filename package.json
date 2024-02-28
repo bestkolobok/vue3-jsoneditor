@@ -1,6 +1,6 @@
 {
   "name": "vue3-ts-jsoneditor",
-  "version": "2.10.1",
+  "version": "2.10.2",
   "author": {
     "name": "Alex Guzey",
     "email": "alex.guzey@gmail.com"
@@ -11,7 +11,10 @@
   "main": "dist/index.mjs",
   "module": "dist/index.mjs",
   "exports": {
-    ".": "./dist/index.mjs",
+    ".": {
+      "import": "./dist/index.mjs",
+      "types": "./dist/JsonEditorPlugin.d.ts"
+    },
     "./dist/vanilla-jsoneditor.js": "./dist/vanilla-jsoneditor.js",
     "./styles.css": "./dist/style.css"
   },
@@ -40,7 +43,7 @@
   },
   "dependencies": {
     "immutable-json-patch": "^6.0.0",
-    "vanilla-jsoneditor": "^0.21.2",
+    "vanilla-jsoneditor": "^0.21.6",
     "vue": "^3.4.5"
   },
   "devDependencies": {
@@ -60,7 +63,7 @@
     "rollup-plugin-typescript2": "0.32.1",
     "sass": "^1.69.7",
     "typescript": "^5.3.3",
-    "vite": "^5.0.11",
+    "vite": "^5.1.3",
     "vite-plugin-chunk-split": "0.5.0",
     "vite-plugin-env-config": "^2.0.0",
     "vite-plugin-libcss": "^1.0.5",

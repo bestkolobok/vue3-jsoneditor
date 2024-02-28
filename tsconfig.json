@@ -8,10 +8,21 @@
       "@/*": ["./src/*"]
     },
     "types" : ["node"],
-    "module": "es2020"
+    "target": "esnext",
+    "module": "esnext",
+    "moduleResolution": "node",
+    "skipLibCheck": true,
+    "esModuleInterop": true,
+    "strict": true,
+    "allowSyntheticDefaultImports": true,
+    "experimentalDecorators": true,
+    "sourceMap": true
   },
-  "skipLibCheck": true,
   "noImplicitAny": false,
+  "exclude": [
+    "node_modules",
+    "dist"
+  ],
 
   "references": [
     {

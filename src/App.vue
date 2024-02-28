@@ -12,6 +12,7 @@
         v-model:json="jsonData"
         ref="editor"
         :queryLanguagesIds="queryLanguages"
+        @error="onError"
       />
 
       <div class="body-container__buttons">
@@ -51,7 +52,7 @@ const jsonData = ref({
 const queryLanguages = ref<QueryLanguageId[]>(['javascript', 'lodash', 'jmespath']);
 
 const modes = ['text', 'tree', 'table'];
-const currentModeIndex = ref(1)
+const currentModeIndex = ref(1);
 const mode = computed(() => modes[currentModeIndex.value]);
 const toggleMode = () => {
   if (currentModeIndex.value === 2) {
@@ -83,6 +84,11 @@ const onFocus = () => {
 
 const onRefresh = () => {
   editor.value.$refresh();
+};
+
+const onError = (error: string) => {
+  console.log('>>>>>>>>>> ', error);
+  //
 };
 </script>
 

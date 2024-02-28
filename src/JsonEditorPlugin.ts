@@ -1,6 +1,15 @@
 import {VueJsonEditor} from './components';
-import type {App} from 'vue';
-import type {JSONEditorOptions, TextContent, JSONContent, Content, Path, QueryLanguageId, JSONValue, JSONPatchDocument} from './types';
+import type {Plugin} from 'vue';
+import type {
+  JSONEditorOptions,
+  TextContent,
+  JSONContent,
+  Content,
+  Path,
+  QueryLanguageId,
+  JSONValue,
+  JSONPatchDocument,
+} from './types';
 
 import type {
   ContentErrors,
@@ -25,7 +34,7 @@ import type {
   JSONNodeProp,
   JSONPathParser,
   JSONParser,
-  JSONEditorSelection
+  JSONEditorSelection,
 } from 'vanilla-jsoneditor';
 
 interface Params {
@@ -64,13 +73,19 @@ export type {
   JSONNodeProp,
   JSONPathParser,
   JSONParser,
-  JSONEditorSelection
+  JSONEditorSelection,
 };
 
-export default {
-  ...VueJsonEditor,
-  install: (app: App, params: Params = {}) => {
+const plugin: Plugin<Params> = {
+  install(app, params = {}) {
+    if (app.config.globalProperties.$_vue3TsJsoneditor) return;
+    app.config.globalProperties.$_vue3TsJsoneditor = true;
+
     app.component(params.componentName || 'JsonEditor', VueJsonEditor);
     app.provide('jsonEditorOptions', params.options);
   },
 };
+
+(plugin as any).VueJsonEditor = VueJsonEditor;
+
+export default plugin;
