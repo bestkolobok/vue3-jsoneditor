@@ -1,5 +1,15 @@
-import type {Validator, OnRenderValue, OnClassName, OnRenderMenu, Mode, JSONEditorSelection, JSONParser, JSONPathParser} from 'vanilla-jsoneditor';
-import type { JSONPatchDocument } from 'immutable-json-patch';
+import type {
+  Validator,
+  OnRenderValue,
+  OnClassName,
+  OnRenderMenu,
+  JSONEditorSelection,
+  JSONParser,
+  JSONPathParser,
+} from 'vanilla-jsoneditor';
+import type {JSONPatchDocument} from 'immutable-json-patch';
+
+type Mode = 'text' | 'tree' | 'table';
 
 export interface JSONEditorOptions {
   readOnly?: boolean;
@@ -45,15 +55,15 @@ export type Path = Array<string | number | symbol>;
 export type QueryLanguageId = 'javascript' | 'lodash' | 'jmespath';
 
 export interface OnTransformArguments {
-  operations: JSONPatchDocument, json: JSONValue, transformedJson: JSONValue
+  operations: JSONPatchDocument;
+  json: JSONValue;
+  transformedJson: JSONValue;
 }
 export interface TransformArguments {
-  id?: string,
-  rootPath?: [],
-  onTransform: (args: OnTransformArguments) => void,
-  onClose: () => void
+  id?: string;
+  rootPath?: [];
+  onTransform: (args: OnTransformArguments) => void;
+  onClose: () => void;
 }
 
-export type {
-  JSONPatchDocument
-}
+export type {JSONPatchDocument};

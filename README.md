@@ -77,7 +77,7 @@ interface JSONEditorOptions {
   darkTheme?: boolean;
 }
 
-type Mode = "text" | "tree";
+type Mode = "text" | "tree" | "table";
 
 type QueryLanguageId = 'javascript' | 'lodash' | 'jmespath';
 ```
