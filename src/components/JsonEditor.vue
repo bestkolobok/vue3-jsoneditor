@@ -17,7 +17,6 @@ import type {
   OnRenderValue,
   OnRenderMenu,
   Validator,
-  Mode,
   MenuItem,
   RenderMenuContext,
   JSONPathParser,
@@ -26,11 +25,20 @@ import type {
   ContentErrors,
   JSONPatchResult,
   JSONEditorSelection,
+  Mode,
 } from 'vanilla-jsoneditor';
 import {defineComponent, inject, ref, reactive, computed, watch, nextTick, onMounted, onBeforeUnmount} from 'vue';
 import type {PropType} from 'vue';
 import {pickDefinedProps, fullWidthIcon, watchPropNames, hasProp} from './utils';
-import type {JSONEditorOptions, Content, QueryLanguageId, Path, TransformArguments, JSONPatchDocument} from '@/types';
+import type {
+  JSONEditorOptions,
+  Content,
+  QueryLanguageId,
+  Path,
+  TransformArguments,
+  JSONPatchDocument,
+  TMode,
+} from '@/types';
 
 interface QueryLanguagesBuffer {
   javascript?: QueryLanguage;
@@ -65,13 +73,13 @@ export default defineComponent({
      * ### text: string
      * Pass the JSON string to be rendered in the JSONEditor.
      * */
-    text: String,
+    text: String as PropType<string>,
 
     /**
      * ### jsonString: string
      * Same as prop 'text'. Pass the JSON string to be rendered in the JSONEditor.
      * */
-    jsonString: String,
+    jsonString: String as PropType<string>,
 
     /**
      * ### selection: JSONEditorSelection | null.
@@ -89,7 +97,7 @@ export default defineComponent({
      * Open the editor in 'tree' mode (default) or 'text' mode (formerly: code mode).
      * */
     mode: {
-      type: String as PropType<Mode>,
+      type: String as PropType<TMode>,
       default: 'tree',
       validator: (value: string): boolean => ['tree', 'text', 'table'].includes(value as string),
     },
@@ -99,7 +107,7 @@ export default defineComponent({
      * Show the main menu bar. Default value is true.
      * */
     mainMenuBar: {
-      type: Boolean,
+      type: Boolean as PropType<boolean>,
       default: undefined,
     },
 
@@ -109,7 +117,7 @@ export default defineComponent({
      * document from there. Default value is true.
      * */
     navigationBar: {
-      type: Boolean,
+      type: Boolean as PropType<boolean>,
       default: undefined,
     },
 
@@ -119,7 +127,7 @@ export default defineComponent({
      * location and selected contents. Default value is true.
      * */
     statusBar: {
-      type: Boolean,
+      type: Boolean as PropType<boolean>,
       default: undefined,
     },
 
@@ -129,7 +137,7 @@ export default defineComponent({
      * when a compact document is loaded or pasted in 'text' mode. Only applicable to 'text' mode.
      */
     askToFormat: {
-      type: Boolean,
+      type: Boolean as PropType<boolean>,
       default: undefined,
     },
 
@@ -139,7 +147,7 @@ export default defineComponent({
      * from the menu, and the context menu is not enabled. Default value is false.
      * */
     readOnly: {
-      type: Boolean,
+      type: Boolean as PropType<boolean>,
       default: undefined,
     },
 
@@ -149,14 +157,14 @@ export default defineComponent({
      * like '\t' to use a tab as indentation, or ' ' to use 4 spaces (which is equivalent to configuring
      * indentation: 4). See also property tabSize.
      * */
-    indentation: [String, Number],
+    indentation: [String, Number] as PropType<string | number>,
 
     /**
      * ### tabSize: number
      * When indentation is configured as a tab character (indentation: '\t'), tabSize configures how
      * large a tab character is rendered. Default value is 4. Only applicable to text mode.
      * */
-    tabSize: Number,
+    tabSize: Number as PropType<number>,
 
     /**
      * ### escapeControlCharacters: boolean.
@@ -165,7 +173,7 @@ export default defineComponent({
      * always escaped.
      * */
     escapeControlCharacters: {
-      type: Boolean,
+      type: Boolean as PropType<boolean>,
       default: undefined,
     },
 
@@ -175,7 +183,7 @@ export default defineComponent({
      * like \u260e and \ud83d\ude00.
      * */
     escapeUnicodeCharacters: {
-      type: Boolean,
+      type: Boolean as PropType<boolean>,
       default: undefined,
     },
 
@@ -186,7 +194,7 @@ export default defineComponent({
      * nested objects will be rendered inline, and double-clicking them will open them in a popup
      * */
     flattenColumns: {
-      type: Boolean,
+      type: Boolean as PropType<boolean>,
       default: undefined,
     },
 
@@ -321,14 +329,14 @@ export default defineComponent({
      * ### height: string | number
      * Height of render container
      * */
-    height: [String, Number],
+    height: [String, Number] as PropType<string | number>,
 
     /**
      * ### fullWidthButton: boolean
      * Show full screen button
      * */
     fullWidthButton: {
-      type: Boolean,
+      type: Boolean as PropType<boolean>,
       default: undefined,
     },
 
@@ -337,7 +345,7 @@ export default defineComponent({
      * Switch to dark theme
      * */
     darkTheme: {
-      type: Boolean,
+      type: Boolean as PropType<boolean>,
       default: undefined,
     },
   },
@@ -363,7 +371,7 @@ export default defineComponent({
     const container = ref<HTMLDivElement>();
     const fullWidthButton = ref<HTMLButtonElement | null>(null);
 
-    const max = ref<boolean>(false);
+    const max = ref(false);
     const blockUpdate = ref(false);
     const blockChange = ref(false);
     const mode = ref('tree');
@@ -381,7 +389,7 @@ export default defineComponent({
       return {};
     });
 
-    const darkThemeStyle = computed<boolean>(() => {
+    const darkThemeStyle = computed(() => {
       return props.darkTheme || pluginOptions?.darkTheme;
     });
 
@@ -526,7 +534,7 @@ export default defineComponent({
       emit('update:mode', newMode);
     };
 
-    const onChangeQueryLanguage = (queryLanguageId: string) => {
+    const onChangeQueryLanguage = (queryLanguageId: QueryLanguageId) => {
       emit('change-query-language', queryLanguageId);
     };
 

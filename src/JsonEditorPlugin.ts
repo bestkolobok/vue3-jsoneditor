@@ -90,3 +90,5 @@ const JsonEditorPluginWithComponent = {
 } as Plugin<Params> & typeof VueJsonEditor;
 
 export default JsonEditorPluginWithComponent;
+
+export const JsonEditor = VueJsonEditor;

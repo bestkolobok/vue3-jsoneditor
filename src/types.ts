@@ -9,14 +9,14 @@ import type {
 } from 'vanilla-jsoneditor';
 import type {JSONPatchDocument} from 'immutable-json-patch';
 
-type Mode = 'text' | 'tree' | 'table';
+export type TMode = 'text' | 'tree' | 'table';
 
 export interface JSONEditorOptions {
   readOnly?: boolean;
   indentation?: number | string;
   tabSize?: number;
   selection?: JSONEditorSelection;
-  mode?: Mode;
+  mode?: TMode;
   mainMenuBar?: boolean;
   navigationBar?: boolean;
   statusBar?: boolean;

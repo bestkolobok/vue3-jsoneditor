@@ -11,6 +11,7 @@ export default defineConfig({
     vue(),
     dts({
       insertTypesEntry: true,
+      rollupTypes: true,
     }),
     envConfig({
       prefix: 'VITECONFIG_',
