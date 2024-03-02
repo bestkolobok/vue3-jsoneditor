@@ -5,7 +5,7 @@
     </header>
 
     <main class="body-container">
-      <json-editor
+      <vue-json-editor
         height="400"
         :dark-theme="darkTheme"
         :mode="mode"
@@ -35,7 +35,7 @@
 </template>
 
 <script setup lang="ts">
-// import JsonEditor from '@/components/JsonEditor.vue';
+import VueJsonEditor from '@/components/JsonEditor.vue';
 import {ref, computed} from 'vue';
 import type {QueryLanguageId} from './types';
 
@@ -51,7 +51,7 @@ const jsonData = ref({
 
 const queryLanguages = ref<QueryLanguageId[]>(['javascript', 'lodash', 'jmespath']);
 
-const modes = ['text', 'tree', 'table'];
+const modes = ['text', 'tree', 'table'] as const;
 const currentModeIndex = ref(1);
 const mode = computed(() => modes[currentModeIndex.value]);
 const toggleMode = () => {

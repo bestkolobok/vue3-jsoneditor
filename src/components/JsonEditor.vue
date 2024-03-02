@@ -99,7 +99,6 @@ export default defineComponent({
     mode: {
       type: String as PropType<TMode>,
       default: 'tree',
-      validator: (value: string): boolean => ['tree', 'text', 'table'].includes(value as string),
     },
 
     /**

@@ -27,14 +27,15 @@ npm install vue3-ts-jsoneditor
 
 ### 👉 Import globally
 
+
 ```javascript
 import {createApp} from 'vue';
 import App from './App.vue';
-import vue3TsJsoneditor from 'vue3-ts-jsoneditor';
+import {JsonEditorPlugin} from 'vue3-ts-jsoneditor';
 
 const app = createApp(App);
 
-app.use(vue3TsJsoneditor, {
+app.use(JsonEditorPlugin, {
   componentName: '/componentName/', // Default: 'JsonEditor',
   options: {
     /**
@@ -88,7 +89,7 @@ Read more in [svelte-jsoneditor](https://www.npmjs.com/package/svelte-jsoneditor
 
 ```javascript
 <script setup>
-  import VueJsoneditor from 'vue3-ts-jsoneditor';
+  import JsonEditor from 'vue3-ts-jsoneditor';
 </script>
 ```
 <br>
@@ -98,7 +99,7 @@ Read more in [svelte-jsoneditor](https://www.npmjs.com/package/svelte-jsoneditor
 ```vue
 // You can use the "v-model:json" and pass json value
 <template>
-  <vue-jsoneditor
+  <json-editor
     height="400"
     mode="tree"
     :queryLanguagesIds="queryLanguages"
@@ -112,7 +113,7 @@ Read more in [svelte-jsoneditor](https://www.npmjs.com/package/svelte-jsoneditor
 // or you can use the "v-model:text" and pass json string
 
 <template>
-  <vue-jsoneditor
+  <json-editor
     height="400"
     mode="text"
     v-model:text="jsonText"
@@ -122,7 +123,7 @@ Read more in [svelte-jsoneditor](https://www.npmjs.com/package/svelte-jsoneditor
 // or you can use the "v-model" and pass json value. "mode" should be "tree"!!!
 
 <template>
-  <vue-jsoneditor
+  <json-editor
     height="400"
     mode="tree"
     v-model="jsonData"
@@ -132,7 +133,7 @@ Read more in [svelte-jsoneditor](https://www.npmjs.com/package/svelte-jsoneditor
 // or you can use the "v-model" and pass json string. "mode" should be "text"!!!
 
 <template>
-  <vue-jsoneditor
+  <json-editor
     height="400"
     mode="text"
     v-model="jsonText"
@@ -141,8 +142,6 @@ Read more in [svelte-jsoneditor](https://www.npmjs.com/package/svelte-jsoneditor
 
 <script setup lang="ts">
   import {ref} from 'vue';
-  
-  import type {QueryLanguageId} from 'vue3-ts-jsoneditor'
 
   const jsonData = ref({
     array: [1, 2, 3],
@@ -156,7 +155,7 @@ Read more in [svelte-jsoneditor](https://www.npmjs.com/package/svelte-jsoneditor
 
   const jsonText = ref('{"array": [1, 2, 3]}');
 
-  const queryLanguages = ref<QueryLanguageId[]>(['javascript', 'lodash', 'jmespath']);
+  const queryLanguages = ref(['javascript', 'lodash', 'jmespath']);
   
   const onError = (error) => {
     //
@@ -261,7 +260,7 @@ Read more in [svelte-jsoneditor](https://www.npmjs.com/package/svelte-jsoneditor
 
 ```vue
 <template>
-  <vue-jsoneditor
+  <json-editor
     height="400"
     ref="editor"
     v-model:json="jsonData"
@@ -305,7 +304,7 @@ Read more in [svelte-jsoneditor](https://www.npmjs.com/package/svelte-jsoneditor
 The editor can be styled using the available CSS variables. A full list with all variables can be found [here](https://github.com/josdejong/svelte-jsoneditor/blob/main/src/lib/themes/jse-theme-default.css)
 ```vue
 <template>
-  <vue-jsoneditor
+  <json-editor
     class="awesome-json-editor"
     height="400"
     v-model:json="jsonData"
