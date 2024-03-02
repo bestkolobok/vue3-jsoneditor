@@ -76,16 +76,17 @@ export type {
   JSONEditorSelection,
 };
 
-const plugin: Plugin<Params> = {
-  install(app, params = {}) {
-    if (app.config.globalProperties.$_vue3TsJsoneditor) return;
-    app.config.globalProperties.$_vue3TsJsoneditor = true;
+const install: Plugin<Params>['install'] = (app, params = {}) => {
+  if (app.config.globalProperties.$_vue3TsJsoneditor) return;
+  app.config.globalProperties.$_vue3TsJsoneditor = true;
 
-    app.component(params.componentName || 'JsonEditor', VueJsonEditor);
-    app.provide('jsonEditorOptions', params.options);
-  },
+  app.component(params.componentName || 'JsonEditor', VueJsonEditor);
+  app.provide('jsonEditorOptions', params.options);
 };
 
-(plugin as any).VueJsonEditor = VueJsonEditor;
+const JsonEditorPluginWithComponent = {
+  ...VueJsonEditor,
+  install,
+} as Plugin<Params> & typeof VueJsonEditor;
 
-export default plugin;
+export default JsonEditorPluginWithComponent;

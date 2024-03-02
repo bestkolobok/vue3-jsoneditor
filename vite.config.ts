@@ -1,27 +1,16 @@
 import {fileURLToPath, URL} from 'url';
-
 import {defineConfig} from 'vite';
 import vue from '@vitejs/plugin-vue';
-import typescript2 from 'rollup-plugin-typescript2';
+import dts from 'vite-plugin-dts';
+
 import {envConfig} from 'vite-plugin-env-config';
 import {chunkSplitPlugin} from 'vite-plugin-chunk-split';
 
-// https://vitejs.dev/config/
 export default defineConfig({
   plugins: [
     vue(),
-    typescript2({
-      check: false,
-      clean: true,
-      include: ['src/components/*.vue'],
-      tsconfigOverride: {
-        compilerOptions: {
-          sourceMap: true,
-          declaration: true,
-          declarationMap: true,
-        },
-        exclude: ['vite.config.ts', 'main.ts'],
-      },
+    dts({
+      insertTypesEntry: true,
     }),
     envConfig({
       prefix: 'VITECONFIG_',
@@ -39,8 +28,8 @@ export default defineConfig({
       '@': fileURLToPath(new URL('./src', import.meta.url)),
     },
   },
-  define:{
-    __VUE_PROD_HYDRATION_MISMATCH_DETAILS__: false
+  define: {
+    __VUE_PROD_HYDRATION_MISMATCH_DETAILS__: false,
   },
   build: {
     cssCodeSplit: false,

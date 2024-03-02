@@ -1,4 +1,4 @@
-export const watchPropNames: string[] = [
+export const watchPropNames = [
   'selection',
   'mainMenuBar',
   'navigationBar',
@@ -14,9 +14,9 @@ export const watchPropNames: string[] = [
   'onClassName',
   'onRenderValue',
   'onRenderMenu',
-];
+] as const;
 
-export const propNames: string[] = [
+export const propNames = [
   'selection',
   'mode',
   'mainMenuBar',
@@ -36,7 +36,7 @@ export const propNames: string[] = [
   'onClassName',
   'onRenderValue',
   'onRenderMenu',
-];
+] as const;
 
 export const pickDefinedProps = (options: Record<string, any> = {}, props: Record<string, any>) => {
   const computedProps: Record<string, any> = {};

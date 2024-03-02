@@ -1,32 +1,37 @@
 {
-  "extends": "@vue/tsconfig/tsconfig.dom.json",
-  "include": ["env.d.ts", "src/**/*", "src/**/*.vue"],
+  "include": ["src/**/*", "src/**/*.vue"],
   "compilerOptions": {
-    "strictNullChecks": false,
-    "baseUrl": ".",
-    "paths": {
-      "@/*": ["./src/*"]
-    },
     "types" : ["node"],
     "target": "esnext",
     "module": "esnext",
-    "moduleResolution": "node",
-    "skipLibCheck": true,
-    "esModuleInterop": true,
     "strict": true,
+    "jsx": "preserve",
+    "importHelpers": true,
+    "moduleResolution": "node",
+    "resolveJsonModule": true,
+    "isolatedModules": true,
+    "skipLibCheck": true,
+    "strictNullChecks": false,
+    "esModuleInterop": true,
     "allowSyntheticDefaultImports": true,
+    "sourceMap": true,
+    "declaration": true,
+    "baseUrl": ".",
+    "paths": {
+      "@/*": ["src/*"]
+    },
+    "outDir": "./dist",
+    "lib": [
+      "dom",
+      "esnext"
+    ],
     "experimentalDecorators": true,
-    "sourceMap": true
   },
   "noImplicitAny": false,
   "exclude": [
     "node_modules",
-    "dist"
-  ],
-
-  "references": [
-    {
-      "path": "./tsconfig.config.json"
-    }
+    "vite.config.js",
+    "dist",
+    "src/main.ts"
   ]
 }

@@ -438,14 +438,14 @@ export default defineComponent({
       return allQueryLanguages;
     };
 
-    const removeFullWidthButton = (): void => {
+    const removeFullWidthButton = () => {
       if (!fullWidthButton.value) return;
 
       fullWidthButton.value.removeEventListener('click', onButtonClick);
       fullWidthButton.value = null;
     };
 
-    const setFullWidthButton = async (): Promise<void> => {
+    const setFullWidthButton = async () => {
       if (typeof window === 'undefined') return;
 
       const {getElement, createElement} = await import('./full-width-button-handler');
@@ -465,7 +465,7 @@ export default defineComponent({
       }
 
       const menu = getElement('.jse-menu');
-      const menuSvelteClass = [...menu.classList].find((menuClass) => menuClass.startsWith('svelte-'));
+      const menuSvelteClass = Array.from(menu.classList).find((menuClass) => menuClass.startsWith('svelte-'));
 
       fullWidthButton.value = createElement('button') as HTMLButtonElement;
       fullWidthButton.value.classList.add('jse-full-width');
@@ -479,7 +479,7 @@ export default defineComponent({
       fullWidthButton.value.addEventListener('click', onButtonClick);
     };
 
-    const onButtonClick = (): void => {
+    const onButtonClick = () => {
       max.value = !max.value;
 
       if (max.value) {
@@ -489,13 +489,13 @@ export default defineComponent({
       }
     };
 
-    const expandCollapseAll = async (value: boolean): Promise<void> => {
+    const expandCollapseAll = async (value: boolean) => {
       if (mode.value !== 'tree') return;
 
       await editor.value?.expand(() => value);
     };
 
-    const onChange = (content: Content, previousContent: Content, status: OnChangeStatus): void => {
+    const onChange = (content: Content, previousContent: Content, status: OnChangeStatus) => {
       if (blockChange.value) {
         blockChange.value = false;
         return;
@@ -516,29 +516,29 @@ export default defineComponent({
       emit('change', content, previousContent, status);
     };
 
-    const onError = (err: Error): void => {
+    const onError = (err: Error) => {
       emit('error', err);
     };
 
-    const onChangeMode = (newMode: Mode): void => {
+    const onChangeMode = (newMode: Mode) => {
       mode.value = newMode;
       emit('change-mode', newMode);
       emit('update:mode', newMode);
     };
 
-    const onChangeQueryLanguage = (queryLanguageId: string): void => {
+    const onChangeQueryLanguage = (queryLanguageId: string) => {
       emit('change-query-language', queryLanguageId);
     };
 
-    const onFocus = (): void => {
+    const onFocus = () => {
       emit('focus');
     };
 
-    const onBlur = (): void => {
+    const onBlur = () => {
       emit('blur');
     };
 
-    const onSelect = (selection: JSONEditorSelection | null): void => {
+    const onSelect = (selection: JSONEditorSelection | null) => {
       emit('update:selection', selection);
     };
 
@@ -587,45 +587,45 @@ export default defineComponent({
         ) {
           return {
             json: json,
-          } as Content;
+          } satisfies Content;
         }
         if (Array.isArray(json)) {
           return {
             json: [...json],
-          } as Content;
+          } satisfies Content;
         }
         return {
           json: {...json},
-        } as Content;
+        } satisfies Content;
       };
       const getTextContent = (text: string = ''): Content => {
         return {
           text: text || '',
-        } as Content;
+        } satisfies Content;
       };
 
       const propValue = props.modelValue || props.value;
 
       if (propValue) {
-        if (mode.value === 'text') {
-          return getTextContent(propValue as string) as Content;
+        if (mode.value === 'text' && typeof propValue === 'string') {
+          return getTextContent(propValue) satisfies Content;
         } else {
-          return getJsonContent(propValue) as Content;
+          return getJsonContent(propValue) satisfies Content;
         }
       }
       if (props.json) {
-        return getJsonContent(props.json) as Content;
+        return getJsonContent(props.json) satisfies Content;
       }
       if (props.text) {
-        return getTextContent(props.text) as Content;
+        return getTextContent(props.text) satisfies Content;
       }
       if (props.jsonString) {
-        return getTextContent(props.jsonString) as Content;
+        return getTextContent(props.jsonString) satisfies Content;
       }
-      return getTextContent() as Content;
+      return getTextContent() satisfies Content;
     };
 
-    const initView = async (): Promise<void> => {
+    const initView = async () => {
       if (typeof window === 'undefined') return;
 
       if (!editor.value) {
@@ -643,12 +643,12 @@ export default defineComponent({
       await editor.value.focus();
     };
 
-    const updateProps = async (): Promise<void> => {
+    const updateProps = async () => {
       const props = await makeEditorProps();
       editor.value.updateProps(props);
     };
 
-    const updateContent = (): void => {
+    const updateContent = () => {
       if (blockUpdate.value) {
         blockUpdate.value = false;
         return;
@@ -657,7 +657,7 @@ export default defineComponent({
       editor.value.update(getContent());
     };
 
-    const destroyView = (): void => {
+    const destroyView = () => {
       if (editor.value) {
         editor.value.destroy();
         editor.value = null;
@@ -669,7 +669,7 @@ export default defineComponent({
     watch(
       [
         ...watchPropNames.map((propName) => {
-          return (): any => props[propName as keyof typeof props];
+          return () => props[propName];
         }),
       ],
       updateProps,
@@ -716,43 +716,43 @@ export default defineComponent({
     });
 
     expose({
-      async $collapseAll(): Promise<void> {
+      async $collapseAll() {
         await expandCollapseAll(false);
       },
-      async $expandAll(): Promise<void> {
+      async $expandAll() {
         await expandCollapseAll(true);
       },
-      async $expand(callback: (path: Path) => boolean): Promise<void> {
+      async $expand(callback: (path: Path) => boolean) {
         await editor.value?.expand(callback);
       },
       $get(): Content {
         return editor.value?.get();
       },
-      async $set(content: Content): Promise<void> {
+      async $set(content: Content) {
         await editor.value?.set(content);
       },
-      async $update(content: Content): Promise<void> {
+      async $update(content: Content) {
         await editor.value?.update(content);
       },
-      async $updateProps(props: object): Promise<void> {
+      async $updateProps(props: object) {
         await editor.value?.updateProps(props);
       },
-      async $refresh(): Promise<void> {
+      async $refresh() {
         await editor.value?.refresh();
       },
-      async $focus(): Promise<void> {
+      async $focus() {
         await editor.value?.focus();
       },
-      async $destroy(): Promise<void> {
+      async $destroy() {
         await editor.value?.destroy();
       },
       async $patch(operations: JSONPatchDocument): Promise<JSONPatchResult> {
         return await editor.value?.patch(operations);
       },
-      $transform(args: TransformArguments): void {
+      $transform(args: TransformArguments) {
         editor.value?.transform(args);
       },
-      async $scrollTo(path: Path): Promise<void> {
+      async $scrollTo(path: Path) {
         await editor.value?.scrollTo(path);
       },
       $findElement(path: Path): HTMLElement | null {
