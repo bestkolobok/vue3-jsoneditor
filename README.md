@@ -1,6 +1,8 @@
 [![npm version](https://badge.fury.io/js/vue3-ts-jsoneditor.svg)](https://badge.fury.io/js/vue3-ts-jsoneditor)
 ![NPM](https://img.shields.io/npm/l/vue3-ts-jsoneditor)
 ![npm](https://img.shields.io/npm/dm/vue3-ts-jsoneditor)
+<br>
+[![npm](https://img.shields.io/github/stars/bestkolobok/vue3-jsoneditor?style=social)](https://github.com/bestkolobok/vue3-jsoneditor)
 
 ## 🇺🇦🇺🇦🇺🇦 [Stand With Ukraine](https://www.standwithukraine.how/) 🇺🇦🇺🇦🇺🇦
 
@@ -16,6 +18,9 @@
 ## 🕹 Demo
 
 > you can 👀 a live demo [here](https://bestkolobok.github.io/vue3-jsoneditor/)
+
+## <img style="height: 1em;" src="https://seeklogo.com/images/N/nuxt-logo-64E0472AA8-seeklogo.com.png" /> For Nuxt
+You can use [this module](https://www.npmjs.com/package/nuxt-jsoneditor)
 
 ## ☑️ Installation
 
