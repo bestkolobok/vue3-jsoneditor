@@ -19,7 +19,7 @@
 
 > you can 👀 a live demo [here](https://bestkolobok.github.io/vue3-jsoneditor/)
 
-## <img style="height: 1em;" src="https://seeklogo.com/images/N/nuxt-logo-64E0472AA8-seeklogo.com.png" /> For Nuxt
+## ✳️ For Nuxt
 You can use [this module](https://www.npmjs.com/package/nuxt-jsoneditor)
 
 ## ☑️ Installation
