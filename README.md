@@ -4,7 +4,6 @@
 <br>
 [![npm](https://img.shields.io/github/stars/bestkolobok/vue3-jsoneditor?style=social)](https://github.com/bestkolobok/vue3-jsoneditor)
 
-## 🇺🇦🇺🇦🇺🇦 [Stand With Ukraine](https://www.standwithukraine.how/) 🇺🇦🇺🇦🇺🇦
 
 # vue3-ts-jsoneditor
 #### Powered by [svelte-jsoneditor](https://www.npmjs.com/package/svelte-jsoneditor)
