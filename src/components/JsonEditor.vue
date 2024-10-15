@@ -620,13 +620,13 @@ export default defineComponent({
           return getJsonContent(propValue) satisfies Content;
         }
       }
-      if (props.json) {
+      if (typeof props.json !== 'undefined') {
         return getJsonContent(props.json) satisfies Content;
       }
-      if (props.text) {
+      if (typeof props.text !== 'undefined') {
         return getTextContent(props.text) satisfies Content;
       }
-      if (props.jsonString) {
+      if (typeof props.jsonString !== 'undefined') {
         return getTextContent(props.jsonString) satisfies Content;
       }
       return getTextContent() satisfies Content;
