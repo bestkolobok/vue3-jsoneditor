@@ -61,13 +61,19 @@ export default defineComponent({
      * props value is an alternative to modelValue
      * Pass the JSON value or string to be rendered in the JSONEditor.
      * */
-    value: [Object, Array, Number, String, Boolean, String, null] as PropType<unknown>,
+    value: {
+      type: [Object, Array, Number, String, Boolean, String, null] as PropType<unknown>,
+      default: undefined,
+    },
 
     /**
      * ### json: unknown
      * Pass the JSON value to be rendered in the JSONEditor.
      * */
-    json: [Object, Array, Number, String, Boolean, null] as PropType<unknown>,
+    json: {
+      type: [Object, Array, Number, String, Boolean, null] as PropType<unknown>,
+      default: undefined,
+    },
 
     /**
      * ### text: string
