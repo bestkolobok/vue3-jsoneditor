@@ -1,6 +1,6 @@
 import {createApp} from 'vue';
 import App from './App.vue';
-import {JsonEditorPlugin} from '@/JsonEditorPlugin';
+import {JsonEditorPlugin} from './JsonEditorPlugin';
 
 const app = createApp(App);
 
