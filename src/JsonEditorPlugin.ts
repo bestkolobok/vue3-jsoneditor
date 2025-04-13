@@ -1,15 +1,6 @@
 import {VueJsonEditor} from './components';
 import type {Plugin} from 'vue';
-import type {
-  JSONEditorOptions,
-  TextContent,
-  JSONContent,
-  Content,
-  Path,
-  QueryLanguageId,
-  JSONValue,
-  JSONPatchDocument,
-} from './types';
+import type {JSONEditorOptions, TextContent, JSONContent, Content, QueryLanguageId, JSONValue} from './types';
 
 import type {
   ContentErrors,
@@ -29,18 +20,22 @@ import type {
   Validator,
   Mode,
   MenuItem,
-  JSONEditor,
-  JSONNodeItem,
-  JSONNodeProp,
   JSONPathParser,
   JSONParser,
   JSONEditorSelection,
+  EditKeySelection,
+  EditValueSelection,
+  createJSONEditor,
 } from 'vanilla-jsoneditor';
+
+import type {JSONPatchDocument, JSONPath} from 'immutable-json-patch';
 
 interface Params {
   componentName?: string;
   options?: JSONEditorOptions;
 }
+
+export type Path = JSONPath;
 
 export type {
   ContentErrors,
@@ -48,7 +43,7 @@ export type {
   TextContent,
   JSONContent,
   Content,
-  Path,
+  JSONPath,
   QueryLanguageId,
   JSONValue,
   JSONPatchDocument,
@@ -68,12 +63,12 @@ export type {
   Validator,
   Mode,
   MenuItem,
-  JSONEditor,
-  JSONNodeItem,
-  JSONNodeProp,
   JSONPathParser,
   JSONParser,
   JSONEditorSelection,
+  EditKeySelection,
+  EditValueSelection,
+  createJSONEditor,
 };
 
 export const JsonEditorPlugin: Plugin<Params> = {

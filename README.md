@@ -85,7 +85,7 @@ interface JSONEditorOptions {
 
 type Mode = "text" | "tree" | "table";
 
-type QueryLanguageId = 'javascript' | 'lodash' | 'jmespath';
+type QueryLanguageId = 'javascript' | 'lodash' | 'jmespath' | 'jsonquery' | 'jsonpath';
 ```
 Read more in [svelte-jsoneditor](https://www.npmjs.com/package/svelte-jsoneditor) properties
 <br>
@@ -160,7 +160,7 @@ Read more in [svelte-jsoneditor](https://www.npmjs.com/package/svelte-jsoneditor
 
   const jsonText = ref('{"array": [1, 2, 3]}');
 
-  const queryLanguages = ref(['javascript', 'lodash', 'jmespath']);
+  const queryLanguages = ref(['javascript' | 'lodash' | 'jmespath' | 'jsonquery' | 'jsonpath']);
   
   const onError = (error) => {
     //

@@ -26,24 +26,21 @@ import type {
   JSONPatchResult,
   JSONEditorSelection,
   Mode,
+  JSONEditorPropsOptional,
+  TransformModalOptions,
 } from 'vanilla-jsoneditor';
+import type {JSONPatchDocument, JSONPath} from 'immutable-json-patch';
 import {defineComponent, inject, ref, reactive, computed, watch, nextTick, onMounted, onBeforeUnmount} from 'vue';
 import type {PropType} from 'vue';
 import {pickDefinedProps, fullWidthIcon, watchPropNames, hasProp} from './utils';
-import type {
-  JSONEditorOptions,
-  Content,
-  QueryLanguageId,
-  Path,
-  TransformArguments,
-  JSONPatchDocument,
-  TMode,
-} from '@/types';
+import type {JSONEditorOptions, Content, QueryLanguageId, TMode} from '@/types';
 
 interface QueryLanguagesBuffer {
   javascript?: QueryLanguage;
   lodash?: QueryLanguage;
   jmespath?: QueryLanguage;
+  jsonquery?: QueryLanguage;
+  jsonpath?: QueryLanguage;
 }
 
 export default defineComponent({
@@ -94,8 +91,8 @@ export default defineComponent({
      * table mode supports ValueSelection, and text mode supports TextSelection.
      * */
     selection: {
-      type: Object as PropType<JSONEditorSelection | null>,
-      default: null,
+      type: Object as PropType<JSONEditorSelection | undefined>,
+      default: undefined,
     },
 
     /**
@@ -435,6 +432,17 @@ export default defineComponent({
               queryLanguagesBuffer[languageId] = jmespathQueryLanguage;
               break;
             }
+            // Add these new languages:
+            case 'jsonquery': {
+              const {jsonQueryLanguage} = await import('vanilla-jsoneditor');
+              queryLanguagesBuffer[languageId] = jsonQueryLanguage;
+              break;
+            }
+            case 'jsonpath': {
+              const {jsonpathQueryLanguage} = await import('vanilla-jsoneditor');
+              queryLanguagesBuffer[languageId] = jsonpathQueryLanguage;
+              break;
+            }
             default: {
               break;
             }
@@ -502,12 +510,6 @@ export default defineComponent({
       }
     };
 
-    const expandCollapseAll = async (value: boolean) => {
-      if (mode.value !== 'tree') return;
-
-      await editor.value?.expand(() => value);
-    };
-
     const onChange = (content: Content, previousContent: Content, status: OnChangeStatus) => {
       if (blockChange.value) {
         blockChange.value = false;
@@ -551,7 +553,7 @@ export default defineComponent({
       emit('blur');
     };
 
-    const onSelect = (selection: JSONEditorSelection | null) => {
+    const onSelect = (selection: JSONEditorSelection | undefined) => {
       emit('update:selection', selection);
     };
 
@@ -643,17 +645,17 @@ export default defineComponent({
 
       if (!editor.value) {
         const editorProps = await makeEditorProps();
-        const {JSONEditor} = await import('vanilla-jsoneditor');
+        const {createJSONEditor} = await import('vanilla-jsoneditor');
         fallbackSlot.value = false;
 
-        editor.value = new JSONEditor({
+        editor.value = createJSONEditor({
           target: container.value,
           props: editorProps,
         });
-        await editor.value.set(getContent());
+        editor.value.set(getContent());
       }
 
-      await editor.value.focus();
+      editor.value.focus();
     };
 
     const updateProps = async () => {
@@ -729,52 +731,63 @@ export default defineComponent({
     });
 
     expose({
-      async $collapseAll() {
-        await expandCollapseAll(false);
+      $collapseAll() {
+        if (mode.value !== 'tree') return;
+        editor.value?.collapse([], true);
       },
-      async $expandAll() {
-        await expandCollapseAll(true);
+      $expandAll() {
+        if (mode.value !== 'tree') return;
+        editor.value?.expand([]);
       },
-      async $expand(callback: (path: Path) => boolean) {
-        await editor.value?.expand(callback);
+      $expand(pathOrCallback: JSONPath | ((path: JSONPath) => boolean), callback?: (path: JSONPath) => boolean) {
+        if (typeof pathOrCallback === 'function') {
+          // Old API: only callback provided
+          editor.value?.expand([], pathOrCallback);
+          console.warn(
+            'In new API you must pass the path before the callback!!! Backwards compatibility is deprecated and will be discontinued in the future'
+          );
+        } else {
+          // New API: path and optional callback
+          editor.value?.expand(pathOrCallback, callback);
+        }
       },
       $get(): Content {
         return editor.value?.get();
       },
-      async $set(content: Content) {
-        await editor.value?.set(content);
+      $set(content: Content) {
+        editor.value?.set(content);
       },
-      async $update(content: Content) {
-        await editor.value?.update(content);
+      $update(content: Content) {
+        editor.value?.update(content);
       },
-      async $updateProps(props: object) {
-        await editor.value?.updateProps(props);
+      $updateProps(props: JSONEditorPropsOptional) {
+        editor.value?.updateProps(props);
       },
       async $refresh() {
         await editor.value?.refresh();
       },
-      async $focus() {
-        await editor.value?.focus();
+      $focus() {
+        editor.value?.focus();
       },
       async $destroy() {
         await editor.value?.destroy();
       },
-      async $patch(operations: JSONPatchDocument): Promise<JSONPatchResult> {
-        return await editor.value?.patch(operations);
+      $patch(operations: JSONPatchDocument): JSONPatchResult {
+        return editor.value?.patch(operations);
       },
-      $transform(args: TransformArguments) {
-        editor.value?.transform(args);
+      $transform(options?: TransformModalOptions) {
+        editor.value?.transform(options);
       },
-      async $scrollTo(path: Path) {
+      async $scrollTo(path: JSONPath) {
         await editor.value?.scrollTo(path);
       },
-      $findElement(path: Path): HTMLElement | null {
+      $findElement(path: JSONPath): HTMLElement | undefined {
         return editor.value?.findElement(path);
       },
-      async $acceptAutoRepair(): Promise<Content> {
-        return await editor.value?.acceptAutoRepair();
+      $acceptAutoRepair(): Content {
+        return editor.value?.acceptAutoRepair();
       },
-      $validate(): ContentErrors | null {
+      $validate(): ContentErrors | undefined {
         return editor.value?.validate();
       },
     });

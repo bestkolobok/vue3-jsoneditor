@@ -7,7 +7,6 @@ import type {
   JSONParser,
   JSONPathParser,
 } from 'vanilla-jsoneditor';
-import type {JSONPatchDocument} from 'immutable-json-patch';
 
 export type TMode = 'text' | 'tree' | 'table';
 
@@ -50,20 +49,4 @@ export type JSONContent = {
 
 export type Content = JSONContent | TextContent;
 
-export type Path = Array<string | number | symbol>;
-
-export type QueryLanguageId = 'javascript' | 'lodash' | 'jmespath';
-
-export interface OnTransformArguments {
-  operations: JSONPatchDocument;
-  json: JSONValue;
-  transformedJson: JSONValue;
-}
-export interface TransformArguments {
-  id?: string;
-  rootPath?: [];
-  onTransform: (args: OnTransformArguments) => void;
-  onClose: () => void;
-}
-
-export type {JSONPatchDocument};
+export type QueryLanguageId = 'javascript' | 'lodash' | 'jmespath' | 'jsonquery' | 'jsonpath';
