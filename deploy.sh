@@ -13,8 +13,6 @@ npm version "$1"
 # build
 npm run build
 npm run build:gh
-# Create an empty .nojekyll file to disable Jekyll processing
-touch gh-dist/.nojekyll
 
 # publish
 npm publish
@@ -37,4 +35,4 @@ rm -rf .git
 
 cd -
 
-rm gh-dist
+rm -rf gh-dist
