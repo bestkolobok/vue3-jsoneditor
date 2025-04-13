@@ -34,3 +34,5 @@ git push -f git@github.com:bestkolobok/vue3-jsoneditor.git main:gh-pages
 rm -rf .git
 
 cd -
+
+rm gh-dist
