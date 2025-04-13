@@ -1,5 +1,5 @@
 {
-  "include": ["src/**/*", "src/**/*.vue"],
+  "include": ["src/**/*", "src/**/*.vue", "vite.config.ts"],
   "compilerOptions": {
     "types" : ["node"],
     "target": "esnext",
@@ -26,11 +26,10 @@
       "esnext"
     ],
     "experimentalDecorators": true,
+    "noImplicitAny": false
   },
-  "noImplicitAny": false,
   "exclude": [
     "node_modules",
-    "vite.config.js",
     "dist",
     "src/main.ts"
   ]
