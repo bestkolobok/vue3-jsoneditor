@@ -660,7 +660,7 @@ export default defineComponent({
 
     const updateProps = async () => {
       const props = await makeEditorProps();
-      editor.value.updateProps(props);
+      editor.value?.updateProps(props);
     };
 
     const updateContent = () => {
@@ -669,7 +669,7 @@ export default defineComponent({
         return;
       }
       blockChange.value = true;
-      editor.value.update(getContent());
+      editor.value?.update(getContent());
     };
 
     const destroyView = () => {
