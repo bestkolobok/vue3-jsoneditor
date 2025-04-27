@@ -70,6 +70,7 @@ export type {
   EditValueSelection,
   createJSONEditor,
 };
+export {renderValue, renderJSONSchemaEnum} from 'vanilla-jsoneditor';
 
 export const JsonEditorPlugin: Plugin<Params> = {
   install(app, params = {}) {
