@@ -374,8 +374,7 @@ export default defineComponent({
     const fullWidthButton = ref<HTMLButtonElement | null>(null);
 
     const max = ref(false);
-    const blockUpdate = ref(false);
-    const blockChange = ref(false);
+    const isSyncing = ref(false);
     const mode = ref('tree');
 
     const editor = ref(null);
@@ -432,7 +431,6 @@ export default defineComponent({
               queryLanguagesBuffer[languageId] = jmespathQueryLanguage;
               break;
             }
-            // Add these new languages:
             case 'jsonquery': {
               const {jsonQueryLanguage} = await import('vanilla-jsoneditor');
               queryLanguagesBuffer[languageId] = jsonQueryLanguage;
@@ -511,11 +509,15 @@ export default defineComponent({
     };
 
     const onChange = (content: Content, previousContent: Content, status: OnChangeStatus) => {
-      if (blockChange.value) {
-        blockChange.value = false;
+      if (isSyncing.value) {
+        // Uses setTimeout instead of nextTick for better synchronization with vanilla-jsoneditor
+        setTimeout(() => {
+          isSyncing.value = false;
+        });
         return;
       }
-      blockUpdate.value = true;
+
+      isSyncing.value = true;
 
       if (hasProp(content, 'json')) {
         emit('update:json', content.json);
@@ -529,6 +531,11 @@ export default defineComponent({
       }
 
       emit('change', content, previousContent, status);
+
+      // Uses setTimeout instead of nextTick for better synchronization with vanilla-jsoneditor
+      setTimeout(() => {
+        isSyncing.value = false;
+      });
     };
 
     const onError = (err: Error) => {
@@ -652,7 +659,13 @@ export default defineComponent({
           target: container.value,
           props: editorProps,
         });
-        editor.value.set(getContent());
+
+        const initialContent = getContent();
+        editor.value.set(initialContent);
+
+        setTimeout(() => {
+          isSyncing.value = false;
+        }, 0);
       }
 
       editor.value.focus();
@@ -664,12 +677,34 @@ export default defineComponent({
     };
 
     const updateContent = () => {
-      if (blockUpdate.value) {
-        blockUpdate.value = false;
-        return;
+      if (isSyncing.value) return;
+
+      const newContent = getContent();
+      const currentContent = editor.value?.get();
+
+      let isEqual = false;
+
+      if (hasProp(newContent, 'text') && hasProp(currentContent, 'text')) {
+        // For text mode, we compare the text directly
+        isEqual = newContent.text === currentContent.text;
+      } else if (hasProp(newContent, 'json') && hasProp(currentContent, 'json')) {
+        // For json mode, compare via stringify
+        isEqual = JSON.stringify(newContent.json) === JSON.stringify(currentContent.json);
+      } else {
+        // If the types are different, compare via stringify
+        const newJson = JSON.stringify(newContent);
+        const currentJson = JSON.stringify(currentContent);
+        isEqual = newJson === currentJson;
       }
-      blockChange.value = true;
-      editor.value?.update(getContent());
+
+      if (isEqual) return;
+
+      isSyncing.value = true;
+      editor.value?.update(newContent);
+
+      setTimeout(() => {
+        isSyncing.value = false;
+      });
     };
 
     const destroyView = () => {
@@ -691,9 +726,21 @@ export default defineComponent({
       {deep: true}
     );
 
+    // Adding debounce helper to avoid problems with quick updates
+    const resetSyncFlag = () => {
+      if (isSyncing.value) {
+        setTimeout(() => {
+          isSyncing.value = false;
+        }, 10);
+      }
+    };
+
     watch(
       [() => props.modelValue, () => props.value, () => props.json, () => props.text, () => props.jsonString],
-      updateContent,
+      () => {
+        updateContent();
+        resetSyncFlag();
+      },
       {
         deep: true,
       }
