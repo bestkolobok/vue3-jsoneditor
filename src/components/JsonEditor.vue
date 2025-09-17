@@ -471,7 +471,7 @@ export default defineComponent({
       const {setFullWidthButtonStyle} = await import('./styles-handler');
       await setFullWidthButtonStyle();
 
-      const oldButton = getElement('.jse-full-width');
+      const oldButton = getElement(container.value, '.jse-full-width');
 
       const pluginOptionFlag = pluginOptions?.fullWidthButton !== undefined ? pluginOptions?.fullWidthButton : true;
 
@@ -483,11 +483,14 @@ export default defineComponent({
         removeFullWidthButton();
       }
 
-      const menu = getElement('.jse-menu');
+      const menu = getElement(container.value, '.jse-menu');
       const menuSvelteClass = Array.from(menu.classList).find((menuClass) => menuClass.startsWith('svelte-'));
 
       fullWidthButton.value = createElement('button') as HTMLButtonElement;
       fullWidthButton.value.classList.add('jse-full-width');
+      if (max.value) {
+        fullWidthButton.value.classList.add('jse-full-width--active');
+      }
       fullWidthButton.value.classList.add('jse-button');
       fullWidthButton.value.classList.add(menuSvelteClass);
 
@@ -505,6 +508,7 @@ export default defineComponent({
         fullWidthButton.value?.classList.add('jse-full-width--active');
       } else {
         fullWidthButton.value?.classList.remove('jse-full-width--active');
+        fullWidthButton.value?.blur();
       }
     };
 
