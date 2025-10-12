@@ -1,36 +1,54 @@
 {
-  "include": ["src/**/*", "src/**/*.vue", "vite.config.ts"],
   "compilerOptions": {
-    "types" : ["node"],
-    "target": "esnext",
-    "module": "esnext",
-    "strict": true,
-    "jsx": "preserve",
-    "importHelpers": true,
-    "moduleResolution": "node",
+    "target": "ES2022",
+    "useDefineForClassFields": true,
+    "module": "ESNext",
+    "lib": ["ES2022", "DOM", "DOM.Iterable"],
+    "skipLibCheck": true,
+    "moduleResolution": "bundler",
+    "allowImportingTsExtensions": false,
     "resolveJsonModule": true,
     "isolatedModules": true,
-    "skipLibCheck": true,
-    "strictNullChecks": false,
+    "moduleDetection": "force",
+
+    // Для бібліотеки важливо генерувати декларації
+    "declaration": true,
+    "declarationMap": true,
+    "emitDeclarationOnly": true,
+    "outDir": "./dist",
+
+    "strict": true,
+    "noImplicitAny": false,  // Тимчасово для сумісності
+    "strictNullChecks": false,  // Тимчасово для сумісності
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    "noFallthroughCasesInSwitch": true,
+
     "esModuleInterop": true,
     "allowSyntheticDefaultImports": true,
+    "forceConsistentCasingInFileNames": true,
+
+    "jsx": "preserve",
     "sourceMap": true,
-    "declaration": true,
+
     "baseUrl": ".",
     "paths": {
       "@/*": ["src/*"]
     },
-    "outDir": "./dist",
-    "lib": [
-      "dom",
-      "esnext"
-    ],
-    "experimentalDecorators": true,
-    "noImplicitAny": false
+
+    "types": ["node"]
   },
+  "include": [
+    "src/**/*.ts",
+    "src/**/*.tsx",
+    "src/**/*.vue",
+    "src/**/*.d.ts",
+    "vite.config.ts"
+  ],
   "exclude": [
     "node_modules",
     "dist",
-    "src/main.ts"
+    "**/*.spec.ts",
+    "**/*.test.ts"
   ]
 }

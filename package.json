@@ -39,18 +39,18 @@
     "build:gh": "VITECONFIG_build_lib=false VITECONFIG_build_rollupOptions=false VITECONFIG_build_cssMinify=esbuild VITECONFIG_build_outDir=gh-dist VITECONFIG_base='/vue3-jsoneditor' run-p build-only && touch gh-dist/.nojekyll",
     "preview": "vite preview --port 4173",
     "build-only": "vite build",
-    "type-check": "vue-tsc --noEmit",
+    "type-check": "vue-tsc --build --force",
     "lint": "eslint . --ext .vue,.js,.jsx,.cjs,.mjs,.ts,.tsx,.cts,.mts --fix --ignore-path .gitignore"
   },
   "dependencies": {
     "immutable-json-patch": "^6.0.1",
-    "vanilla-jsoneditor": "^3.3.1",
+    "vanilla-jsoneditor": "^3.10.0",
     "vue": "^3.5.13"
   },
   "devDependencies": {
     "@rushstack/eslint-patch": "^1.1.0",
     "@types/node": "^22.14.1",
-    "@vitejs/plugin-vue": "^5.2.3",
+    "@vitejs/plugin-vue": "^6.0.1",
     "@vue/eslint-config-prettier": "^7.0.0",
     "@vue/eslint-config-typescript": "^11.0.0",
     "@vue/tsconfig": "^0.5.1",
@@ -59,12 +59,14 @@
     "npm-run-all": "^4.1.5",
     "prettier": "^2.5.1",
     "sass": "^1.86.3",
-    "typescript": "^5.3.3",
-    "vite": "^6.2.6",
-    "vite-plugin-chunk-split": "0.5.0",
-    "vite-plugin-dts": "^4.5.3",
+    "typescript": "^5.8.2",
+    "vite": "^7.1.9",
+    "vite-plugin-dts": "^4.5.4",
     "vite-plugin-env-config": "^2.0.1",
-    "vue-tsc": "^1.8.27"
+    "vue-tsc": "^3.1.1"
+  },
+  "engines": {
+    "node": ">=20.19.0"
   },
   "keywords": [
     "vue",

@@ -1,10 +1,8 @@
-import {fileURLToPath, URL} from 'url';
+import {fileURLToPath, URL} from 'node:url';
 import {defineConfig} from 'vite';
 import vue from '@vitejs/plugin-vue';
 import dts from 'vite-plugin-dts';
-
 import {envConfig} from 'vite-plugin-env-config';
-import {chunkSplitPlugin} from 'vite-plugin-chunk-split';
 
 export default defineConfig({
   plugins: [
@@ -17,23 +15,7 @@ export default defineConfig({
       prefix: 'VITECONFIG_',
       separator: '_',
     }),
-    chunkSplitPlugin({
-      strategy: 'single-vendor',
-      customSplitting: {
-        'vanilla-jsoneditor': [/vanilla-jsoneditor/],
-        'immutable-json-patch': [/immutable-json-patch/],
-        jmespath: [/jmespath/],
-        'json-source-map': [/json-source-map/],
-        'jsonpath-plus': [/jsonpath-plus/],
-        'lodash-es': [/lodash-es/],
-        jsonrepair: [/jsonrepair/],
-        ajv: [/ajv/],
-        'memoize-one': [/memoize-one/],
-        '@fortawesome_free-solid-svg-icons': [/@fortawesome\/free-solid-svg-icons/],
-        '@jsonquerylang_jsonquery': [/@jsonquerylang\/jsonquery/],
-        '@replit_codemirror-indentation-markers': [/@replit\/codemirror-indentation-markers/],
-      },
-    }),
+    // Видаляємо chunkSplitPlugin
   ],
   resolve: {
     alias: {
@@ -45,6 +27,7 @@ export default defineConfig({
   },
   build: {
     cssMinify: 'esbuild',
+    target: 'es2022',
     lib: {
       entry: './src/JsonEditorPlugin.ts',
       formats: ['es'],
@@ -56,6 +39,24 @@ export default defineConfig({
       output: {
         globals: {
           vue: 'Vue',
+        },
+        manualChunks: (id) => {
+          if (id.includes('vanilla-jsoneditor')) return 'vanilla-jsoneditor';
+          if (id.includes('immutable-json-patch')) return 'immutable-json-patch';
+          if (id.includes('jmespath')) return 'jmespath';
+          if (id.includes('json-source-map')) return 'json-source-map';
+          if (id.includes('jsonpath-plus')) return 'jsonpath-plus';
+          if (id.includes('lodash-es')) return 'lodash-es';
+          if (id.includes('jsonrepair')) return 'jsonrepair';
+          if (id.includes('ajv')) return 'ajv';
+          if (id.includes('memoize-one')) return 'memoize-one';
+          if (id.includes('@fortawesome/free-solid-svg-icons')) return 'fortawesome';
+          if (id.includes('@jsonquerylang/jsonquery')) return 'jsonquerylang';
+          if (id.includes('@replit/codemirror-indentation-markers')) return 'replit';
+
+          if (id.includes('node_modules')) {
+            return 'vendor';
+          }
         },
       },
     },

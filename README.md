@@ -1,25 +1,32 @@
-[![npm version](https://badge.fury.io/js/vue3-ts-jsoneditor.svg)](https://badge.fury.io/js/vue3-ts-jsoneditor)
-![NPM](https://img.shields.io/npm/l/vue3-ts-jsoneditor)
-![npm](https://img.shields.io/npm/dm/vue3-ts-jsoneditor)
-<br>
-[![npm](https://img.shields.io/github/stars/bestkolobok/vue3-jsoneditor?style=social)](https://github.com/bestkolobok/vue3-jsoneditor)
+[![npm version](https://img.shields.io/npm/v/vue3-ts-jsoneditor.svg)](https://www.npmjs.com/package/vue3-ts-jsoneditor)
+[![NPM](https://img.shields.io/npm/l/vue3-ts-jsoneditor)](https://www.npmjs.com/package/vue3-ts-jsoneditor)
+[![npm](https://img.shields.io/npm/dm/vue3-ts-jsoneditor.svg)](https://www.npmjs.com/package/vue3-ts-jsoneditor)
+[![npm](https://img.shields.io/badge/release-semantic-e10079?logo=semantic-release)](https://semantic-release.gitbook.io)
 
-## 🇺🇦🇺🇦🇺🇦 [Stand With Ukraine](https://stand-with-ukraine.pp.ua) 🇺🇦🇺🇦🇺🇦
+🇺🇦🇺🇦🇺🇦 [Stand With Ukraine](https://stand-with-ukraine.pp.ua) 🇺🇦🇺🇦🇺🇦
 
 # vue3-ts-jsoneditor
-#### Powered by [svelte-jsoneditor](https://www.npmjs.com/package/svelte-jsoneditor)
 
-### 🚀 Advantages
+Powered by [svelte-jsoneditor](https://www.npmjs.com/package/svelte-jsoneditor)
+
+> 💡 **Found this useful?** Consider giving it a ⭐ on [GitHub](https://github.com/bestkolobok/vue3-jsoneditor) to help others discover it!
+
+
+## 🚀 Advantages
+
 - SSR support
 - Full width button
 - Automatic dynamic import of query languages
 - Automatic dynamic import of dark theme
+- **NEW**: Expand/Collapse functionality in Text Mode
+- **NEW**: Enhanced query language support (jsonquery v5)
 
 ## 🕹 Demo
 
-> you can 👀 a live demo [here](https://bestkolobok.github.io/vue3-jsoneditor/)
+you can 👀 a live demo [here](https://bestkolobok.github.io/vue3-jsoneditor/)
 
 ## ✳️ For Nuxt
+
 You can use [this module](https://www.npmjs.com/package/nuxt-jsoneditor)
 
 ## ☑️ Installation
@@ -31,7 +38,6 @@ npm install vue3-ts-jsoneditor
 ## ✅ Using
 
 ### 👉 Import globally
-
 
 ```javascript
 import {createApp} from 'vue';
@@ -54,7 +60,8 @@ app.use(JsonEditorPlugin, {
 app.mount('#app');
 ```
 
-### 🌎 Global options
+## 🌎 Global options
+
 ```typescript
 interface JSONEditorOptions {
   readOnly?: boolean;
@@ -87,17 +94,16 @@ type Mode = "text" | "tree" | "table";
 
 type QueryLanguageId = 'javascript' | 'lodash' | 'jmespath' | 'jsonquery' | 'jsonpath';
 ```
+
 Read more in [svelte-jsoneditor](https://www.npmjs.com/package/svelte-jsoneditor) properties
-<br>
 
 ### 👉 Import locally
 
-```javascript
+```vue
 <script setup>
   import JsonEditor from 'vue3-ts-jsoneditor';
 </script>
 ```
-<br>
 
 ### 👉 Use in template
 
@@ -144,7 +150,9 @@ Read more in [svelte-jsoneditor](https://www.npmjs.com/package/svelte-jsoneditor
     v-model="jsonText"
   />
 </template>
+```
 
+```vue
 <script setup lang="ts">
   import {ref} from 'vue';
 
@@ -160,7 +168,7 @@ Read more in [svelte-jsoneditor](https://www.npmjs.com/package/svelte-jsoneditor
 
   const jsonText = ref('{"array": [1, 2, 3]}');
 
-  const queryLanguages = ref(['javascript' | 'lodash' | 'jmespath' | 'jsonquery' | 'jsonpath']);
+  const queryLanguages = ref(['javascript', 'lodash', 'jmespath', 'jsonquery', 'jsonpath']);
   
   const onError = (error) => {
     //
@@ -176,92 +184,82 @@ Read more in [svelte-jsoneditor](https://www.npmjs.com/package/svelte-jsoneditor
 </script>
 ```
 
-### ❗️❗️❗️ Important
+## ❗️❗️❗️ Important
 
-> If you want use v-model (not v-model:json or v-model:text) then the type of data depends on the mode of the editor. 
-> If mode="tree", then the data type in the model is JSON value, if mode="text", 
-> then the data type is JSON string.
-> Please be aware that in text mode v-model can contain invalid JSON: whilst typing in text mode, 
-> a JSON document will be temporarily invalid, like when the user is typing a new string.
-> 
-> It is more clear to use v-model:json for tree mode and v-model:text for text mode.
+If you want use `v-model` (not `v-model:json` or `v-model:text`) then the type of data depends on the mode of the editor. If `mode="tree"`, then the data type in the model is JSON value, if `mode="text"`, then the data type is JSON string. Please be aware that in text mode `v-model` can contain invalid JSON: whilst typing in text mode, a JSON document will be temporarily invalid, like when the user is typing a new string.
 
-<br>
+It is more clear to use `v-model:json` for tree mode and `v-model:text` for text mode.
 
-### ☑️ Slots
-| Slot          | Description                                                           |
-| ----------    | ------------------                                                    |
-| default       | Slot content displayed before the editor is rendered. Useful for SSR  | 
+## ☑️ Slots
 
-<br>
+| Slot | Description |
+|------|-------------|
+| default | Slot content displayed before the editor is rendered. Useful for SSR |
 
-### ☑️ Props
-| Name                    | Description                                                                                                                                                                                                                                                                                                                                                                                                                                                       |                                                                      type                                                                       |   default    |
-|-------------------------|-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|:-----------------------------------------------------------------------------------------------------------------------------------------------:|:------------:|
-| json (v-model)          | JSON value                                                                                                                                                                                                                                                                                                                                                                                                                                                        |                        <code>object &vert; array &vert; true &vert; false &vert; null &vert; number &vert; string</code>                        |  undefined   |
-| text (v-model)          | JSON string                                                                                                                                                                                                                                                                                                                                                                                                                                                       |                                                               <code>string</code>                                                               |  undefined   |
-| modelValue (v-model)    | JSON value or JSON string                                                                                                                                                                                                                                                                                                                                                                                                                                         |                        <code>object &vert; array &vert; true &vert; false &vert; null &vert; number &vert; string</code>                        |  undefined   |
-| value                   | Same as modelValue                                                                                                                                                                                                                                                                                                                                                                                                                                                |                        <code>object &vert; array &vert; true &vert; false &vert; null &vert; number &vert; string</code>                        |  undefined   |
-| selection (v-model)     | The current selected contents. You can use two-way binding using bind:selection. The tree mode supports MultiSelection, KeySelection, ValueSelection, InsideSelection, or AfterSelection. The table mode supports ValueSelection, and text mode supports TextSelection.                                                                                                                                                                                           |                                                  <code>JSONEditorSelection &vert; null</code>                                                   |     null     |
-| mode                    | mode: 'tree', 'text' or 'table'. Open the editor in 'tree' mode (default), 'table' mode, or 'text' mode                                                                                                                                                                                                                                                                                                                                                           |                                                               <code>string</code>                                                               |    'tree'    |
-| mainMenuBar             | Show the main menu bar. Default value is true.                                                                                                                                                                                                                                                                                                                                                                                                                    |                                                              <code>boolean</code>                                                               |     true     |
-| navigationBar           | Show the navigation bar with, where you can see the selected path and navigate through your document from there.                                                                                                                                                                                                                                                                                                                                                  |                                                              <code>boolean</code>                                                               |     true     |
-| statusBar               | Show a status bar at the bottom of the 'text' editor, showing information about the cursor location and selected contents.                                                                                                                                                                                                                                                                                                                                        |                                                              <code>boolean</code>                                                               |     true     |
-| askToFormat             | When true (default), the user will be asked whether he/she wants to format the JSON document when a compact document is loaded or pasted in 'text' mode. Only applicable to 'text' mode.                                                                                                                                                                                                                                                                          |                                                              <code>boolean</code>                                                               |     true     |
-| readOnly                | Open the editor in read-only mode: no changes can be made, non-relevant buttons are hidden from the menu, and the context menu is not enabled.                                                                                                                                                                                                                                                                                                                    |                                                              <code>boolean</code>                                                               |    false     |
-| indentation             | Number of spaces use for indentation when stringifying JSON, or a string to be used as indentation like '\t' to use a tab as indentation, or ' ' to use 4 spaces (which is equivalent to configuring indentation: 4). See also property tabSize.                                                                                                                                                                                                                  |                                                        <code>number &vert; string</code>                                                        |      4       |
-| tabSize                 | When indentation is configured as a tab character (indentation: '\t'), tabSize configures how large a tab character is rendered. Default value is 4. Only applicable to text mode.                                                                                                                                                                                                                                                                                |                                                               <code>number</code>                                                               |      4       |
-| escapeControlCharacters | When true, control characters like newline and tab are rendered as escaped characters \n and \t. Only applicable for 'tree' mode, in 'text' mode control characters are always escaped.                                                                                                                                                                                                                                                                           |                                                              <code>boolean</code>                                                               |    false     |
-| escapeUnicodeCharacters | When true, unicode characters like ☎ and 😀 are rendered escaped like \u260e and \ud83d\ude00                                                                                                                                                                                                                                                                                                                                                                     |                                                              <code>boolean</code>                                                               |    false     |
-| flattenColumns          | Only applicable to 'table' mode. When true, nested object properties will be displayed each in their own column, with the nested path as column name. When false, nested objects will be rendered inline, and double-clicking them will open them in a popup.                                                                                                                                                                                                     |                                                              <code>boolean</code>                                                               |     true     |
-| validator               | Validate the JSON document. Details in [svelte-jsoneditor](https://www.npmjs.com/package/svelte-jsoneditor)                                                                                                                                                                                                                                                                                                                                                       |                                            <code>function (json: unknown): ValidationError[]</code>                                             |              |
-| parser                  | Configure a custom JSON parser, like lossless-json. By default, the native JSON parser of JavaScript is used. The JSON interface is an object with a parse and stringify function                                                                                                                                                                                                                                                                                 |                                                             <code>JSONParser</code>                                                             |  undefined   |
-| validationParser        | Only applicable when a validator is provided. This is the same as parser, except that this parser is used to parse the data before sending it to the validator. Configure a custom JSON parser that is used to parse JSON before passing it to the validator. By default, the built-in JSON parser is used. When passing a custom validationParser, make sure the output of the parser is supported by the configured validator.                                  |                                                             <code>JSONParser</code>                                                             |  undefined   |
-| pathParser              | An optional object with a parse and stringify method to parse and stringify a JSONPath, which is an array with property names. The pathParser is used in the path editor in the navigation bar, which is opened by clicking the edit button on the right side of the navigation bar. The pathParser.parse function is allowed to throw an Error when the input is invalid. By default, a JSON Path notation is used, which looks like $.data[2].nested.property.  |                                                           <code>JSONPathParser</code>                                                           |  undefined   |
-| queryLanguagesIds       | Configure one or multiple query language that can be used in the Transform modal. The library comes with three languages: <code>javascript</code>, <code>lodash</code> or <code>jmespath</code>                                                                                                                                                                                                                                                                   |                                                          <code>QueryLanguage[]</code>                                                           | [javascript] |
-| queryLanguageId         | The id of the currently selected query language <code>javascript</code>, <code>lodash</code> or <code>jmespath</code>                                                                                                                                                                                                                                                                                                                                             |                                                               <code>string</code>                                                               |              |
-| onClassName             | Add a custom class name to specific nodes, based on their path and/or value.                                                                                                                                                                                                                                                                                                                                                                                      |                                     <code>function (path: Path, value: any): string &vert; undefined</code>                                     |              |
-| onRenderValue           | Details in [svelte-jsoneditor](https://www.npmjs.com/package/svelte-jsoneditor)                                                                                                                                                                                                                                                                                                                                                                                   |                               <code>function (props: RenderValueProps) : RenderValueComponentDescription[]</code>                               |              |
-| onRenderMenu            | Details in [svelte-jsoneditor](https://www.npmjs.com/package/svelte-jsoneditor)                                                                                                                                                                                                                                                                                                                                                                                   | <code>function (items: MenuItem[], context: { mode: 'tree' &vert; 'text' &vert; 'table', modal: boolean }) : MenuItem[] &vert; undefined</code> |              |
-| fullWidthButton         | Whether full screen switching is added                                                                                                                                                                                                                                                                                                                                                                                                                            |                                                              <code>boolean</code>                                                               |     true     |
-| height                  | Default height                                                                                                                                                                                                                                                                                                                                                                                                                                                    |                                                        <code>string &vert; number</code>                                                        |  undefined   |
-| darkTheme               | Switch to dark theme                                                                                                                                                                                                                                                                                                                                                                                                                                              |                                                              <code>boolean</code>                                                               |    false     | 
+## ☑️ Props
 
+| Name | Description | type | default |
+|------|-------------|------|---------|
+| json (v-model) | JSON value | `object \| array \| true \| false \| null \| number \| string` | `undefined` |
+| text (v-model) | JSON string | `string` | `undefined` |
+| modelValue (v-model) | JSON value or JSON string | `object \| array \| true \| false \| null \| number \| string` | `undefined` |
+| value | Same as modelValue | `object \| array \| true \| false \| null \| number \| string` | `undefined` |
+| selection (v-model) | The current selected contents. You can use two-way binding using bind:selection. The tree mode supports MultiSelection, KeySelection, ValueSelection, InsideSelection, or AfterSelection. The table mode supports ValueSelection, and text mode supports TextSelection. | `JSONEditorSelection \| null` | `null` |
+| mode | mode: 'tree', 'text' or 'table'. Open the editor in 'tree' mode (default), 'table' mode, or 'text' mode | `string` | `'tree'` |
+| mainMenuBar | Show the main menu bar. Default value is true. | `boolean` | `true` |
+| navigationBar | Show the navigation bar with, where you can see the selected path and navigate through your document from there. | `boolean` | `true` |
+| statusBar | Show a status bar at the bottom of the 'text' editor, showing information about the cursor location and selected contents. | `boolean` | `true` |
+| askToFormat | When true (default), the user will be asked whether he/she wants to format the JSON document when a compact document is loaded or pasted in 'text' mode. Only applicable to 'text' mode. | `boolean` | `true` |
+| readOnly | Open the editor in read-only mode: no changes can be made, non-relevant buttons are hidden from the menu, and the context menu is not enabled. | `boolean` | `false` |
+| indentation | Number of spaces use for indentation when stringifying JSON, or a string to be used as indentation like '\t' to use a tab as indentation, or '    ' to use 4 spaces (which is equivalent to configuring indentation: 4). See also property tabSize. | `number \| string` | `4` |
+| tabSize | When indentation is configured as a tab character (indentation: '\t'), tabSize configures how large a tab character is rendered. Default value is 4. Only applicable to text mode. | `number` | `4` |
+| escapeControlCharacters | When true, control characters like newline and tab are rendered as escaped characters \n and \t. Only applicable for 'tree' mode, in 'text' mode control characters are always escaped. | `boolean` | `false` |
+| escapeUnicodeCharacters | When true, unicode characters like ☎ and 😀 are rendered escaped like \u260e and \ud83d\ude00 | `boolean` | `false` |
+| flattenColumns | Only applicable to 'table' mode. When true, nested object properties will be displayed each in their own column, with the nested path as column name. When false, nested objects will be rendered inline, and double-clicking them will open them in a popup. | `boolean` | `true` |
+| validator | Validate the JSON document. Details in [svelte-jsoneditor](https://www.npmjs.com/package/svelte-jsoneditor) | `function (json: unknown): ValidationError[]` | |
+| parser | Configure a custom JSON parser, like lossless-json. By default, the native JSON parser of JavaScript is used. The JSON interface is an object with a parse and stringify function | `JSONParser` | `undefined` |
+| validationParser | Only applicable when a validator is provided. This is the same as parser, except that this parser is used to parse the data before sending it to the validator. Configure a custom JSON parser that is used to parse JSON before passing it to the validator. By default, the built-in JSON parser is used. When passing a custom validationParser, make sure the output of the parser is supported by the configured validator. | `JSONParser` | `undefined` |
+| pathParser | An optional object with a parse and stringify method to parse and stringify a JSONPath, which is an array with property names. The pathParser is used in the path editor in the navigation bar, which is opened by clicking the edit button on the right side of the navigation bar. The pathParser.parse function is allowed to throw an Error when the input is invalid. By default, a JSON Path notation is used, which looks like $.data[2].nested.property. | `JSONPathParser` | `undefined` |
+| queryLanguagesIds | Configure one or multiple query language that can be used in the Transform modal. The library comes with five languages: `javascript`, `lodash`, `jmespath`, `jsonquery`, and `jsonpath` | `QueryLanguage[]` | `[javascript]` |
+| queryLanguageId | The id of the currently selected query language: `javascript`, `lodash`, `jmespath`, `jsonquery`, or `jsonpath` | `string` | |
+| onClassName | Add a custom class name to specific nodes, based on their path and/or value. | `function (path: Path, value: any): string \| undefined` | |
+| onRenderValue | Details in [svelte-jsoneditor](https://www.npmjs.com/package/svelte-jsoneditor) | `function (props: RenderValueProps) : RenderValueComponentDescription[]` | |
+| onRenderMenu | Details in [svelte-jsoneditor](https://www.npmjs.com/package/svelte-jsoneditor) | `function (items: MenuItem[], context: { mode: 'tree' \| 'text' \| 'table', modal: boolean }) : MenuItem[] \| undefined` | |
+| fullWidthButton | Whether full screen switching is added | `boolean` | `true` |
+| height | Default height | `string \| number` | `undefined` |
+| darkTheme | Switch to dark theme | `boolean` | `false` |
 
-<br>
+## ☑️ Events
 
-### ☑️ Events
-| Name                   | Description                                                                                                                                                                                                                | Arguments                                                                              |
-|------------------------|----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|----------------------------------------------------------------------------------------|
-| change                 | Which is invoked on every change made in the JSON document. The parameter patchResult is only available in tree mode, and not in text mode, since a change in arbitrary text cannot be expressed as a JSON Patch document. | (content: Content, previousContent: Content, patchResult: JSONPatchResult &vert; null) |
-| error                  | Event fired when an error occurs. Default implementation is to log an error in the console and show a simple alert message to the user.                                                                                    | (err: Error)                                                                           |
-| change-mode            | Invoked when the mode is changed.                                                                                                                                                                                          | (mode: 'tree' &vert; 'text' &vert; 'table')                                            |
-| change-query-language  | Invoked when the user changes the selected query language in the TransformModal via the configuration button top right.                                                                                                    | (queryLanguageId: string)                                                              |
-| focus                  | Fired when the editor got focus.                                                                                                                                                                                           | ()                                                                                     |
-| blur                   | Fired when the editor lost focus.                                                                                                                                                                                          | ()                                                                                     |
+| Name | Description | Arguments |
+|------|-------------|-----------|
+| change | Which is invoked on every change made in the JSON document. The parameter patchResult is only available in tree mode, and not in text mode, since a change in arbitrary text cannot be expressed as a JSON Patch document. | `(content: Content, previousContent: Content, patchResult: JSONPatchResult \| null)` |
+| error | Event fired when an error occurs. Default implementation is to log an error in the console and show a simple alert message to the user. | `(err: Error)` |
+| change-mode | Invoked when the mode is changed. | `(mode: 'tree' \| 'text' \| 'table')` |
+| change-query-language | Invoked when the user changes the selected query language in the TransformModal via the configuration button top right. | `(queryLanguageId: string)` |
+| focus | Fired when the editor got focus. | `()` |
+| blur | Fired when the editor lost focus. | `()` |
 
-<br>
+## ☑️ Use expose functions
 
-### ☑️ Use expose functions
-- <b>$collapseAll</b> - collapse all nodes
-- <b>$expandAll</b> - expand all nodes
-- <b>$expand</b> - Expand or collapse paths in the editor. [See more](https://www.npmjs.com/package/svelte-jsoneditor) about <code>expand()</code>
-- <b>$get</b> - Get the current JSON document. [See more](https://www.npmjs.com/package/svelte-jsoneditor) about <code>get()</code>
-- <b>$set</b> - Replace the current content. Will reset the state of the editor. See also method <code>update()</code>. [See more](https://www.npmjs.com/package/svelte-jsoneditor) about <code>set()</code>
-- <b>$update</b> - Update the loaded content, keeping the state of the editor (like expanded objects). [See more](https://www.npmjs.com/package/svelte-jsoneditor) about <code>update()</code>
-- <b>$updateProps</b> - Update some or all of the properties [See more](https://www.npmjs.com/package/svelte-jsoneditor) about <code>updateProps()</code>
-- <b>$refresh</b> - Refresh rendering of the contents, for example after changing the font size. This is only available in text mode. [See more](https://www.npmjs.com/package/svelte-jsoneditor) about <code>refresh()</code>
-- <b>$focus</b> - Give the editor focus. [See more](https://www.npmjs.com/package/svelte-jsoneditor) about <code>focus()</code>
-- <b>$destroy</b> - Destroy the editor, remove it from the DOM. [See more](https://www.npmjs.com/package/svelte-jsoneditor) about <code>destroy()</code>
-- <b>$patch</b> - Apply a JSON patch document to update the contents of the JSON document. [See more](https://www.npmjs.com/package/svelte-jsoneditor) about <code>patch()</code>
-- <b>$transform</b> - Programmatically trigger clicking of the transform button in the main menu, opening the transform model.  [See more](https://www.npmjs.com/package/svelte-jsoneditor) about <code>transform()</code>
-- <b>$scrollTo</b> - Scroll the editor vertically such that the specified path comes into view. Only applicable to modes tree and table. The path will be expanded when needed. The returned Promise is resolved after scrolling is finished. [See more](https://www.npmjs.com/package/svelte-jsoneditor) about <code>scrollTo()</code>
-- <b>$findElement</b> - Find the DOM element of a given path. Returns null when not found. [See more](https://www.npmjs.com/package/svelte-jsoneditor) about <code>findElement()</code>
-- <b>$acceptAutoRepair</b> - In tree mode, invalid JSON is automatically repaired when loaded. [See more](https://www.npmjs.com/package/svelte-jsoneditor) about <code>acceptAutoRepair()</code>
-- <b>$validate</b> - Get all current parse errors and validation errors. [See more](https://www.npmjs.com/package/svelte-jsoneditor) about <code>validate()</code>
+- **$collapseAll** - collapse all nodes (works in both tree and text mode)
+- **$expandAll** - expand all nodes (works in both tree and text mode)
+- **$expand** - Expand or collapse paths in the editor. [See more](https://www.npmjs.com/package/svelte-jsoneditor) about `expand()`
+- **$get** - Get the current JSON document. [See more](https://www.npmjs.com/package/svelte-jsoneditor) about `get()`
+- **$set** - Replace the current content. Will reset the state of the editor. See also method `update()`. [See more](https://www.npmjs.com/package/svelte-jsoneditor) about `set()`
+- **$update** - Update the loaded content, keeping the state of the editor (like expanded objects). [See more](https://www.npmjs.com/package/svelte-jsoneditor) about `update()`
+- **$updateProps** - Update some or all of the properties. [See more](https://www.npmjs.com/package/svelte-jsoneditor) about `updateProps()`
+- **$refresh** - Refresh rendering of the contents, for example after changing the font size. This is only available in text mode. [See more](https://www.npmjs.com/package/svelte-jsoneditor) about `refresh()`
+- **$focus** - Give the editor focus. [See more](https://www.npmjs.com/package/svelte-jsoneditor) about `focus()`
+- **$destroy** - Destroy the editor, remove it from the DOM. [See more](https://www.npmjs.com/package/svelte-jsoneditor) about `destroy()`
+- **$patch** - Apply a JSON patch document to update the contents of the JSON document. [See more](https://www.npmjs.com/package/svelte-jsoneditor) about `patch()`
+- **$transform** - Programmatically trigger clicking of the transform button in the main menu, opening the transform model. [See more](https://www.npmjs.com/package/svelte-jsoneditor) about `transform()`
+- **$scrollTo** - Scroll the editor vertically such that the specified path comes into view. Only applicable to modes tree and table. The path will be expanded when needed. The returned Promise is resolved after scrolling is finished. [See more](https://www.npmjs.com/package/svelte-jsoneditor) about `scrollTo()`
+- **$findElement** - Find the DOM element of a given path. Returns null when not found. [See more](https://www.npmjs.com/package/svelte-jsoneditor) about `findElement()`
+- **$acceptAutoRepair** - In tree mode, invalid JSON is automatically repaired when loaded. [See more](https://www.npmjs.com/package/svelte-jsoneditor) about `acceptAutoRepair()`
+- **$validate** - Get all current parse errors and validation errors. [See more](https://www.npmjs.com/package/svelte-jsoneditor) about `validate()`
 
-
-<br>
+### Example
 
 ```vue
 <template>
@@ -273,7 +271,6 @@ Read more in [svelte-jsoneditor](https://www.npmjs.com/package/svelte-jsoneditor
 
   <div>
     <button @click="onCollapse">collapse all</button>
-
     <button @click="onExpand">expand all</button>
   </div>
 </template>
@@ -303,10 +300,10 @@ Read more in [svelte-jsoneditor](https://www.npmjs.com/package/svelte-jsoneditor
 </script>
 ```
 
-<br>
+## 🟥🟧🟨🟩🟦🟪️ Styling
 
-### 🟥🟧🟨🟩🟦🟪️ Styling
 The editor can be styled using the available CSS variables. A full list with all variables can be found [here](https://github.com/josdejong/svelte-jsoneditor/blob/main/src/lib/themes/defaults.scss)
+
 ```vue
 <template>
   <json-editor
@@ -328,7 +325,6 @@ const jsonData = ref({
   object: {a: 'b', c: 'd'},
   string: 'Hello World',
 });
-
 </script>
 
 <style>
@@ -466,11 +462,25 @@ const jsonData = ref({
 </style>
 ```
 
-<br>
+## 🆕 What's New in Latest Version
 
-## 🔨Build Setup
+### Text Mode Enhancements
+- **Expand/Collapse in Text Mode**: You can now expand and collapse JSON sections directly in text mode, making it easier to work with large JSON documents
+- **Expand All / Collapse All buttons**: New menu buttons in text mode for quick navigation
+- **Recursive Collapse**: Support for collapsing nested structures recursively
 
-``` bash
+### Improved Query Language Support
+- **JSONQuery v5**: Updated to the latest version of @jsonquerylang/jsonquery with improved performance and features
+- **Five Query Languages**: Full support for `javascript`, `lodash`, `jmespath`, `jsonquery`, and `jsonpath`
+
+### Performance & Bug Fixes
+- Improved performance when renaming object keys
+- Better handling of context menu with updated selections
+- Enhanced paste functionality with multiline text
+
+## 🔨 Build Setup
+
+```bash
 # install dependencies
 npm install
 
@@ -479,3 +489,16 @@ npm run dev
 
 # build for production with minification
 npm run build
+```
+
+## 📝 License
+
+MIT
+
+## 🤝 Contributing
+
+Contributions, issues and feature requests are welcome!
+
+## ⭐ Show your support
+
+Give a ⭐️ if this project helped you!
