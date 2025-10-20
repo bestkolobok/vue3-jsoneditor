@@ -11,15 +11,14 @@
     "isolatedModules": true,
     "moduleDetection": "force",
 
-    // Для бібліотеки важливо генерувати декларації
     "declaration": true,
     "declarationMap": true,
     "emitDeclarationOnly": true,
     "outDir": "./dist",
 
     "strict": true,
-    "noImplicitAny": false,  // Тимчасово для сумісності
-    "strictNullChecks": false,  // Тимчасово для сумісності
+    "noImplicitAny": false,
+    "strictNullChecks": false,
     "noUnusedLocals": true,
     "noUnusedParameters": true,
     "noFallthroughCasesInSwitch": true,
@@ -29,6 +28,7 @@
     "forceConsistentCasingInFileNames": true,
 
     "jsx": "preserve",
+    "jsxImportSource": "vue",
     "sourceMap": true,
 
     "baseUrl": ".",

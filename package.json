@@ -1,6 +1,6 @@
 {
   "name": "vue3-ts-jsoneditor",
-  "version": "3.1.0",
+  "version": "3.1.1",
   "author": {
     "name": "Alex Guzey",
     "email": "alex.guzey@gmail.com"
@@ -10,18 +10,14 @@
   "type": "module",
   "main": "dist/index.mjs",
   "module": "dist/index.mjs",
+  "types": "./dist/JsonEditorPlugin.d.ts",
   "exports": {
     ".": {
       "import": "./dist/index.mjs",
-      "types": "./dist/JsonEditorPlugin.d.ts"
-    },
-    "./dist/vanilla-jsoneditor.js": "./dist/vanilla-jsoneditor.js",
-    "./styles.css": "./dist/style.css"
+      "types": "./dist/JsonEditorPlugin.d.ts",
+      "default": "./dist/index.mjs"
+    }
   },
-  "imports": {
-    "#query-languages.mjs": "./dist/index2.mjs"
-  },
-  "types": "dist/JsonEditorPlugin.d.ts",
   "repository": {
     "type": "git",
     "url": "https://github.com/bestkolobok/vue3-jsoneditor.git"
@@ -40,30 +36,34 @@
     "preview": "vite preview --port 4173",
     "build-only": "vite build",
     "type-check": "vue-tsc --build --force",
-    "lint": "eslint . --ext .vue,.js,.jsx,.cjs,.mjs,.ts,.tsx,.cts,.mts --fix --ignore-path .gitignore"
+    "lint": "eslint . --fix"
   },
   "dependencies": {
     "immutable-json-patch": "^6.0.1",
-    "vanilla-jsoneditor": "^3.10.0",
-    "vue": "^3.5.13"
+    "vanilla-jsoneditor": "^3.10.0"
   },
   "devDependencies": {
+    "@eslint/js": "^9.38.0",
     "@rushstack/eslint-patch": "^1.1.0",
     "@types/node": "^22.14.1",
     "@vitejs/plugin-vue": "^6.0.1",
-    "@vue/eslint-config-prettier": "^7.0.0",
-    "@vue/eslint-config-typescript": "^11.0.0",
     "@vue/tsconfig": "^0.5.1",
-    "eslint": "^8.5.0",
-    "eslint-plugin-vue": "^9.0.0",
+    "eslint": "^9.38.0",
+    "eslint-plugin-vue": "^9.33.0",
+    "globals": "^16.4.0",
+    "jiti": "^2.6.1",
     "npm-run-all": "^4.1.5",
     "prettier": "^2.5.1",
     "sass": "^1.86.3",
     "typescript": "^5.8.2",
+    "typescript-eslint": "^8.46.1",
     "vite": "^7.1.9",
     "vite-plugin-dts": "^4.5.4",
     "vite-plugin-env-config": "^2.0.1",
     "vue-tsc": "^3.1.1"
+  },
+  "peerDependencies": {
+    "vue": "^3.0.0"
   },
   "engines": {
     "node": ">=20.19.0"

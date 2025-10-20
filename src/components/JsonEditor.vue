@@ -763,7 +763,7 @@ export default defineComponent({
     watch(
       () => darkThemeStyle.value,
       async (value) => {
-        if (!!value) {
+        if (value) {
           const {setDarkThemeStyle} = await import('./styles-handler');
           await setDarkThemeStyle();
         }

@@ -10,12 +10,12 @@ export default defineConfig({
     dts({
       insertTypesEntry: true,
       rollupTypes: true,
+      copyDtsFiles: true,
     }),
     envConfig({
       prefix: 'VITECONFIG_',
       separator: '_',
     }),
-    // Видаляємо chunkSplitPlugin
   ],
   resolve: {
     alias: {
@@ -25,14 +25,38 @@ export default defineConfig({
   define: {
     __VUE_PROD_HYDRATION_MISMATCH_DETAILS__: false,
   },
+  optimizeDeps: {
+    include: [
+      'ajv',
+      'ajv-dist',
+      'ajv-formats',
+      'ajv-i18n',
+      'immutable-json-patch',
+      'lodash-es',
+      '@fortawesome/free-regular-svg-icons',
+      '@fortawesome/free-solid-svg-icons',
+      'jmespath',
+      'jsonrepair',
+      'vanilla-jsoneditor',
+    ],
+    esbuildOptions: {
+      define: {
+        global: 'globalThis',
+      },
+    },
+  },
   build: {
     cssMinify: 'esbuild',
     target: 'es2022',
     lib: {
+      name: 'JsonEditorPlugin',
       entry: './src/JsonEditorPlugin.ts',
       formats: ['es'],
-      name: 'JsonEditorPlugin',
       fileName: () => 'index.mjs',
+    },
+    commonjsOptions: {
+      transformMixedEsModules: true,
+      include: [/node_modules/],
     },
     rollupOptions: {
       external: ['vue'],
@@ -40,6 +64,12 @@ export default defineConfig({
         globals: {
           vue: 'Vue',
         },
+        interop: 'auto',
+        generatedCode: {
+          constBindings: true,
+        },
+        preserveModules: false,
+        exports: 'named',
         manualChunks: (id) => {
           if (id.includes('vanilla-jsoneditor')) return 'vanilla-jsoneditor';
           if (id.includes('immutable-json-patch')) return 'immutable-json-patch';
@@ -58,7 +88,15 @@ export default defineConfig({
             return 'vendor';
           }
         },
+        chunkFileNames: '[name].js',
+      },
+      onwarn(warning, warn) {
+        if (warning.code === 'CIRCULAR_DEPENDENCY' && warning.message.includes('node_modules')) {
+          return;
+        }
+        warn(warning);
       },
     },
+    chunkSizeWarningLimit: 1000,
   },
 });
