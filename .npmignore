@@ -77,17 +77,19 @@ pnpm-debug.log*
 
 ### WebStorm/IntelliJ ###
 /.idea
-modules.xml
 *.ipr
 
 .npmignore
 .gitignore
 .prettierrc
-.eslint.cjs
-yarn.lock
+eslint.config.ts
 vite.config.ts
 tsconfig.config.json
 tsconfig.json
+pnpm-workspace.yaml
+index.html
+env.d.ts
+deploy.sh
 deploy/
 
 

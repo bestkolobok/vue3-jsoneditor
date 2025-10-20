@@ -78,7 +78,6 @@ export default defineConfig({
           if (id.includes('jsonpath-plus')) return 'jsonpath-plus';
           if (id.includes('lodash-es')) return 'lodash-es';
           if (id.includes('jsonrepair')) return 'jsonrepair';
-          if (id.includes('ajv')) return 'ajv';
           if (id.includes('memoize-one')) return 'memoize-one';
           if (id.includes('@fortawesome/free-solid-svg-icons')) return 'fortawesome';
           if (id.includes('@jsonquerylang/jsonquery')) return 'jsonquerylang';
