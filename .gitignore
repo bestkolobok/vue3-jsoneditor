@@ -84,3 +84,6 @@ modules.xml
 dist
 build
 gh-dist
+
+# Package
+*.tgz

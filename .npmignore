@@ -6,7 +6,6 @@
 
 # packages
 .package-lock.json
-yarn.lock
 
 # local env files
 .env.local
@@ -27,6 +26,7 @@ pnpm-debug.log*
 *.njsproj
 *.sln
 *.sw?
+*.ipr
 
 # Optional npm cache directory
 .npm
@@ -75,10 +75,6 @@ pnpm-debug.log*
 ### Vim ###
 *.sw[a-p]
 
-### WebStorm/IntelliJ ###
-/.idea
-*.ipr
-
 .npmignore
 .gitignore
 .prettierrc
@@ -89,9 +85,11 @@ tsconfig.json
 pnpm-workspace.yaml
 index.html
 env.d.ts
-deploy.sh
 deploy/
 
 
 #Build generated
 gh-dist
+
+# Package
+*.tgz

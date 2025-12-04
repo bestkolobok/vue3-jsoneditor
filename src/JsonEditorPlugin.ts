@@ -70,7 +70,22 @@ export type {
   EditValueSelection,
   createJSONEditor,
 };
-export {renderValue, renderJSONSchemaEnum} from 'vanilla-jsoneditor';
+
+const createLazyExport = (fnName: string) => {
+  return new Proxy(() => {}, {
+    apply: async (_target, _thisArg, args) => {
+      if (typeof window === 'undefined') {
+        throw new Error(`${fnName} is not available on server side. Please use it only in client-side code.`);
+      }
+
+      const module = await import('vanilla-jsoneditor');
+      return module[fnName](...args);
+    },
+  });
+};
+
+export const renderValue = createLazyExport('renderValue');
+export const renderJSONSchemaEnum = createLazyExport('renderJSONSchemaEnum');
 
 export const JsonEditorPlugin: Plugin<Params> = {
   install(app, params = {}) {
