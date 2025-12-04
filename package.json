@@ -28,36 +28,48 @@
   "homepage": "https://github.com/bestkolobok/vue3-jsoneditor#readme",
   "scripts": {
     "dev": "vite",
-    "deploy": "sh deploy.sh patch",
-    "deploy:minor": "sh deploy.sh minor",
-    "deploy:major": "sh deploy.sh major",
     "build": "run-p type-check build-only",
     "build:gh": "VITECONFIG_build_lib=false VITECONFIG_build_rollupOptions=false VITECONFIG_build_cssMinify=esbuild VITECONFIG_build_outDir=gh-dist VITECONFIG_base='/vue3-jsoneditor' run-p build-only && touch gh-dist/.nojekyll",
     "preview": "vite preview --port 4173",
     "build-only": "vite build",
-    "type-check": "vue-tsc --build --force",
-    "lint": "eslint . --fix"
+    "type-check": "vue-tsc --noEmit",
+    "lint": "eslint . --fix",
+    "test": "echo \"No tests yet\"",
+    "semantic-release": "semantic-release",
+    "deploy:local": "npm run build && npm run build:gh && npm publish",
+    "pack": "npm pack",
+    "prepare": "husky"
   },
   "dependencies": {
     "immutable-json-patch": "^6.0.1",
     "vanilla-jsoneditor": "^3.10.0"
   },
   "devDependencies": {
+    "@commitlint/cli": "^20.1.0",
+    "@commitlint/config-conventional": "^20.0.0",
     "@eslint/js": "^9.38.0",
     "@rushstack/eslint-patch": "^1.1.0",
+    "@semantic-release/changelog": "^6.0.3",
+    "@semantic-release/commit-analyzer": "^13.0.1",
+    "@semantic-release/git": "^10.0.1",
+    "@semantic-release/github": "^12.0.2",
+    "@semantic-release/npm": "^13.1.2",
+    "@semantic-release/release-notes-generator": "^14.1.0",
     "@types/node": "^22.14.1",
     "@vitejs/plugin-vue": "^6.0.1",
     "@vue/tsconfig": "^0.5.1",
     "eslint": "^9.38.0",
     "eslint-plugin-vue": "^9.33.0",
     "globals": "^16.4.0",
+    "husky": "^9.1.7",
     "jiti": "^2.6.1",
     "npm-run-all": "^4.1.5",
     "prettier": "^2.5.1",
     "sass": "^1.86.3",
+    "semantic-release": "^25.0.2",
     "typescript": "^5.8.2",
     "typescript-eslint": "^8.46.1",
-    "vite": "^7.1.9",
+    "vite": "^7.2.6",
     "vite-plugin-dts": "^4.5.4",
     "vite-plugin-env-config": "^2.0.1",
     "vue-tsc": "^3.1.1"
@@ -75,15 +87,7 @@
     "editor"
   ],
   "funding": [
-    "https://uahelp.monobank.ua/",
-    "https://bank.gov.ua/en/news/all/natsionalniy-bank-vidkriv-spetsrahunok-dlya-zboru-koshtiv-na-potrebi-armiyi",
-    "https://www.comebackalive.in.ua/",
-    "https://armysos.com.ua/donate/",
-    "http://wings-phoenix.org.ua/en/about-fund/",
-    "https://novaposhta.ua/eng/",
-    "https://voices.org.ua/en/donat/",
-    "https://www.unicef.org.uk/donate/donate-now-to-protect-children-in-ukraine/",
-    "https://www.paypal.com/donate/?cmd=_s-xclick&hosted_button_id=FYFZPVQN8J7YC&source=url",
-    "https://novaukraine.org/"
+    "https://u24.gov.ua/",
+    "https://savelife.in.ua/en/"
   ]
 }
