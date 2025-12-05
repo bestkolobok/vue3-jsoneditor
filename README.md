@@ -3,6 +3,8 @@
 [![npm](https://img.shields.io/npm/dm/vue3-ts-jsoneditor.svg)](https://www.npmjs.com/package/vue3-ts-jsoneditor)
 [![npm](https://github.com/bestkolobok/vue3-jsoneditor/actions/workflows/test.yml/badge.svg)](https://github.com/bestkolobok/vue3-jsoneditor/actions/workflows/test.yml)
 [![npm](https://img.shields.io/badge/release-semantic-e10079?logo=semantic-release)](https://semantic-release.gitbook.io)
+<br>
+[![npm](https://img.shields.io/github/stars/bestkolobok/vue3-jsoneditor?style=social)](https://github.com/bestkolobok/vue3-jsoneditor)
 
 🇺🇦🇺🇦🇺🇦 [Stand With Ukraine](https://u24.gov.ua/) 🇺🇦🇺🇦🇺🇦
 
