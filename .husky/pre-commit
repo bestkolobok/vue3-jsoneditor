@@ -1,1 +1,2 @@
-pnpm lint
+# Lint staged files
+pnpm lint-staged

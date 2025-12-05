@@ -85,7 +85,6 @@ tsconfig.json
 pnpm-workspace.yaml
 index.html
 env.d.ts
-deploy/
 
 
 #Build generated
@@ -93,3 +92,9 @@ gh-dist
 
 # Package
 *.tgz
+
+# Tests
+/coverage
+/tests
+vitest.config.ts
+tsconfig.test.json
