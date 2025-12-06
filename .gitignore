@@ -5,7 +5,7 @@
 .output
 
 # packages
-.package-lock.json
+package-lock.json
 yarn.lock
 
 # local env files
