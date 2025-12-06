@@ -18,6 +18,13 @@
       "default": "./dist/index.mjs"
     }
   },
+  "files": [
+    "dist",
+    "README.md",
+    "LICENSE",
+    "CHANGELOG.md",
+    "package.json"
+  ],
   "repository": {
     "type": "git",
     "url": "git+https://github.com/bestkolobok/vue3-jsoneditor.git"
