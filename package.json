@@ -59,7 +59,7 @@
   },
   "dependencies": {
     "immutable-json-patch": "^6.0.1",
-    "vanilla-jsoneditor": "^3.10.0"
+    "vanilla-jsoneditor": "^3.11.0"
   },
   "devDependencies": {
     "@commitlint/cli": "^20.1.0",
