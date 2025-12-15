@@ -1,3 +1,10 @@
+# [3.3.0](https://github.com/bestkolobok/vue3-jsoneditor/compare/v3.2.1...v3.3.0) (2025-12-15)
+
+
+### Features
+
+* upgrade vanilla-jsoneditor to v3.11.0 ([2cb72a3](https://github.com/bestkolobok/vue3-jsoneditor/commit/2cb72a3c24138f6a529dc1aa894bc8510a5e78ce))
+
 ## [3.2.1](https://github.com/bestkolobok/vue3-jsoneditor/compare/v3.2.0...v3.2.1) (2025-12-06)
 
 
