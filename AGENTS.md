@@ -65,6 +65,8 @@ Prefer `pnpm` in this repo.
 - Coverage: `pnpm test:coverage`
 - Build library: `pnpm build`
 - Pack publishable tarball: `pnpm pack`
+- Package + browser smoke: `pnpm smoke`
+- Package install/build smoke only: `pnpm smoke:consumer`
 
 ## Validation Expectations
 
