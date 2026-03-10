@@ -1,3 +1,10 @@
+## [3.3.2](https://github.com/bestkolobok/vue3-jsoneditor/compare/v3.3.1...v3.3.2) (2026-03-10)
+
+
+### Bug Fixes
+
+* **ci:** add packaged browser smoke test ([5f27a7d](https://github.com/bestkolobok/vue3-jsoneditor/commit/5f27a7d604009cf101ee69011c93482a8dac48ec))
+
 ## [3.3.1](https://github.com/bestkolobok/vue3-jsoneditor/compare/v3.3.0...v3.3.1) (2026-03-10)
 
 
