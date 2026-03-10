@@ -7,6 +7,7 @@ export const watchPropNames = [
   'readOnly',
   'indentation',
   'tabSize',
+  'truncateTextSize',
   'escapeControlCharacters',
   'escapeUnicodeCharacters',
   'flattenColumns',
@@ -14,6 +15,7 @@ export const watchPropNames = [
   'onClassName',
   'onRenderValue',
   'onRenderMenu',
+  'onRenderContextMenu',
 ] as const;
 
 export const propNames = [
@@ -26,6 +28,7 @@ export const propNames = [
   'readOnly',
   'indentation',
   'tabSize',
+  'truncateTextSize',
   'escapeControlCharacters',
   'escapeUnicodeCharacters',
   'flattenColumns',
@@ -36,6 +39,7 @@ export const propNames = [
   'onClassName',
   'onRenderValue',
   'onRenderMenu',
+  'onRenderContextMenu',
 ] as const;
 
 export const pickDefinedProps = (options: Record<string, any> = {}, props: Record<string, any>) => {

@@ -218,6 +218,14 @@ describe('JsonEditor.vue', () => {
       expect(wrapper.props('tabSize')).toBe(4)
     })
 
+    it('should accept truncateTextSize prop', async () => {
+      const wrapper = mount(JsonEditor, {
+        props: { truncateTextSize: 64 }
+      })
+
+      expect(wrapper.props('truncateTextSize')).toBe(64)
+    })
+
     it('should accept queryLanguagesIds prop', async () => {
       const wrapper = mount(JsonEditor, {
         props: { queryLanguagesIds: ['javascript', 'lodash'] }
@@ -308,6 +316,15 @@ describe('JsonEditor.vue', () => {
       })
 
       expect(wrapper.props('onRenderMenu')).toBe(onRenderMenuFn)
+    })
+
+    it('should accept onRenderContextMenu function prop', async () => {
+      const onRenderContextMenuFn = vi.fn((items) => items)
+      const wrapper = mount(JsonEditor, {
+        props: { onRenderContextMenu: onRenderContextMenuFn }
+      })
+
+      expect(wrapper.props('onRenderContextMenu')).toBe(onRenderContextMenuFn)
     })
   })
 

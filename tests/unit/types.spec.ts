@@ -116,6 +116,7 @@ describe('types.ts', () => {
         readOnly: true,
         indentation: 2,
         tabSize: 4,
+        truncateTextSize: 80,
         mode: 'tree',
         mainMenuBar: true,
         navigationBar: true,
@@ -132,6 +133,7 @@ describe('types.ts', () => {
       expect(options.readOnly).toBe(true)
       expect(options.indentation).toBe(2)
       expect(options.tabSize).toBe(4)
+      expect(options.truncateTextSize).toBe(80)
       expect(options.mode).toBe('tree')
     })
 
@@ -172,6 +174,15 @@ describe('types.ts', () => {
       }
 
       expect(options.indentation).toBe('\t')
+    })
+
+    it('should accept onRenderContextMenu', () => {
+      const onRenderContextMenu = (items: unknown[]) => items
+      const options: JSONEditorOptions = {
+        onRenderContextMenu,
+      }
+
+      expect(options.onRenderContextMenu).toBe(onRenderContextMenu)
     })
   })
 })

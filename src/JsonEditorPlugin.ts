@@ -13,13 +13,16 @@ import type {
   ValueNormalization,
   SearchResultItem,
   RenderValueComponentDescription,
+  ContextMenuItem,
   OnClassName,
   OnRenderValue,
   OnRenderMenu,
+  OnRenderContextMenu,
   OnChangeStatus,
   Validator,
   Mode,
   MenuItem,
+  RenderContextMenuContext,
   JSONPathParser,
   JSONParser,
   JSONEditorSelection,
@@ -56,13 +59,16 @@ export type {
   ValueNormalization,
   SearchResultItem,
   RenderValueComponentDescription,
+  ContextMenuItem,
   OnClassName,
   OnRenderValue,
   OnRenderMenu,
+  OnRenderContextMenu,
   OnChangeStatus,
   Validator,
   Mode,
   MenuItem,
+  RenderContextMenuContext,
   JSONPathParser,
   JSONParser,
   JSONEditorSelection,
@@ -86,6 +92,23 @@ const createLazyExport = (fnName: string) => {
 
 export const renderValue = createLazyExport('renderValue');
 export const renderJSONSchemaEnum = createLazyExport('renderJSONSchemaEnum');
+
+export {createAjvValidator, createAjvValidatorAsync} from 'vanilla-jsoneditor';
+export {
+  createAfterSelection,
+  createEditKeySelection,
+  createEditValueSelection,
+  createInsideSelection,
+  createKeySelection,
+  createMultiSelection,
+  createValueSelection,
+  expandAll,
+  expandMinimal,
+  expandNone,
+  expandSelf,
+  parseJSONPath,
+  stringifyJSONPath,
+} from 'vanilla-jsoneditor';
 
 export const JsonEditorPlugin: Plugin<Params> = {
   install(app, params = {}) {

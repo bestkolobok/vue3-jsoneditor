@@ -116,5 +116,36 @@ describe('JsonEditorPlugin.ts', () => {
       const module = await import('@/JsonEditorPlugin')
       expect(module.renderJSONSchemaEnum).toBeDefined()
     })
+
+    it('should export createAjvValidator', async () => {
+      const module = await import('@/JsonEditorPlugin')
+      expect(module.createAjvValidator).toBeDefined()
+    })
+
+    it('should export createAjvValidatorAsync', async () => {
+      const module = await import('@/JsonEditorPlugin')
+      expect(module.createAjvValidatorAsync).toBeDefined()
+    })
+
+    it('should export expand helpers', async () => {
+      const module = await import('@/JsonEditorPlugin')
+      expect(module.expandAll).toBeDefined()
+      expect(module.expandMinimal).toBeDefined()
+      expect(module.expandNone).toBeDefined()
+      expect(module.expandSelf).toBeDefined()
+    })
+
+    it('should export selection helpers', async () => {
+      const module = await import('@/JsonEditorPlugin')
+      expect(module.createKeySelection).toBeDefined()
+      expect(module.createValueSelection).toBeDefined()
+      expect(module.createMultiSelection).toBeDefined()
+    })
+
+    it('should export path helpers', async () => {
+      const module = await import('@/JsonEditorPlugin')
+      expect(module.parseJSONPath).toBeDefined()
+      expect(module.stringifyJSONPath).toBeDefined()
+    })
   })
 })

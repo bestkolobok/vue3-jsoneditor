@@ -16,6 +16,7 @@ import type {
   OnClassName,
   OnRenderValue,
   OnRenderMenu,
+  OnRenderContextMenu,
   Validator,
   MenuItem,
   RenderMenuContext,
@@ -169,6 +170,12 @@ export default defineComponent({
     tabSize: Number as PropType<number>,
 
     /**
+     * ### truncateTextSize: number
+     * Truncate large text values in tree mode. Set to 0 to disable truncation.
+     * */
+    truncateTextSize: Number as PropType<number>,
+
+    /**
      * ### escapeControlCharacters: boolean.
      * False by default. When true, control characters like newline and tab are rendered as escaped
      * characters \n and \t. Only applicable for 'tree' mode, in 'text' mode control characters are
@@ -205,7 +212,7 @@ export default defineComponent({
      * Validate the JSON document. For example use the built-in JSON Schema validator
      * powered by Ajv:
      * ```ts
-     *  import { createAjvValidator } from 'svelte-jsoneditor'
+     *  import { createAjvValidator } from 'vue3-ts-jsoneditor'
      *  const validator = createAjvValidator(schema, schemaDefinitions)
      * ```
      * */
@@ -280,7 +287,7 @@ export default defineComponent({
      *
      *
      * ```ts
-     *  import { renderJSONSchemaEnum, renderValue } from 'svelte-jsoneditor'
+     *  import { renderJSONSchemaEnum, renderValue } from 'vue3-ts-jsoneditor'
      *
      *  function onRenderValue(props) {
      *    // use the enum renderer, and fallback on the default renderer
@@ -326,6 +333,13 @@ export default defineComponent({
      *  ```
      * */
     onRenderMenu: Function as PropType<OnRenderMenu>,
+
+    /**
+     * ### onRenderContextMenu(items, context): ContextMenuItem[] | false | undefined
+     * Customize the context menu items shown for the current selection.
+     * Returning false will hide the context menu.
+     * */
+    onRenderContextMenu: Function as PropType<OnRenderContextMenu>,
 
     /**
      * ### height: string | number
@@ -580,6 +594,14 @@ export default defineComponent({
       return items;
     };
 
+    const onRenderContextMenu: OnRenderContextMenu = (items, context) => {
+      if (typeof props.onRenderContextMenu === 'function') {
+        return props.onRenderContextMenu(items, context);
+      }
+
+      return items;
+    };
+
     const makeEditorProps = async (): Promise<Record<string, any>> => {
       const options = {fullWidthButton: true, ...(pluginOptions || {})};
       const queryLanguages = await makeQueryLanguages();
@@ -595,6 +617,7 @@ export default defineComponent({
         onFocus,
         onBlur,
         onRenderMenu,
+        onRenderContextMenu,
         onSelect,
       };
     };
@@ -783,11 +806,9 @@ export default defineComponent({
 
     expose({
       $collapseAll() {
-        if (mode.value !== 'tree') return;
         editor.value?.collapse([], true);
       },
       $expandAll() {
-        if (mode.value !== 'tree') return;
         editor.value?.expand([]);
       },
       $expand(pathOrCallback: JSONPath | ((path: JSONPath) => boolean), callback?: (path: JSONPath) => boolean) {
