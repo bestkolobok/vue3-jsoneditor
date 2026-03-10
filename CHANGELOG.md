@@ -1,3 +1,10 @@
+## [3.3.1](https://github.com/bestkolobok/vue3-jsoneditor/compare/v3.3.0...v3.3.1) (2026-03-10)
+
+
+### Bug Fixes
+
+* align change event status signature ([a744cbd](https://github.com/bestkolobok/vue3-jsoneditor/commit/a744cbdabc9358d9bf8928b0b79872c49556cbb9))
+
 # [3.3.0](https://github.com/bestkolobok/vue3-jsoneditor/compare/v3.2.1...v3.3.0) (2025-12-15)
 
 
