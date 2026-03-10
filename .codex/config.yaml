@@ -1,0 +1,29 @@
+model: gpt-5.2
+approval_policy: on-request
+sandbox_mode: workspace-write
+model_reasoning_effort: high
+
+shell_environment_policy:
+  include_only:
+    - PATH
+    - HOME
+
+features:
+  parallel: true
+  shell_tool: true
+  shell_snapshot: true
+  view_image_tool: true
+  warnings: true
+  skills: true
+  web_search_request: true
+
+commands:
+  dir: .codex/commands
+  invoke: |
+    /<name>
+    <arguments>
+    (alias) Use command: <name>
+
+# Project note:
+# MCP servers are expected to be defined in the user-level ~/.codex/config.toml.
+# This repository is prepared to use MCP Context7 from that shared configuration.
