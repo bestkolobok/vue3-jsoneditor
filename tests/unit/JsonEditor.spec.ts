@@ -2,6 +2,7 @@ import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest'
 import { mount, flushPromises } from '@vue/test-utils'
 import { defineComponent, ref } from 'vue'
 import JsonEditor from '@/components/JsonEditor.vue'
+import type { OnChangeStatus } from 'vanilla-jsoneditor'
 
 // Mock vanilla-jsoneditor
 const mockEditor = {
@@ -22,8 +23,10 @@ const mockEditor = {
   collapse: vi.fn(),
 }
 
+const mockCreateJSONEditor = vi.fn(() => mockEditor)
+
 vi.mock('vanilla-jsoneditor', () => ({
-  createJSONEditor: vi.fn(() => mockEditor),
+  createJSONEditor: mockCreateJSONEditor,
   javascriptQueryLanguage: { id: 'javascript' },
   lodashQueryLanguage: { id: 'lodash' },
   jmespathQueryLanguage: { id: 'jmespath' },
@@ -35,6 +38,7 @@ describe('JsonEditor.vue', () => {
   beforeEach(() => {
     vi.clearAllMocks()
     mockEditor.get.mockReturnValue({ json: {} })
+    mockCreateJSONEditor.mockClear()
   })
 
   afterEach(() => {
@@ -75,6 +79,35 @@ describe('JsonEditor.vue', () => {
       })
 
       expect(wrapper.find('.loading').exists()).toBe(true)
+    })
+
+    it('should emit change with upstream OnChangeStatus as the third argument', async () => {
+      const wrapper = mount(JsonEditor, {
+        props: { json: { foo: 'bar' } }
+      })
+      await flushPromises()
+      await new Promise(resolve => setTimeout(resolve, 0))
+
+      const editorConfig = mockCreateJSONEditor.mock.calls[0]?.[0]
+      const onChange = editorConfig?.props?.onChange
+
+      const content = { json: { foo: 'baz' } }
+      const previousContent = { json: { foo: 'bar' } }
+      const status: OnChangeStatus = {
+        contentErrors: undefined,
+        patchResult: {
+          json: { foo: 'baz' },
+          previousJson: { foo: 'bar' },
+          undo: [],
+          redo: []
+        }
+      }
+
+      onChange(content, previousContent, status)
+
+      expect(wrapper.emitted('change')).toEqual([
+        [content, previousContent, status]
+      ])
     })
   })
 

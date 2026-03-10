@@ -236,7 +236,7 @@ It is more clear to use `v-model:json` for tree mode and `v-model:text` for text
 
 | Name | Description | Arguments |
 |------|-------------|-----------|
-| change | Which is invoked on every change made in the JSON document. The parameter patchResult is only available in tree mode, and not in text mode, since a change in arbitrary text cannot be expressed as a JSON Patch document. | `(content: Content, previousContent: Content, patchResult: JSONPatchResult \| null)` |
+| change | Which is invoked on every change made in the JSON document. The third argument is `status: OnChangeStatus`. Use `status.patchResult` in tree mode when a JSON Patch result is available. In text mode, `status.patchResult` is `undefined`. Parse and validation details are exposed via `status.contentErrors`. | `(content: Content, previousContent: Content, status: OnChangeStatus)` |
 | error | Event fired when an error occurs. Default implementation is to log an error in the console and show a simple alert message to the user. | `(err: Error)` |
 | change-mode | Invoked when the mode is changed. | `(mode: 'tree' \| 'text' \| 'table')` |
 | change-query-language | Invoked when the user changes the selected query language in the TransformModal via the configuration button top right. | `(queryLanguageId: string)` |

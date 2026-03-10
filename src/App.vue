@@ -86,7 +86,7 @@ const onRefresh = () => {
   editor.value.$refresh();
 };
 
-const onError = (error: string) => {
+const onError = (error: Error) => {
   console.log('>>>>>>>>>> ', error);
   //
 };

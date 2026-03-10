@@ -352,20 +352,20 @@ export default defineComponent({
     },
   },
 
-  emits: [
-    'update:modelValue',
-    'update:json',
-    'update:text',
-    'update:jsonString',
-    'update:selection',
-    'change',
-    'error',
-    'change-mode',
-    'update:mode',
-    'change-query-language',
-    'focus',
-    'blur',
-  ],
+  emits: {
+    'update:modelValue': (...args: [unknown]) => args.length === 1,
+    'update:json': (...args: [unknown]) => args.length === 1,
+    'update:text': (...args: [string]) => args.length === 1,
+    'update:jsonString': (...args: [string]) => args.length === 1,
+    'update:selection': (...args: [JSONEditorSelection | undefined]) => args.length === 1,
+    change: (...args: [Content, Content, OnChangeStatus]) => args.length === 3,
+    error: (...args: [Error]) => args.length === 1,
+    'change-mode': (...args: [Mode]) => args.length === 1,
+    'update:mode': (...args: [Mode]) => args.length === 1,
+    'change-query-language': (...args: [QueryLanguageId]) => args.length === 1,
+    focus: () => true,
+    blur: () => true,
+  },
 
   setup(props, {expose, emit}) {
     const pluginOptions: JSONEditorOptions = inject('jsonEditorOptions', {});
