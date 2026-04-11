@@ -1,3 +1,10 @@
+## [3.3.3](https://github.com/bestkolobok/vue3-jsoneditor/compare/v3.3.2...v3.3.3) (2026-04-11)
+
+
+### Bug Fixes
+
+* apply queued external content updates ([737e031](https://github.com/bestkolobok/vue3-jsoneditor/commit/737e031ef77fedf7a7600472720bc63ea5c23015))
+
 ## [3.3.2](https://github.com/bestkolobok/vue3-jsoneditor/compare/v3.3.1...v3.3.2) (2026-03-10)
 
 
