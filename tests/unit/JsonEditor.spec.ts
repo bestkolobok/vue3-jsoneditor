@@ -34,6 +34,10 @@ vi.mock('vanilla-jsoneditor', () => ({
   jsonpathQueryLanguage: { id: 'jsonpath' },
 }))
 
+afterEach(() => {
+  vi.useRealTimers()
+})
+
 describe('JsonEditor.vue', () => {
   beforeEach(() => {
     vi.clearAllMocks()
@@ -541,6 +545,42 @@ describe('JsonEditor Component Integration', () => {
 
     const editor = wrapper.findComponent(JsonEditor)
     expect(editor.props('text')).toBe('{"key": "value"}')
+  })
+
+  it('should apply the latest external json update queued during sync', async () => {
+    vi.useFakeTimers()
+
+    let editorContent = { json: {} }
+
+    mockEditor.set.mockImplementation((content) => {
+      editorContent = structuredClone(content)
+    })
+
+    mockEditor.get.mockImplementation(() => {
+      return structuredClone(editorContent)
+    })
+
+    mockEditor.update.mockImplementation((content) => {
+      editorContent = structuredClone(content)
+    })
+
+    const wrapper = mount(JsonEditor, {
+      props: { json: {} }
+    })
+
+    await flushPromises()
+    await vi.runAllTimersAsync()
+
+    await wrapper.setProps({ json: { a: 1 } })
+    await wrapper.setProps({ json: { a: 1, b: 2 } })
+
+    await vi.runAllTimersAsync()
+    await flushPromises()
+
+    expect(mockEditor.update).toHaveBeenCalledTimes(2)
+    expect(mockEditor.update).toHaveBeenNthCalledWith(1, { json: { a: 1 } })
+    expect(mockEditor.update).toHaveBeenLastCalledWith({ json: { a: 1, b: 2 } })
+    expect(editorContent).toEqual({ json: { a: 1, b: 2 } })
   })
 })
 
