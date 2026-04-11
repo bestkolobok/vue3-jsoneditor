@@ -87,5 +87,10 @@ Prefer `pnpm` in this repo.
 ## Release Notes
 
 - Releases are handled through `semantic-release`.
+- Release intent rules:
+  - `feat` -> minor
+  - `fix` and `perf` -> patch
+  - `docs` -> patch
+  - `ci`, `build`, `style`, `test`, `chore`, and `refactor` should not trigger a release
 - Commit messages should remain compatible with Conventional Commits.
 - Do not manually edit release artifacts unless the task is specifically about release automation.

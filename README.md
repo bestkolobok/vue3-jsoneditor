@@ -40,6 +40,15 @@ npm install vue3-ts-jsoneditor
 
 ## ✅ Using
 
+## 🔧 Helper exports
+
+The package also re-exports a subset of `vanilla-jsoneditor` helpers that are commonly needed together with this Vue wrapper:
+
+- validators: `createAjvValidator`, `createAjvValidatorAsync`
+- expand callbacks: `expandAll`, `expandMinimal`, `expandNone`, `expandSelf`
+- path helpers: `parseJSONPath`, `stringifyJSONPath`
+- selection helpers: `createAfterSelection`, `createInsideSelection`, `createKeySelection`, `createValueSelection`, `createEditKeySelection`, `createEditValueSelection`, `createMultiSelection`
+
 ### 👉 Import globally
 
 ```javascript
@@ -70,6 +79,7 @@ interface JSONEditorOptions {
   readOnly?: boolean;
   indentation?: number | string;
   tabSize?: number;
+  truncateTextSize?: number;
   selection?: JSONEditorSelection;
   mode?: Mode;
   mainMenuBar?: boolean;
@@ -88,6 +98,7 @@ interface JSONEditorOptions {
   onRenderValue?: OnRenderValue;
   onClassName?: OnClassName;
   onRenderMenu?: OnRenderMenu;
+  onRenderContextMenu?: OnRenderContextMenu;
   height?: string | number;
   fullWidthButton?: boolean;
   darkTheme?: boolean;
@@ -216,10 +227,11 @@ It is more clear to use `v-model:json` for tree mode and `v-model:text` for text
 | readOnly | Open the editor in read-only mode: no changes can be made, non-relevant buttons are hidden from the menu, and the context menu is not enabled. | `boolean` | `false` |
 | indentation | Number of spaces use for indentation when stringifying JSON, or a string to be used as indentation like '\t' to use a tab as indentation, or '    ' to use 4 spaces (which is equivalent to configuring indentation: 4). See also property tabSize. | `number \| string` | `4` |
 | tabSize | When indentation is configured as a tab character (indentation: '\t'), tabSize configures how large a tab character is rendered. Default value is 4. Only applicable to text mode. | `number` | `4` |
+| truncateTextSize | Truncate large text values in tree mode. Set to `0` to disable truncation. | `number` | upstream default |
 | escapeControlCharacters | When true, control characters like newline and tab are rendered as escaped characters \n and \t. Only applicable for 'tree' mode, in 'text' mode control characters are always escaped. | `boolean` | `false` |
 | escapeUnicodeCharacters | When true, unicode characters like ☎ and 😀 are rendered escaped like \u260e and \ud83d\ude00 | `boolean` | `false` |
 | flattenColumns | Only applicable to 'table' mode. When true, nested object properties will be displayed each in their own column, with the nested path as column name. When false, nested objects will be rendered inline, and double-clicking them will open them in a popup. | `boolean` | `true` |
-| validator | Validate the JSON document. Details in [svelte-jsoneditor](https://www.npmjs.com/package/svelte-jsoneditor) | `function (json: unknown): ValidationError[]` | |
+| validator | Validate the JSON document. You can use the exported helpers `createAjvValidator` or `createAjvValidatorAsync`. Details in [svelte-jsoneditor](https://www.npmjs.com/package/svelte-jsoneditor) | `function (json: unknown): ValidationError[]` | |
 | parser | Configure a custom JSON parser, like lossless-json. By default, the native JSON parser of JavaScript is used. The JSON interface is an object with a parse and stringify function | `JSONParser` | `undefined` |
 | validationParser | Only applicable when a validator is provided. This is the same as parser, except that this parser is used to parse the data before sending it to the validator. Configure a custom JSON parser that is used to parse JSON before passing it to the validator. By default, the built-in JSON parser is used. When passing a custom validationParser, make sure the output of the parser is supported by the configured validator. | `JSONParser` | `undefined` |
 | pathParser | An optional object with a parse and stringify method to parse and stringify a JSONPath, which is an array with property names. The pathParser is used in the path editor in the navigation bar, which is opened by clicking the edit button on the right side of the navigation bar. The pathParser.parse function is allowed to throw an Error when the input is invalid. By default, a JSON Path notation is used, which looks like $.data[2].nested.property. | `JSONPathParser` | `undefined` |
@@ -228,6 +240,7 @@ It is more clear to use `v-model:json` for tree mode and `v-model:text` for text
 | onClassName | Add a custom class name to specific nodes, based on their path and/or value. | `function (path: Path, value: any): string \| undefined` | |
 | onRenderValue | Details in [svelte-jsoneditor](https://www.npmjs.com/package/svelte-jsoneditor) | `function (props: RenderValueProps) : RenderValueComponentDescription[]` | |
 | onRenderMenu | Details in [svelte-jsoneditor](https://www.npmjs.com/package/svelte-jsoneditor) | `function (items: MenuItem[], context: { mode: 'tree' \| 'text' \| 'table', modal: boolean }) : MenuItem[] \| undefined` | |
+| onRenderContextMenu | Customize context menu items for the current selection. Return `false` to hide the context menu. | `function (items: ContextMenuItem[], context: { mode: 'tree' \| 'text' \| 'table', modal: boolean, selection: JSONEditorSelection \| undefined }) : ContextMenuItem[] \| false \| undefined` | |
 | fullWidthButton | Whether full screen switching is added | `boolean` | `true` |
 | height | Default height | `string \| number` | `undefined` |
 | darkTheme | Switch to dark theme | `boolean` | `false` |

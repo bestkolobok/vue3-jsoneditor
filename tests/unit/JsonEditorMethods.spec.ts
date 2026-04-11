@@ -370,7 +370,7 @@ describe('JsonEditor Exposed Methods', () => {
       expect(mockEditor.collapse).toHaveBeenCalledWith([], true)
     })
 
-    it('should not collapse in text mode', async () => {
+    it('should collapse all nodes in text mode', async () => {
       const wrapper = mount(JsonEditor, {
         props: { text: '{}', mode: 'text' }
       })
@@ -381,7 +381,7 @@ describe('JsonEditor Exposed Methods', () => {
 
       getTypedVm(wrapper).$collapseAll()
 
-      expect(typeof getTypedVm(wrapper).$collapseAll).toBe('function')
+      expect(mockEditor.collapse).toHaveBeenCalledWith([], true)
     })
   })
 
@@ -398,7 +398,7 @@ describe('JsonEditor Exposed Methods', () => {
       expect(mockEditor.expand).toHaveBeenCalledWith([])
     })
 
-    it('should not expand in text mode', async () => {
+    it('should expand all nodes in text mode', async () => {
       const wrapper = mount(JsonEditor, {
         props: { text: '{}', mode: 'text' }
       })
@@ -409,7 +409,7 @@ describe('JsonEditor Exposed Methods', () => {
 
       getTypedVm(wrapper).$expandAll()
 
-      expect(typeof getTypedVm(wrapper).$expandAll).toBe('function')
+      expect(mockEditor.expand).toHaveBeenCalledWith([])
     })
   })
 

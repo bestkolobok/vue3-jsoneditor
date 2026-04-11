@@ -12,6 +12,7 @@ describe('utils.ts', () => {
       expect(watchPropNames).toContain('readOnly')
       expect(watchPropNames).toContain('indentation')
       expect(watchPropNames).toContain('tabSize')
+      expect(watchPropNames).toContain('truncateTextSize')
       expect(watchPropNames).toContain('escapeControlCharacters')
       expect(watchPropNames).toContain('escapeUnicodeCharacters')
       expect(watchPropNames).toContain('flattenColumns')
@@ -19,11 +20,12 @@ describe('utils.ts', () => {
       expect(watchPropNames).toContain('onClassName')
       expect(watchPropNames).toContain('onRenderValue')
       expect(watchPropNames).toContain('onRenderMenu')
+      expect(watchPropNames).toContain('onRenderContextMenu')
     })
 
     it('should be a readonly array', () => {
       expect(Array.isArray(watchPropNames)).toBe(true)
-      expect(watchPropNames.length).toBe(15)
+      expect(watchPropNames.length).toBe(17)
     })
   })
 
@@ -44,9 +46,14 @@ describe('utils.ts', () => {
       expect(propNames).toContain('pathParser')
     })
 
+    it('should contain current upstream passthrough props', () => {
+      expect(propNames).toContain('truncateTextSize')
+      expect(propNames).toContain('onRenderContextMenu')
+    })
+
     it('should be a readonly array', () => {
       expect(Array.isArray(propNames)).toBe(true)
-      expect(propNames.length).toBe(19)
+      expect(propNames.length).toBe(21)
     })
   })
 
@@ -161,13 +168,16 @@ describe('utils.ts', () => {
     it('should handle function props', () => {
       const validatorFn = () => []
       const onClassNameFn = () => 'custom-class'
+      const onRenderContextMenuFn = (items: unknown[]) => items
       const props = {
         validator: validatorFn,
         onClassName: onClassNameFn,
+        onRenderContextMenu: onRenderContextMenuFn,
       }
       const result = pickDefinedProps({}, props)
       expect(result.validator).toBe(validatorFn)
       expect(result.onClassName).toBe(onClassNameFn)
+      expect(result.onRenderContextMenu).toBe(onRenderContextMenuFn)
     })
   })
 

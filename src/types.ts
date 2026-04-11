@@ -3,6 +3,7 @@ import type {
   OnRenderValue,
   OnClassName,
   OnRenderMenu,
+  OnRenderContextMenu,
   JSONEditorSelection,
   JSONParser,
   JSONPathParser,
@@ -14,6 +15,7 @@ export interface JSONEditorOptions {
   readOnly?: boolean;
   indentation?: number | string;
   tabSize?: number;
+  truncateTextSize?: number;
   selection?: JSONEditorSelection;
   mode?: TMode;
   mainMenuBar?: boolean;
@@ -32,6 +34,7 @@ export interface JSONEditorOptions {
   onRenderValue?: OnRenderValue;
   onClassName?: OnClassName;
   onRenderMenu?: OnRenderMenu;
+  onRenderContextMenu?: OnRenderContextMenu;
   height?: string | number;
   fullWidthButton?: boolean;
   darkTheme?: boolean;
