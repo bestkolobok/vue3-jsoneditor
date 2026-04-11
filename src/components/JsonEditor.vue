@@ -389,6 +389,8 @@ export default defineComponent({
 
     const max = ref(false);
     const isSyncing = ref(false);
+    const hasPendingContentSync = ref(false);
+    let syncResetTimer: ReturnType<typeof setTimeout> | undefined;
     const mode = ref('tree');
 
     const editor = ref(null);
@@ -529,9 +531,7 @@ export default defineComponent({
     const onChange = (content: Content, previousContent: Content, status: OnChangeStatus) => {
       if (isSyncing.value) {
         // Uses setTimeout instead of nextTick for better synchronization with vanilla-jsoneditor
-        setTimeout(() => {
-          isSyncing.value = false;
-        });
+        scheduleSyncReset();
         return;
       }
 
@@ -551,9 +551,7 @@ export default defineComponent({
       emit('change', content, previousContent, status);
 
       // Uses setTimeout instead of nextTick for better synchronization with vanilla-jsoneditor
-      setTimeout(() => {
-        isSyncing.value = false;
-      });
+      scheduleSyncReset();
     };
 
     const onError = (err: Error) => {
@@ -690,9 +688,7 @@ export default defineComponent({
         const initialContent = getContent();
         editor.value.set(initialContent);
 
-        setTimeout(() => {
-          isSyncing.value = false;
-        }, 0);
+        scheduleSyncReset();
       }
 
       editor.value.focus();
@@ -701,6 +697,25 @@ export default defineComponent({
     const updateProps = async () => {
       const props = await makeEditorProps();
       editor.value?.updateProps(props);
+    };
+
+    const flushPendingContentSync = () => {
+      if (isSyncing.value || !hasPendingContentSync.value) return;
+
+      hasPendingContentSync.value = false;
+      updateContent();
+    };
+
+    const scheduleSyncReset = (delay = 0) => {
+      if (typeof syncResetTimer !== 'undefined') {
+        clearTimeout(syncResetTimer);
+      }
+
+      syncResetTimer = setTimeout(() => {
+        syncResetTimer = undefined;
+        isSyncing.value = false;
+        flushPendingContentSync();
+      }, delay);
     };
 
     const updateContent = () => {
@@ -729,9 +744,8 @@ export default defineComponent({
       isSyncing.value = true;
       editor.value?.update(newContent);
 
-      setTimeout(() => {
-        isSyncing.value = false;
-      });
+      // Uses setTimeout instead of nextTick for better synchronization with vanilla-jsoneditor
+      scheduleSyncReset();
     };
 
     const destroyView = () => {
@@ -753,20 +767,11 @@ export default defineComponent({
       {deep: true}
     );
 
-    // Adding debounce helper to avoid problems with quick updates
-    const resetSyncFlag = () => {
-      if (isSyncing.value) {
-        setTimeout(() => {
-          isSyncing.value = false;
-        }, 10);
-      }
-    };
-
     watch(
       [() => props.modelValue, () => props.value, () => props.json, () => props.text, () => props.jsonString],
       () => {
-        updateContent();
-        resetSyncFlag();
+        hasPendingContentSync.value = true;
+        flushPendingContentSync();
       },
       {
         deep: true,
@@ -801,6 +806,10 @@ export default defineComponent({
     });
 
     onBeforeUnmount(() => {
+      if (typeof syncResetTimer !== 'undefined') {
+        clearTimeout(syncResetTimer);
+      }
+
       destroyView();
     });
 
