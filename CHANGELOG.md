@@ -1,3 +1,16 @@
+# [3.4.0](https://github.com/bestkolobok/vue3-jsoneditor/compare/v3.3.3...v3.4.0) (2026-04-11)
+
+
+### Bug Fixes
+
+* apply queued external content updates ([06e850b](https://github.com/bestkolobok/vue3-jsoneditor/commit/06e850b075bc3406430712f1e809e417f813ca6d))
+* **ci:** add packaged browser smoke test ([74756d9](https://github.com/bestkolobok/vue3-jsoneditor/commit/74756d98b11309fa98853519f18cdcc32ff7f56e))
+
+
+### Features
+
+* align wrapper api with upstream jsoneditor ([59cf26f](https://github.com/bestkolobok/vue3-jsoneditor/commit/59cf26f89b62b7a571a77989b7a0f9a772659cfa))
+
 ## [3.3.3](https://github.com/bestkolobok/vue3-jsoneditor/compare/v3.3.2...v3.3.3) (2026-04-11)
 
 
