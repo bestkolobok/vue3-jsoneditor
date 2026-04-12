@@ -87,6 +87,11 @@ Prefer `pnpm` in this repo.
 ## Release Notes
 
 - Releases are handled through `semantic-release`.
+- Branch strategy is `main`-only:
+  - branch new `feat/*`, `fix/*`, and `chore/*` work from `main`
+  - open pull requests into `main`
+  - treat `main` as the only release branch
+  - do not rely on a long-lived `develop` branch for unreleased work
 - Release intent rules:
   - `feat` -> minor
   - `fix` and `perf` -> patch
