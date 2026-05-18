@@ -1,3 +1,10 @@
+## [3.4.1](https://github.com/bestkolobok/vue3-jsoneditor/compare/v3.4.0...v3.4.1) (2026-05-18)
+
+
+### Bug Fixes
+
+* respect global editor options ([582f003](https://github.com/bestkolobok/vue3-jsoneditor/commit/582f00326a30b36cee23f001ec507f333b582371))
+
 # [3.4.0](https://github.com/bestkolobok/vue3-jsoneditor/compare/v3.3.3...v3.4.0) (2026-04-11)
 
 
