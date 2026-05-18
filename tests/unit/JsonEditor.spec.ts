@@ -623,4 +623,81 @@ describe('JsonEditor with Plugin Options', () => {
     // The component should have received the options
     expect(wrapper.find('.jse-theme-dark').exists()).toBe(true)
   })
+
+  it('should use injected mode when mode prop is not provided', async () => {
+    const textValue = '{"from":"plugin"}'
+
+    mount(JsonEditor, {
+      props: { modelValue: textValue },
+      global: {
+        provide: {
+          jsonEditorOptions: {
+            mode: 'text',
+          }
+        }
+      }
+    })
+    await flushPromises()
+
+    const editorConfig = mockCreateJSONEditor.mock.calls[0]?.[0]
+    expect(editorConfig?.props?.mode).toBe('text')
+    expect(mockEditor.set).toHaveBeenCalledWith({ text: textValue })
+  })
+
+  it('should prefer explicit mode prop over injected mode', async () => {
+    mount(JsonEditor, {
+      props: { mode: 'tree' },
+      global: {
+        provide: {
+          jsonEditorOptions: {
+            mode: 'text',
+          }
+        }
+      }
+    })
+    await flushPromises()
+
+    const editorConfig = mockCreateJSONEditor.mock.calls[0]?.[0]
+    expect(editorConfig?.props?.mode).toBe('tree')
+  })
+
+  it('should keep user-selected mode when unrelated props update without mode prop', async () => {
+    const wrapper = mount(JsonEditor, {
+      global: {
+        provide: {
+          jsonEditorOptions: {
+            mode: 'text',
+          }
+        }
+      }
+    })
+    await flushPromises()
+
+    const editorConfig = mockCreateJSONEditor.mock.calls[0]?.[0]
+    editorConfig?.props?.onChangeMode('tree')
+
+    await wrapper.setProps({ readOnly: true })
+    await flushPromises()
+
+    expect(mockEditor.updateProps).toHaveBeenLastCalledWith(expect.objectContaining({
+      mode: 'tree',
+      readOnly: true,
+    }))
+  })
+
+  it('should prefer explicit false darkTheme prop over injected darkTheme', async () => {
+    const wrapper = mount(JsonEditor, {
+      props: { darkTheme: false },
+      global: {
+        provide: {
+          jsonEditorOptions: {
+            darkTheme: true,
+          }
+        }
+      }
+    })
+    await flushPromises()
+
+    expect(wrapper.find('.jse-theme-dark').exists()).toBe(false)
+  })
 })

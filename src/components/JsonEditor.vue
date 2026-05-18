@@ -31,7 +31,18 @@ import type {
   TransformModalOptions,
 } from 'vanilla-jsoneditor';
 import type {JSONPatchDocument, JSONPath} from 'immutable-json-patch';
-import {defineComponent, inject, ref, reactive, computed, watch, nextTick, onMounted, onBeforeUnmount} from 'vue';
+import {
+  defineComponent,
+  inject,
+  ref,
+  reactive,
+  computed,
+  watch,
+  nextTick,
+  onMounted,
+  onBeforeUnmount,
+  getCurrentInstance,
+} from 'vue';
 import type {PropType} from 'vue';
 import {pickDefinedProps, fullWidthIcon, watchPropNames, hasProp} from './utils';
 import type {JSONEditorOptions, Content, QueryLanguageId, TMode} from '@/types';
@@ -383,6 +394,31 @@ export default defineComponent({
 
   setup(props, {expose, emit}) {
     const pluginOptions: JSONEditorOptions = inject('jsonEditorOptions', {});
+    const instance = getCurrentInstance();
+
+    const getProvidedPropValue = (propName: string): unknown => {
+      const vnodeProps = instance?.vnode.props as Record<string, unknown> | null | undefined;
+      if (!vnodeProps) return undefined;
+
+      if (Object.prototype.hasOwnProperty.call(vnodeProps, propName)) {
+        return vnodeProps[propName];
+      }
+
+      const kebabPropName = propName.replace(/[A-Z]/g, (letter) => `-${letter.toLowerCase()}`);
+      if (Object.prototype.hasOwnProperty.call(vnodeProps, kebabPropName)) {
+        return vnodeProps[kebabPropName];
+      }
+
+      return undefined;
+    };
+
+    const hasProvidedProp = (propName: string): boolean => {
+      return typeof getProvidedPropValue(propName) !== 'undefined';
+    };
+
+    const getResolvedMode = (): TMode => {
+      return hasProvidedProp('mode') ? props.mode : pluginOptions?.mode ?? props.mode;
+    };
 
     const container = ref<HTMLDivElement>();
     const fullWidthButton = ref<HTMLButtonElement | null>(null);
@@ -391,7 +427,7 @@ export default defineComponent({
     const isSyncing = ref(false);
     const hasPendingContentSync = ref(false);
     let syncResetTimer: ReturnType<typeof setTimeout> | undefined;
-    const mode = ref('tree');
+    const mode = ref<TMode>(getResolvedMode());
 
     const editor = ref(null);
 
@@ -407,15 +443,15 @@ export default defineComponent({
     });
 
     const darkThemeStyle = computed(() => {
-      return props.darkTheme || pluginOptions?.darkTheme;
+      return props.darkTheme ?? pluginOptions?.darkTheme;
     });
 
-    const queryLanguagesIds = computed<QueryLanguageId[]>(() => {
-      return props.queryLanguagesIds || pluginOptions?.queryLanguagesIds;
+    const queryLanguagesIds = computed<QueryLanguageId[] | undefined>(() => {
+      return props.queryLanguagesIds ?? pluginOptions?.queryLanguagesIds;
     });
 
-    const queryLanguageId = computed<QueryLanguageId>(() => {
-      return props.queryLanguageId || pluginOptions?.queryLanguageId;
+    const queryLanguageId = computed<QueryLanguageId | undefined>(() => {
+      return props.queryLanguageId ?? pluginOptions?.queryLanguageId;
     });
 
     const queryLanguagesBuffer = reactive<QueryLanguagesBuffer>({});
@@ -559,7 +595,7 @@ export default defineComponent({
     };
 
     const onChangeMode = (newMode: Mode) => {
-      mode.value = newMode;
+      mode.value = newMode as TMode;
       emit('change-mode', newMode);
       emit('update:mode', newMode);
     };
@@ -603,9 +639,11 @@ export default defineComponent({
     const makeEditorProps = async (): Promise<Record<string, any>> => {
       const options = {fullWidthButton: true, ...(pluginOptions || {})};
       const queryLanguages = await makeQueryLanguages();
+      const editorProps = pickDefinedProps(options, props);
+      editorProps.mode = mode.value;
 
       return {
-        ...pickDefinedProps(options, props),
+        ...editorProps,
         queryLanguages,
         queryLanguageId: queryLanguageId.value,
         onChange,
@@ -780,9 +818,10 @@ export default defineComponent({
 
     watch(
       () => props.mode,
-      (newMode) => {
-        if (newMode !== mode.value) {
-          mode.value = newMode;
+      () => {
+        const resolvedMode = getResolvedMode();
+        if (resolvedMode !== mode.value) {
+          mode.value = resolvedMode;
           updateProps();
         }
       }
