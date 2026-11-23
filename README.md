@@ -492,6 +492,7 @@ const jsonData = ref({
 - **Dependencies are no longer bundled**: `vanilla-jsoneditor` and its dependencies are resolved by your package manager (see Installation)
 - **SSR**: importing the package during server-side rendering (for example in Nuxt) works again
 - **Styling**: the CSS variables `--jse-panel-button-color-highlight`, `--jse-context-menu-tip-color` and `--jse-message-success-background` now take effect
+- **Dark theme** (`darkTheme`): synced with the vanilla-jsoneditor dark theme, so tables, tooltips, secondary buttons, dropdowns, context menu pointers and inactive selections are dark as well
 
 ### Text Mode Enhancements
 - **Expand/Collapse in Text Mode**: You can now expand and collapse JSON sections directly in text mode, making it easier to work with large JSON documents
