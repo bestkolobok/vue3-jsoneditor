@@ -38,6 +38,8 @@ You can use [this module](https://www.npmjs.com/package/nuxt-jsoneditor)
 npm install vue3-ts-jsoneditor
 ```
 
+`vanilla-jsoneditor` and its dependencies are regular dependencies of this package: they are installed and resolved by your package manager and are not bundled into `vue3-ts-jsoneditor`. Security updates of transitive dependencies (for example `ajv`) therefore reach your project through your own lockfile and show up in `npm audit`.
+
 ## ✅ Using
 
 ## 🔧 Helper exports
@@ -484,6 +486,12 @@ const jsonData = ref({
 
 ## 🆕 What's New in Latest Version
 
+### vanilla-jsoneditor 3.13
+- **New props**: `ariaLabel` (accessible name of the editor for screen readers) and `maxDocumentSizeTextMode` (maximum document size in text mode), also available as global options
+- **Dependencies are no longer bundled**: `vanilla-jsoneditor` and its dependencies are resolved by your package manager (see Installation)
+- **SSR**: importing the package during server-side rendering (for example in Nuxt) works again
+- **Styling**: the CSS variables `--jse-panel-button-color-highlight`, `--jse-context-menu-tip-color` and `--jse-message-success-background` now take effect
+
 ### Text Mode Enhancements
 - **Expand/Collapse in Text Mode**: You can now expand and collapse JSON sections directly in text mode, making it easier to work with large JSON documents
 - **Expand All / Collapse All buttons**: New menu buttons in text mode for quick navigation
@@ -504,7 +512,7 @@ const jsonData = ref({
 # install dependencies
 npm install
 
-# serve with hot reload at localhost:3080
+# serve with hot reload at localhost:5173
 npm run dev
 
 # build for production with minification
