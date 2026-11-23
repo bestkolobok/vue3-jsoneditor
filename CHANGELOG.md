@@ -1,3 +1,17 @@
+# [3.5.0](https://github.com/bestkolobok/vue3-jsoneditor/compare/v3.4.1...v3.5.0) (2026-11-23)
+
+
+### Bug Fixes
+
+* reset cleared editor props to their defaults ([d7804e5](https://github.com/bestkolobok/vue3-jsoneditor/commit/d7804e5216f0a94162cc5b29ba4422a7bd3d5545))
+* stop bundling runtime dependencies into dist ([d01af34](https://github.com/bestkolobok/vue3-jsoneditor/commit/d01af347402146420ca7b6d0d1d74fc5fb90ee4d)), closes [#41](https://github.com/bestkolobok/vue3-jsoneditor/issues/41)
+* sync the built-in dark theme with vanilla-jsoneditor ([158be97](https://github.com/bestkolobok/vue3-jsoneditor/commit/158be97f8a0ec88689d32e282f7f64138e85e4eb))
+
+
+### Features
+
+* support ariaLabel and maxDocumentSizeTextMode props ([45bc5b5](https://github.com/bestkolobok/vue3-jsoneditor/commit/45bc5b51937326e6d2c03f3aab67341c14e00d84))
+
 ## [3.4.1](https://github.com/bestkolobok/vue3-jsoneditor/compare/v3.4.0...v3.4.1) (2026-05-18)
 
 
