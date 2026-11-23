@@ -23,7 +23,9 @@ const mockEditor = {
   collapse: vi.fn(),
 }
 
-const mockCreateJSONEditor = vi.fn(() => mockEditor)
+const mockCreateJSONEditor = vi.fn<
+  (config: { target?: unknown; props?: Record<string, any> }) => typeof mockEditor
+>(() => mockEditor)
 
 vi.mock('vanilla-jsoneditor', () => ({
   createJSONEditor: mockCreateJSONEditor,
@@ -286,6 +288,22 @@ describe('JsonEditor.vue', () => {
       expect(wrapper.props('askToFormat')).toBe(false)
     })
 
+    it('should accept ariaLabel prop', async () => {
+      const wrapper = mount(JsonEditor, {
+        props: { ariaLabel: 'Settings editor' }
+      })
+
+      expect(wrapper.props('ariaLabel')).toBe('Settings editor')
+    })
+
+    it('should accept maxDocumentSizeTextMode prop', async () => {
+      const wrapper = mount(JsonEditor, {
+        props: { maxDocumentSizeTextMode: 1024 }
+      })
+
+      expect(wrapper.props('maxDocumentSizeTextMode')).toBe(1024)
+    })
+
     it('should accept validator function prop', async () => {
       const validatorFn = vi.fn(() => [])
       const wrapper = mount(JsonEditor, {
@@ -329,6 +347,85 @@ describe('JsonEditor.vue', () => {
       })
 
       expect(wrapper.props('onRenderContextMenu')).toBe(onRenderContextMenuFn)
+    })
+  })
+
+  describe('Upstream Editor Props', () => {
+    it('should pass ariaLabel and maxDocumentSizeTextMode to createJSONEditor', async () => {
+      mount(JsonEditor, {
+        props: {
+          ariaLabel: 'Settings editor',
+          maxDocumentSizeTextMode: 2048,
+        }
+      })
+      await flushPromises()
+
+      const editorConfig = mockCreateJSONEditor.mock.calls[0]?.[0]
+      expect(editorConfig?.props?.ariaLabel).toBe('Settings editor')
+      expect(editorConfig?.props?.maxDocumentSizeTextMode).toBe(2048)
+    })
+
+    it('should not pass ariaLabel and maxDocumentSizeTextMode when they are not set', async () => {
+      mount(JsonEditor)
+      await flushPromises()
+
+      const editorConfig = mockCreateJSONEditor.mock.calls[0]?.[0]
+      expect(editorConfig?.props).not.toHaveProperty('ariaLabel')
+      expect(editorConfig?.props).not.toHaveProperty('maxDocumentSizeTextMode')
+    })
+
+    it('should propagate ariaLabel changes via updateProps', async () => {
+      const wrapper = mount(JsonEditor, {
+        props: { ariaLabel: 'First editor' }
+      })
+      await flushPromises()
+
+      await wrapper.setProps({ ariaLabel: 'Second editor' })
+      await flushPromises()
+
+      expect(mockEditor.updateProps).toHaveBeenLastCalledWith(expect.objectContaining({
+        ariaLabel: 'Second editor',
+      }))
+    })
+
+    it('should propagate maxDocumentSizeTextMode changes via updateProps', async () => {
+      const wrapper = mount(JsonEditor, {
+        props: { maxDocumentSizeTextMode: 1024 }
+      })
+      await flushPromises()
+
+      await wrapper.setProps({ maxDocumentSizeTextMode: 4096 })
+      await flushPromises()
+
+      expect(mockEditor.updateProps).toHaveBeenLastCalledWith(expect.objectContaining({
+        maxDocumentSizeTextMode: 4096,
+      }))
+    })
+
+    it('should map kebab-case template attributes to ariaLabel and maxDocumentSizeTextMode', async () => {
+      const ParentComponent = defineComponent({
+        components: { JsonEditor },
+        template: `
+          <JsonEditor
+            aria-label="Template editor"
+            :max-document-size-text-mode="512"
+          />
+        `,
+      })
+
+      const wrapper = mount(ParentComponent)
+      await flushPromises()
+
+      const editor = wrapper.findComponent(JsonEditor)
+      expect(editor.props('ariaLabel')).toBe('Template editor')
+      expect(editor.props('maxDocumentSizeTextMode')).toBe(512)
+
+      const editorConfig = mockCreateJSONEditor.mock.calls[0]?.[0]
+      expect(editorConfig?.props?.ariaLabel).toBe('Template editor')
+      expect(editorConfig?.props?.maxDocumentSizeTextMode).toBe(512)
+
+      // aria-label is consumed as a prop and is no longer a fallthrough attribute on the wrapper div
+      expect(wrapper.find('.vue-ts-json-editor').attributes('aria-label')).toBeUndefined()
     })
   })
 
@@ -683,6 +780,91 @@ describe('JsonEditor with Plugin Options', () => {
       mode: 'tree',
       readOnly: true,
     }))
+  })
+
+  it('should use injected ariaLabel and maxDocumentSizeTextMode when props are not provided', async () => {
+    mount(JsonEditor, {
+      global: {
+        provide: {
+          jsonEditorOptions: {
+            ariaLabel: 'Global editor',
+            maxDocumentSizeTextMode: 1024,
+          }
+        }
+      }
+    })
+    await flushPromises()
+
+    const editorConfig = mockCreateJSONEditor.mock.calls[0]?.[0]
+    expect(editorConfig?.props?.ariaLabel).toBe('Global editor')
+    expect(editorConfig?.props?.maxDocumentSizeTextMode).toBe(1024)
+  })
+
+  it('should prefer explicit ariaLabel and maxDocumentSizeTextMode props over injected options', async () => {
+    mount(JsonEditor, {
+      props: {
+        ariaLabel: 'Local editor',
+        maxDocumentSizeTextMode: 0,
+      },
+      global: {
+        provide: {
+          jsonEditorOptions: {
+            ariaLabel: 'Global editor',
+            maxDocumentSizeTextMode: 1024,
+          }
+        }
+      }
+    })
+    await flushPromises()
+
+    const editorConfig = mockCreateJSONEditor.mock.calls[0]?.[0]
+    expect(editorConfig?.props?.ariaLabel).toBe('Local editor')
+    expect(editorConfig?.props?.maxDocumentSizeTextMode).toBe(0)
+  })
+
+  it('should keep injected ariaLabel and maxDocumentSizeTextMode when other props update', async () => {
+    const wrapper = mount(JsonEditor, {
+      global: {
+        provide: {
+          jsonEditorOptions: {
+            ariaLabel: 'Global editor',
+            maxDocumentSizeTextMode: 1024,
+          }
+        }
+      }
+    })
+    await flushPromises()
+
+    await wrapper.setProps({ readOnly: true })
+    await flushPromises()
+
+    expect(mockEditor.updateProps).toHaveBeenLastCalledWith(expect.objectContaining({
+      ariaLabel: 'Global editor',
+      maxDocumentSizeTextMode: 1024,
+      readOnly: true,
+    }))
+  })
+
+  it('should pass ariaLabel and maxDocumentSizeTextMode from JsonEditorPlugin options to the editor', async () => {
+    // Imported lazily: the plugin entry imports vanilla-jsoneditor statically, which must not
+    // evaluate the hoisted vi.mock factory before the mock variables above are initialized.
+    const { JsonEditorPlugin } = await import('@/JsonEditorPlugin')
+
+    mount(JsonEditor, {
+      global: {
+        plugins: [[JsonEditorPlugin, {
+          options: {
+            ariaLabel: 'Plugin editor',
+            maxDocumentSizeTextMode: 4096,
+          }
+        }]]
+      }
+    })
+    await flushPromises()
+
+    const editorConfig = mockCreateJSONEditor.mock.calls[0]?.[0]
+    expect(editorConfig?.props?.ariaLabel).toBe('Plugin editor')
+    expect(editorConfig?.props?.maxDocumentSizeTextMode).toBe(4096)
   })
 
   it('should prefer explicit false darkTheme prop over injected darkTheme', async () => {

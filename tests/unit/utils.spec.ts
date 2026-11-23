@@ -23,9 +23,14 @@ describe('utils.ts', () => {
       expect(watchPropNames).toContain('onRenderContextMenu')
     })
 
+    it('should watch ariaLabel and maxDocumentSizeTextMode', () => {
+      expect(watchPropNames).toContain('ariaLabel')
+      expect(watchPropNames).toContain('maxDocumentSizeTextMode')
+    })
+
     it('should be a readonly array', () => {
       expect(Array.isArray(watchPropNames)).toBe(true)
-      expect(watchPropNames.length).toBe(17)
+      expect(watchPropNames.length).toBe(19)
     })
   })
 
@@ -49,11 +54,13 @@ describe('utils.ts', () => {
     it('should contain current upstream passthrough props', () => {
       expect(propNames).toContain('truncateTextSize')
       expect(propNames).toContain('onRenderContextMenu')
+      expect(propNames).toContain('ariaLabel')
+      expect(propNames).toContain('maxDocumentSizeTextMode')
     })
 
     it('should be a readonly array', () => {
       expect(Array.isArray(propNames)).toBe(true)
-      expect(propNames.length).toBe(21)
+      expect(propNames.length).toBe(23)
     })
   })
 
@@ -178,6 +185,32 @@ describe('utils.ts', () => {
       expect(result.validator).toBe(validatorFn)
       expect(result.onClassName).toBe(onClassNameFn)
       expect(result.onRenderContextMenu).toBe(onRenderContextMenuFn)
+    })
+
+    it('should pick ariaLabel and maxDocumentSizeTextMode from options when props are undefined', () => {
+      const options = {
+        ariaLabel: 'Global editor',
+        maxDocumentSizeTextMode: 1024,
+      }
+      const result = pickDefinedProps(options, { ariaLabel: undefined, maxDocumentSizeTextMode: undefined })
+      expect(result).toEqual({
+        ariaLabel: 'Global editor',
+        maxDocumentSizeTextMode: 1024,
+      })
+    })
+
+    it('should prefer ariaLabel and maxDocumentSizeTextMode props over options', () => {
+      const options = {
+        ariaLabel: 'Global editor',
+        maxDocumentSizeTextMode: 1024,
+      }
+      const props = {
+        ariaLabel: 'Local editor',
+        maxDocumentSizeTextMode: 0,
+      }
+      const result = pickDefinedProps(options, props)
+      expect(result.ariaLabel).toBe('Local editor')
+      expect(result.maxDocumentSizeTextMode).toBe(0)
     })
   })
 

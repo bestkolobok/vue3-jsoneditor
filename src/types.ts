@@ -18,6 +18,7 @@ export interface JSONEditorOptions {
   truncateTextSize?: number;
   selection?: JSONEditorSelection;
   mode?: TMode;
+  ariaLabel?: string;
   mainMenuBar?: boolean;
   navigationBar?: boolean;
   statusBar?: boolean;
@@ -29,6 +30,7 @@ export interface JSONEditorOptions {
   parser?: JSONParser;
   validationParser?: JSONParser;
   pathParser?: JSONPathParser;
+  maxDocumentSizeTextMode?: number;
   queryLanguagesIds?: QueryLanguageId[];
   queryLanguageId?: QueryLanguageId;
   onRenderValue?: OnRenderValue;

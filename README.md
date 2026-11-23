@@ -82,6 +82,7 @@ interface JSONEditorOptions {
   truncateTextSize?: number;
   selection?: JSONEditorSelection;
   mode?: Mode;
+  ariaLabel?: string;
   mainMenuBar?: boolean;
   navigationBar?: boolean;
   statusBar?: boolean;
@@ -93,6 +94,7 @@ interface JSONEditorOptions {
   parser?: JSONParser;
   validationParser?: JSONParser;
   pathParser?: JSONPathParser;
+  maxDocumentSizeTextMode?: number;
   queryLanguagesIds?: QueryLanguageId[];
   queryLanguageId?: QueryLanguageId;
   onRenderValue?: OnRenderValue;
@@ -220,6 +222,7 @@ It is more clear to use `v-model:json` for tree mode and `v-model:text` for text
 | value | Same as modelValue | `object \| array \| true \| false \| null \| number \| string` | `undefined` |
 | selection (v-model) | The current selected contents. You can use two-way binding using bind:selection. The tree mode supports MultiSelection, KeySelection, ValueSelection, InsideSelection, or AfterSelection. The table mode supports ValueSelection, and text mode supports TextSelection. | `JSONEditorSelection \| null` | `null` |
 | mode | mode: 'tree', 'text' or 'table'. Open the editor in 'tree' mode (default), 'table' mode, or 'text' mode | `string` | `'tree'` |
+| ariaLabel | The accessible name of the editor, applied to the contents of all three modes. Give each editor a name of its own when a page contains more than one, so screen reader users can tell them apart. | `string` | `'JSON editor'` |
 | mainMenuBar | Show the main menu bar. Default value is true. | `boolean` | `true` |
 | navigationBar | Show the navigation bar with, where you can see the selected path and navigate through your document from there. | `boolean` | `true` |
 | statusBar | Show a status bar at the bottom of the 'text' editor, showing information about the cursor location and selected contents. | `boolean` | `true` |
@@ -235,6 +238,7 @@ It is more clear to use `v-model:json` for tree mode and `v-model:text` for text
 | parser | Configure a custom JSON parser, like lossless-json. By default, the native JSON parser of JavaScript is used. The JSON interface is an object with a parse and stringify function | `JSONParser` | `undefined` |
 | validationParser | Only applicable when a validator is provided. This is the same as parser, except that this parser is used to parse the data before sending it to the validator. Configure a custom JSON parser that is used to parse JSON before passing it to the validator. By default, the built-in JSON parser is used. When passing a custom validationParser, make sure the output of the parser is supported by the configured validator. | `JSONParser` | `undefined` |
 | pathParser | An optional object with a parse and stringify method to parse and stringify a JSONPath, which is an array with property names. The pathParser is used in the path editor in the navigation bar, which is opened by clicking the edit button on the right side of the navigation bar. The pathParser.parse function is allowed to throw an Error when the input is invalid. By default, a JSON Path notation is used, which looks like $.data[2].nested.property. | `JSONPathParser` | `undefined` |
+| maxDocumentSizeTextMode | In 'text' mode, JSON documents with a total length greater than this value (in bytes) are not shown right away. Instead, a warning is displayed, and the user can choose to open the document anyway, open it in 'tree' mode instead, or cancel. | `number` | `10 * 1024 * 1024` (10MB) |
 | queryLanguagesIds | Configure one or multiple query language that can be used in the Transform modal. The library comes with five languages: `javascript`, `lodash`, `jmespath`, `jsonquery`, and `jsonpath` | `QueryLanguage[]` | `[javascript]` |
 | queryLanguageId | The id of the currently selected query language: `javascript`, `lodash`, `jmespath`, `jsonquery`, or `jsonpath` | `string` | |
 | onClassName | Add a custom class name to specific nodes, based on their path and/or value. | `function (path: Path, value: any): string \| undefined` | |
