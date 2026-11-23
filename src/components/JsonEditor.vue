@@ -117,6 +117,14 @@ export default defineComponent({
     },
 
     /**
+     * ### ariaLabel: string
+     * The accessible name of the editor, applied to the contents of all three modes. Default value
+     * is 'JSON editor'. Give each editor a name of its own when a page contains more than one, so
+     * screen reader users can tell them apart.
+     * */
+    ariaLabel: String as PropType<string>,
+
+    /**
      * ### mainMenuBar: boolean
      * Show the main menu bar. Default value is true.
      * */
@@ -263,6 +271,14 @@ export default defineComponent({
      * parseJSONPath and stringifyJSONPath, parseJSONPointer and compileJSONPointer
      * */
     pathParser: Object as PropType<JSONPathParser>,
+
+    /**
+     * ### maxDocumentSizeTextMode: number
+     * In 'text' mode, JSON documents with a total length greater than maxDocumentSizeTextMode will
+     * not be shown. Instead, a warning is displayed, and the user can choose to open the document
+     * anyway, open it in 'tree' mode instead, or cancel. Default value is 10 * 1024 * 1024 bytes (10MB).
+     * */
+    maxDocumentSizeTextMode: Number as PropType<number>,
 
     /**
      * ### queryLanguagesIds: QueryLanguageId[].
@@ -733,8 +749,19 @@ export default defineComponent({
     };
 
     const updateProps = async () => {
-      const props = await makeEditorProps();
-      editor.value?.updateProps(props);
+      const editorProps = await makeEditorProps();
+
+      // vanilla-jsoneditor only updates the keys it receives and falls back to its own default for an
+      // explicit `undefined`. Send unset watched props explicitly, so clearing a prop resets it instead
+      // of keeping the previous value. `selection` is skipped: when it is not bound, it is the user's
+      // live selection inside the editor and must not be cleared by unrelated prop updates.
+      for (const propName of watchPropNames) {
+        if (propName !== 'selection' && !(propName in editorProps)) {
+          editorProps[propName] = undefined;
+        }
+      }
+
+      editor.value?.updateProps(editorProps);
     };
 
     const flushPendingContentSync = () => {

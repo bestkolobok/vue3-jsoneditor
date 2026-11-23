@@ -1,5 +1,6 @@
 export const watchPropNames = [
   'selection',
+  'ariaLabel',
   'mainMenuBar',
   'navigationBar',
   'statusBar',
@@ -12,6 +13,7 @@ export const watchPropNames = [
   'escapeUnicodeCharacters',
   'flattenColumns',
   'validator',
+  'maxDocumentSizeTextMode',
   'onClassName',
   'onRenderValue',
   'onRenderMenu',
@@ -21,6 +23,7 @@ export const watchPropNames = [
 export const propNames = [
   'selection',
   'mode',
+  'ariaLabel',
   'mainMenuBar',
   'navigationBar',
   'statusBar',
@@ -36,6 +39,7 @@ export const propNames = [
   'parser',
   'validationParser',
   'pathParser',
+  'maxDocumentSizeTextMode',
   'onClassName',
   'onRenderValue',
   'onRenderMenu',

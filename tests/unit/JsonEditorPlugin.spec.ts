@@ -58,6 +58,21 @@ describe('JsonEditorPlugin.ts', () => {
       expect(app._context.provides['jsonEditorOptions']).toEqual(options)
     })
 
+    it('should provide ariaLabel and maxDocumentSizeTextMode options to component', () => {
+      const app = createApp(defineComponent({
+        template: '<div></div>'
+      }))
+
+      const options = {
+        ariaLabel: 'Global editor',
+        maxDocumentSizeTextMode: 1024,
+      }
+
+      app.use(JsonEditorPlugin, { options })
+
+      expect(app._context.provides['jsonEditorOptions']).toEqual(options)
+    })
+
     it('should not register plugin twice', () => {
       const app = createApp(defineComponent({
         template: '<div></div>'

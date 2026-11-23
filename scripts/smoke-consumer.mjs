@@ -87,21 +87,24 @@ const waitForUrl = async (url, timeoutMs = 20000) => {
   throw new Error(`Timed out waiting for preview server at ${url}.`);
 };
 
+// A child killed by a signal exits with `exitCode === null` and a non-null `signalCode`,
+// so both have to be checked to know whether it is still running.
+const hasExited = childProcess => childProcess.exitCode !== null || childProcess.signalCode !== null;
+
 const stopProcess = async (childProcess) => {
-  if (!childProcess || childProcess.exitCode !== null) {
+  if (!childProcess || hasExited(childProcess)) {
     return;
   }
 
+  const exited = new Promise(resolve => childProcess.once('exit', resolve));
+
   childProcess.kill('SIGTERM');
 
-  await Promise.race([
-    new Promise(resolve => childProcess.once('exit', resolve)),
-    delay(5000),
-  ]);
+  await Promise.race([exited, delay(5000)]);
 
-  if (childProcess.exitCode === null) {
+  if (!hasExited(childProcess)) {
     childProcess.kill('SIGKILL');
-    await new Promise(resolve => childProcess.once('exit', resolve));
+    await exited;
   }
 };
 
@@ -126,6 +129,8 @@ const runBrowserSmokeTest = async () => {
 
     const browser = await chromium.launch({
       headless: true,
+      // Optional: point to an already installed Chromium when the local Playwright browser revision differs.
+      executablePath: process.env.SMOKE_CHROMIUM_PATH || undefined,
     });
     const page = await browser.newPage();
     const consoleErrors = [];
@@ -235,6 +240,29 @@ export default defineConfig({
 `
   );
 
+  // SSR smoke: importing the packaged library in plain Node (no DOM) and rendering it to a string
+  // must not touch browser globals. This guards SSR consumers such as nuxt-jsoneditor.
+  writeFileSync(
+    join(consumerDir, 'ssr-smoke.mjs'),
+    `import { createSSRApp, h } from 'vue'
+import { renderToString } from 'vue/server-renderer'
+import JsonEditor, { JsonEditorPlugin } from 'vue3-ts-jsoneditor'
+
+const app = createSSRApp({
+  render: () => h(JsonEditor, { json: { hello: 'world' }, mode: 'tree' }),
+})
+app.use(JsonEditorPlugin)
+
+const html = await renderToString(app)
+
+if (!html.includes('vue-ts-json-editor')) {
+  throw new Error('Unexpected SSR markup: ' + html)
+}
+
+console.log('SSR smoke rendered: ' + html)
+`
+  );
+
   writeFileSync(
     join(consumerDir, 'index.html'),
     '<!doctype html><html><body><div id="app"></div><script type="module" src="/src/main.ts"></script></body></html>'
@@ -292,6 +320,7 @@ const main = async () => {
   createConsumerFixture(tarballPath);
   run('pnpm', ['install', '--no-frozen-lockfile'], consumerDir);
   run('pnpm', ['build'], consumerDir);
+  run('node', ['ssr-smoke.mjs'], consumerDir);
 
   if (runBrowserSmoke) {
     await runBrowserSmokeTest();
@@ -301,7 +330,7 @@ const main = async () => {
     rmSync(tempRoot, { recursive: true, force: true });
   }
 
-  console.log(`\nSmoke test passed. Consumer build succeeded with ${tarballName}.`);
+  console.log(`\nSmoke test passed. Consumer build and SSR render succeeded with ${tarballName}.`);
 
   if (runBrowserSmoke) {
     console.log('Browser smoke test passed against the packaged consumer app.');

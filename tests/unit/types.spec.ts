@@ -176,6 +176,16 @@ describe('types.ts', () => {
       expect(options.indentation).toBe('\t')
     })
 
+    it('should accept ariaLabel and maxDocumentSizeTextMode', () => {
+      const options: JSONEditorOptions = {
+        ariaLabel: 'Settings editor',
+        maxDocumentSizeTextMode: 5 * 1024 * 1024,
+      }
+
+      expect(options.ariaLabel).toBe('Settings editor')
+      expect(options.maxDocumentSizeTextMode).toBe(5 * 1024 * 1024)
+    })
+
     it('should accept onRenderContextMenu', () => {
       const onRenderContextMenu = (items: unknown[]) => items
       const options: JSONEditorOptions = {
