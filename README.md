@@ -222,17 +222,17 @@ It is more clear to use `v-model:json` for tree mode and `v-model:text` for text
 | text (v-model) | JSON string | `string` | `undefined` |
 | modelValue (v-model) | JSON value or JSON string | `object \| array \| true \| false \| null \| number \| string` | `undefined` |
 | value | Same as modelValue | `object \| array \| true \| false \| null \| number \| string` | `undefined` |
-| selection (v-model) | The current selected contents. You can use two-way binding using bind:selection. The tree mode supports MultiSelection, KeySelection, ValueSelection, InsideSelection, or AfterSelection. The table mode supports ValueSelection, and text mode supports TextSelection. | `JSONEditorSelection \| null` | `null` |
+| selection (v-model) | The current selected contents. You can use two-way binding using `v-model:selection`. The tree mode supports MultiSelection, KeySelection, EditKeySelection, ValueSelection, EditValueSelection, InsideSelection, or AfterSelection. The table mode supports ValueSelection, and text mode supports TextSelection. | `JSONEditorSelection \| undefined` | `undefined` |
 | mode | mode: 'tree', 'text' or 'table'. Open the editor in 'tree' mode (default), 'table' mode, or 'text' mode | `string` | `'tree'` |
-| ariaLabel | The accessible name of the editor, applied to the contents of all three modes. Give each editor a name of its own when a page contains more than one, so screen reader users can tell them apart. | `string` | `'JSON editor'` |
+| ariaLabel | The accessible name of the editor, applied to the contents of all three modes. Give each editor a name of its own when a page contains more than one, so screen reader users can tell them apart. An `aria-label` attribute on `<json-editor>` is mapped to this prop, so it names the editor contents instead of being added to the wrapper element. | `string` | `'JSON editor'` |
 | mainMenuBar | Show the main menu bar. Default value is true. | `boolean` | `true` |
 | navigationBar | Show the navigation bar with, where you can see the selected path and navigate through your document from there. | `boolean` | `true` |
 | statusBar | Show a status bar at the bottom of the 'text' editor, showing information about the cursor location and selected contents. | `boolean` | `true` |
 | askToFormat | When true (default), the user will be asked whether he/she wants to format the JSON document when a compact document is loaded or pasted in 'text' mode. Only applicable to 'text' mode. | `boolean` | `true` |
 | readOnly | Open the editor in read-only mode: no changes can be made, non-relevant buttons are hidden from the menu, and the context menu is not enabled. | `boolean` | `false` |
-| indentation | Number of spaces use for indentation when stringifying JSON, or a string to be used as indentation like '\t' to use a tab as indentation, or '    ' to use 4 spaces (which is equivalent to configuring indentation: 4). See also property tabSize. | `number \| string` | `4` |
+| indentation | Number of spaces use for indentation when stringifying JSON, or a string to be used as indentation like '\t' to use a tab as indentation, or '    ' to use 4 spaces (which is equivalent to configuring indentation: 4). See also property tabSize. | `number \| string` | `2` |
 | tabSize | When indentation is configured as a tab character (indentation: '\t'), tabSize configures how large a tab character is rendered. Default value is 4. Only applicable to text mode. | `number` | `4` |
-| truncateTextSize | Truncate large text values in tree mode. Set to `0` to disable truncation. | `number` | upstream default |
+| truncateTextSize | JSON string values longer than this number of bytes are truncated in 'tree' and 'table' mode; the full text can be expanded with "Show more". Set to `0` to disable truncation. | `number` | `1000` |
 | escapeControlCharacters | When true, control characters like newline and tab are rendered as escaped characters \n and \t. Only applicable for 'tree' mode, in 'text' mode control characters are always escaped. | `boolean` | `false` |
 | escapeUnicodeCharacters | When true, unicode characters like ☎ and 😀 are rendered escaped like \u260e and \ud83d\ude00 | `boolean` | `false` |
 | flattenColumns | Only applicable to 'table' mode. When true, nested object properties will be displayed each in their own column, with the nested path as column name. When false, nested objects will be rendered inline, and double-clicking them will open them in a popup. | `boolean` | `true` |
@@ -241,7 +241,7 @@ It is more clear to use `v-model:json` for tree mode and `v-model:text` for text
 | validationParser | Only applicable when a validator is provided. This is the same as parser, except that this parser is used to parse the data before sending it to the validator. Configure a custom JSON parser that is used to parse JSON before passing it to the validator. By default, the built-in JSON parser is used. When passing a custom validationParser, make sure the output of the parser is supported by the configured validator. | `JSONParser` | `undefined` |
 | pathParser | An optional object with a parse and stringify method to parse and stringify a JSONPath, which is an array with property names. The pathParser is used in the path editor in the navigation bar, which is opened by clicking the edit button on the right side of the navigation bar. The pathParser.parse function is allowed to throw an Error when the input is invalid. By default, a JSON Path notation is used, which looks like $.data[2].nested.property. | `JSONPathParser` | `undefined` |
 | maxDocumentSizeTextMode | In 'text' mode, JSON documents with a total length greater than this value (in bytes) are not shown right away. Instead, a warning is displayed, and the user can choose to open the document anyway, open it in 'tree' mode instead, or cancel. | `number` | `10 * 1024 * 1024` (10MB) |
-| queryLanguagesIds | Configure one or multiple query language that can be used in the Transform modal. The library comes with five languages: `javascript`, `lodash`, `jmespath`, `jsonquery`, and `jsonpath` | `QueryLanguage[]` | `[javascript]` |
+| queryLanguagesIds | Configure one or multiple query language that can be used in the Transform modal. The library comes with five languages: `javascript`, `lodash`, `jmespath`, `jsonquery`, and `jsonpath` | `QueryLanguageId[]` | `['jsonquery']` |
 | queryLanguageId | The id of the currently selected query language: `javascript`, `lodash`, `jmespath`, `jsonquery`, or `jsonpath` | `string` | |
 | onClassName | Add a custom class name to specific nodes, based on their path and/or value. | `function (path: Path, value: any): string \| undefined` | |
 | onRenderValue | Details in [svelte-jsoneditor](https://www.npmjs.com/package/svelte-jsoneditor) | `function (props: RenderValueProps) : RenderValueComponentDescription[]` | |
@@ -378,7 +378,7 @@ const jsonData = ref({
   --jse-menu-color: var(--jse-text-color-inverse);
   --jse-menu-button-size: 32px;
   --jse-modal-background: #f5f5f5;
-  --jse-modal-overlay-background: rgba(0, 0, 0, 0.3);
+  --jse-overlay-background: rgba(0, 0, 0, 0.3);
   --jse-modal-code-background: rgba(0, 0, 0, 0.05);
 
   /* panels: navigation bar, gutter, search box */
@@ -392,7 +392,6 @@ const jsonData = ref({
   --jse-panel-button-background-highlight: #e0e0e0;
 
   /* navigation-bar */
-  --jse-navigation-bar-color: #656565;
   --jse-navigation-bar-background: var(--jse-background-color);
   --jse-navigation-bar-background-highlight: #e5e5e5;
   --jse-navigation-bar-dropdown-color: #656565;
@@ -403,10 +402,11 @@ const jsonData = ref({
   --jse-context-menu-color: var(--jse-text-color-inverse);
   --jse-context-menu-color-disabled: #9d9d9d;
   --jse-context-menu-separator-color: #7a7a7a;
-  --jse-context-menu-button-background: var(--jse-context-menu-background);
-  --jse-context-menu-button-background-highlight: var(--jse-context-menu-background-highlight);
-  --jse-context-menu-button-color: var(--jse-context-menu-color);
-  --jse-context-menu-button-size: calc(1em + 4px);
+  --jse-context-menu-pointer-hover-background: #b2b2b2;
+  --jse-context-menu-pointer-background: var(--jse-context-menu-background);
+  --jse-context-menu-pointer-background-highlight: var(--jse-context-menu-background-highlight);
+  --jse-context-menu-pointer-color: var(--jse-context-menu-color);
+  --jse-context-menu-pointer-size: calc(1em + 4px);
   --jse-context-menu-tip-background: rgba(255, 255, 255, 0.2);
   --jse-context-menu-tip-color: inherit;
 
@@ -424,7 +424,7 @@ const jsonData = ref({
   /* contents: selected or hovered */
   --jse-hover-background-color: rgba(0, 0, 0, 0.06);
   --jse-selection-background-color: #d3d3d3;
-  --jse-selection-background-light-color: #e8e8e8;
+  --jse-selection-background-inactive-color: #e8e8e8;
 
   /* contents: section of collapsed items in an array */
   --jse-collapsed-items-background-color: #f5f5f5;
@@ -487,7 +487,8 @@ const jsonData = ref({
 ## 🆕 What's New in Latest Version
 
 ### vanilla-jsoneditor 3.13
-- **New props**: `ariaLabel` (accessible name of the editor for screen readers) and `maxDocumentSizeTextMode` (maximum document size in text mode), also available as global options
+- **New props**: `ariaLabel` (accessible name of the editor for screen readers) and `maxDocumentSizeTextMode` (maximum document size in text mode), also available as global options. An `aria-label` attribute on `<json-editor>` now names the editor contents instead of the wrapper element
+- **Clearing a prop resets it**: setting a reactive prop such as `validator` or `readOnly` back to `undefined` now restores the global option or the editor default instead of keeping the previous value
 - **Dependencies are no longer bundled**: `vanilla-jsoneditor` and its dependencies are resolved by your package manager (see Installation)
 - **SSR**: importing the package during server-side rendering (for example in Nuxt) works again
 - **Styling**: the CSS variables `--jse-panel-button-color-highlight`, `--jse-context-menu-tip-color` and `--jse-message-success-background` now take effect
@@ -508,15 +509,25 @@ const jsonData = ref({
 
 ## 🔨 Build Setup
 
+Requires Node.js `>=20.19.0` and [pnpm](https://pnpm.io/).
+
 ```bash
 # install dependencies
-npm install
+pnpm install
 
-# serve with hot reload at localhost:5173
-npm run dev
+# serve the demo app with hot reload at localhost:5173
+pnpm dev
 
-# build for production with minification
-npm run build
+# run unit tests, lint and type checks
+pnpm test
+pnpm lint
+pnpm type-check
+
+# build the library into dist/
+pnpm build
+
+# build, pack and test the package in a consumer app (SSR render + browser)
+pnpm smoke
 ```
 
 ## 📝 License
