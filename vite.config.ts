@@ -2,100 +2,95 @@ import {fileURLToPath, URL} from 'node:url';
 import {defineConfig} from 'vite';
 import vue from '@vitejs/plugin-vue';
 import dts from 'vite-plugin-dts';
-import {envConfig} from 'vite-plugin-env-config';
+import pkg from './package.json' with {type: 'json'};
 
-export default defineConfig({
-  plugins: [
-    vue(),
-    dts({
-      insertTypesEntry: true,
-      rollupTypes: true,
-      copyDtsFiles: true,
-    }),
-    envConfig({
-      prefix: 'VITECONFIG_',
-      separator: '_',
-    }),
-  ],
-  resolve: {
-    alias: {
-      '@': fileURLToPath(new URL('./src', import.meta.url)),
-    },
-  },
-  define: {
-    __VUE_PROD_HYDRATION_MISMATCH_DETAILS__: false,
-  },
-  optimizeDeps: {
-    include: [
-      'ajv',
-      'ajv-dist',
-      'ajv-formats',
-      'ajv-i18n',
-      'immutable-json-patch',
-      'lodash-es',
-      '@fortawesome/free-regular-svg-icons',
-      '@fortawesome/free-solid-svg-icons',
-      'jmespath',
-      'jsonrepair',
-      'vanilla-jsoneditor',
+/**
+ * Runtime dependencies are resolved by the consumer's package manager and bundler instead of being
+ * bundled into `dist/`. This keeps transitive dependencies (Ajv, fast-uri, svelte runtime, ...) visible
+ * to `npm audit` and lets consumers pick up patched versions without a new release of this package.
+ * It also preserves the lazy `import()` boundaries inside vanilla-jsoneditor, which keeps browser-only
+ * modules from being evaluated during SSR.
+ */
+const externalPackages = [...Object.keys(pkg.dependencies ?? {}), ...Object.keys(pkg.peerDependencies ?? {})];
+
+const isExternal = (id: string) => externalPackages.some((name) => id === name || id.startsWith(`${name}/`));
+
+/**
+ * `vite build` builds the publishable library into `dist/`.
+ * `vite build --mode gh` builds the demo app (index.html) for GitHub Pages into `gh-dist/`.
+ */
+export default defineConfig(({mode}) => {
+  const isGhPagesBuild = mode === 'gh';
+
+  return {
+    base: isGhPagesBuild ? '/vue3-jsoneditor/' : '/',
+    plugins: [
+      vue(),
+      !isGhPagesBuild &&
+        dts({
+          insertTypesEntry: true,
+          rollupTypes: true,
+          copyDtsFiles: true,
+        }),
     ],
-    esbuildOptions: {
-      define: {
-        global: 'globalThis',
+    resolve: {
+      alias: {
+        '@': fileURLToPath(new URL('./src', import.meta.url)),
       },
     },
-  },
-  build: {
-    cssMinify: 'esbuild',
-    target: 'es2022',
-    lib: {
-      name: 'JsonEditorPlugin',
-      entry: './src/JsonEditorPlugin.ts',
-      formats: ['es'],
-      fileName: () => 'index.mjs',
+    define: {
+      __VUE_PROD_HYDRATION_MISMATCH_DETAILS__: false,
     },
-    commonjsOptions: {
-      transformMixedEsModules: true,
-      include: [/node_modules/],
-    },
-    rollupOptions: {
-      external: ['vue'],
-      output: {
-        globals: {
-          vue: 'Vue',
+    optimizeDeps: {
+      include: [
+        'ajv',
+        'ajv-dist',
+        'ajv-formats',
+        'ajv-i18n',
+        'immutable-json-patch',
+        'lodash-es',
+        '@fortawesome/free-regular-svg-icons',
+        '@fortawesome/free-solid-svg-icons',
+        'jmespath',
+        'jsonrepair',
+        'vanilla-jsoneditor',
+      ],
+      esbuildOptions: {
+        define: {
+          global: 'globalThis',
         },
-        interop: 'auto',
-        generatedCode: {
-          constBindings: true,
-        },
-        preserveModules: false,
-        exports: 'named',
-        manualChunks: (id) => {
-          if (id.includes('vanilla-jsoneditor')) return 'vanilla-jsoneditor';
-          if (id.includes('immutable-json-patch')) return 'immutable-json-patch';
-          if (id.includes('jmespath')) return 'jmespath';
-          if (id.includes('json-source-map')) return 'json-source-map';
-          if (id.includes('jsonpath-plus')) return 'jsonpath-plus';
-          if (id.includes('lodash-es')) return 'lodash-es';
-          if (id.includes('jsonrepair')) return 'jsonrepair';
-          if (id.includes('memoize-one')) return 'memoize-one';
-          if (id.includes('@fortawesome/free-solid-svg-icons')) return 'fortawesome';
-          if (id.includes('@jsonquerylang/jsonquery')) return 'jsonquerylang';
-          if (id.includes('@replit/codemirror-indentation-markers')) return 'replit';
-
-          if (id.includes('node_modules')) {
-            return 'vendor';
-          }
-        },
-        chunkFileNames: '[name].js',
       },
-      onwarn(warning, warn) {
-        if (warning.code === 'CIRCULAR_DEPENDENCY' && warning.message.includes('node_modules')) {
-          return;
+    },
+    build: isGhPagesBuild
+      ? {
+          cssMinify: 'esbuild',
+          target: 'es2022',
+          outDir: 'gh-dist',
+          commonjsOptions: {
+            transformMixedEsModules: true,
+            include: [/node_modules/],
+          },
+          chunkSizeWarningLimit: 1000,
         }
-        warn(warning);
-      },
-    },
-    chunkSizeWarningLimit: 1000,
-  },
+      : {
+          cssMinify: 'esbuild',
+          target: 'es2022',
+          lib: {
+            name: 'JsonEditorPlugin',
+            entry: './src/JsonEditorPlugin.ts',
+            formats: ['es'],
+            fileName: () => 'index.mjs',
+          },
+          rollupOptions: {
+            external: isExternal,
+            output: {
+              generatedCode: {
+                constBindings: true,
+              },
+              exports: 'named',
+              chunkFileNames: '[name].js',
+            },
+          },
+        },
+  };
 });
