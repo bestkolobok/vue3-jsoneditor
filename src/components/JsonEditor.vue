@@ -749,8 +749,19 @@ export default defineComponent({
     };
 
     const updateProps = async () => {
-      const props = await makeEditorProps();
-      editor.value?.updateProps(props);
+      const editorProps = await makeEditorProps();
+
+      // vanilla-jsoneditor only updates the keys it receives and falls back to its own default for an
+      // explicit `undefined`. Send unset watched props explicitly, so clearing a prop resets it instead
+      // of keeping the previous value. `selection` is skipped: when it is not bound, it is the user's
+      // live selection inside the editor and must not be cleared by unrelated prop updates.
+      for (const propName of watchPropNames) {
+        if (propName !== 'selection' && !(propName in editorProps)) {
+          editorProps[propName] = undefined;
+        }
+      }
+
+      editor.value?.updateProps(editorProps);
     };
 
     const flushPendingContentSync = () => {

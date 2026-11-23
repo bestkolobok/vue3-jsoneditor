@@ -402,6 +402,56 @@ describe('JsonEditor.vue', () => {
       }))
     })
 
+    it('should send cleared watched props as undefined so the editor resets them to its defaults', async () => {
+      const validator = vi.fn(() => [])
+      const wrapper = mount(JsonEditor, {
+        props: { ariaLabel: 'First editor', maxDocumentSizeTextMode: 1024, validator }
+      })
+      await flushPromises()
+
+      await wrapper.setProps({ ariaLabel: undefined, maxDocumentSizeTextMode: undefined, validator: undefined })
+      await flushPromises()
+
+      const lastProps = vi.mocked(mockEditor.updateProps).mock.lastCall?.[0] as Record<string, unknown>
+      for (const name of ['ariaLabel', 'maxDocumentSizeTextMode', 'validator']) {
+        expect(lastProps).toHaveProperty(name)
+        expect(lastProps[name]).toBeUndefined()
+      }
+    })
+
+    it('should not send an unbound selection with unrelated prop updates', async () => {
+      const wrapper = mount(JsonEditor, {
+        props: { readOnly: false }
+      })
+      await flushPromises()
+
+      await wrapper.setProps({ readOnly: true })
+      await flushPromises()
+
+      const lastProps = vi.mocked(mockEditor.updateProps).mock.lastCall?.[0] as Record<string, unknown>
+      expect(lastProps.readOnly).toBe(true)
+      expect(lastProps).not.toHaveProperty('selection')
+    })
+
+    it('should fall back to the global option when a prop is cleared', async () => {
+      const wrapper = mount(JsonEditor, {
+        props: { ariaLabel: 'Local editor' },
+        global: {
+          provide: {
+            jsonEditorOptions: { ariaLabel: 'Global editor' },
+          },
+        },
+      })
+      await flushPromises()
+
+      await wrapper.setProps({ ariaLabel: undefined })
+      await flushPromises()
+
+      expect(mockEditor.updateProps).toHaveBeenLastCalledWith(expect.objectContaining({
+        ariaLabel: 'Global editor',
+      }))
+    })
+
     it('should map kebab-case template attributes to ariaLabel and maxDocumentSizeTextMode', async () => {
       const ParentComponent = defineComponent({
         components: { JsonEditor },
