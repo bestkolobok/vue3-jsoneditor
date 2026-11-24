@@ -15,8 +15,17 @@
       *::after {
         box-sizing: border-box;
       }
+      html {
+        -webkit-text-size-adjust: 100%;
+      }
       body {
         margin: 0;
+        background: #f1f2f5;
+      }
+      @media (prefers-color-scheme: dark) {
+        body {
+          background: #090b10;
+        }
       }
     </style>
   </head>
