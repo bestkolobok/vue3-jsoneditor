@@ -14,6 +14,8 @@ Powered by [svelte-jsoneditor](https://www.npmjs.com/package/svelte-jsoneditor)
 
 > 💡 **Found this useful?** Consider giving it a ⭐ on [GitHub](https://github.com/bestkolobok/vue3-jsoneditor) to help others discover it!
 
+> 👋 **A note from the maintainer.** I've been building and maintaining this package since 2022, and I'll keep at it. I've also just launched [Fayna](https://fayna.ai/?utm_source=vue3-ts-jsoneditor&utm_medium=readme&utm_campaign=maintainer-note), a free résumé and cover-letter builder. It's new, still hard to find, and more than a hobby project for me. If you try it, tell me what you think, or pass it on to someone who's job hunting — that's the best help I could ask for.
+
 
 ## 🚀 Advantages
 
