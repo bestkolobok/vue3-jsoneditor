@@ -75,6 +75,8 @@ export default defineConfig(({mode}) => {
       : {
           cssMinify: 'esbuild',
           target: 'es2022',
+          // `public/` holds demo-only files (favicon, search-engine verification); keep them out of the npm package.
+          copyPublicDir: false,
           lib: {
             name: 'JsonEditorPlugin',
             entry: './src/JsonEditorPlugin.ts',
