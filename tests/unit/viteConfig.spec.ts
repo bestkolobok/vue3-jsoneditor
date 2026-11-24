@@ -58,3 +58,23 @@ describe('vite.config.ts', () => {
     })
   })
 })
+
+describe('demo page assets', () => {
+  it('should not copy public/ into the library build', () => {
+    expect(resolveConfig('production').build?.copyPublicDir).toBe(false)
+    expect(resolveConfig('gh').build?.copyPublicDir).toBeUndefined()
+  })
+
+  it('should ship project links as static HTML matching App.vue', async () => {
+    const { readFileSync } = await import('node:fs')
+    const html = readFileSync(new URL('../../index.html', import.meta.url), 'utf8').replace(/&amp;/g, '&')
+    const app = readFileSync(new URL('../../src/App.vue', import.meta.url), 'utf8')
+    const hrefs = [...app.matchAll(/href: '(https:\/\/(?:fayna\.ai|shine-post\.com)[^']+)'/g)].map((m) => m[1])
+
+    expect(hrefs).toHaveLength(2)
+    for (const href of hrefs) {
+      expect(html).toContain(`href="${href}"`)
+    }
+    expect(html).not.toMatch(/nofollow/)
+  })
+})
